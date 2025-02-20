@@ -1,3 +1,7 @@
 models/*.pth filter=lfs diff=lfs merge=lfs -text
 models/*.h5 filter=lfs diff=lfs merge=lfs -text
 models/*.pt filter=lfs diff=lfs merge=lfs -text
+*.pth filter=lfs diff=lfs merge=lfs -text
+hpc_logs/* -diff
+*.log -diff
+__pycache__/* -diff
