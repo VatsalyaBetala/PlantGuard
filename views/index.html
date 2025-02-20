@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plant Disease Classification</title>
+    <!-- Materialize CSS CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            background-color: #ffffff; /* Blue background color */
+        }
+        .container {
+            margin: 0 auto;
+            width: 90%; /* Adjust width for left and right margins */
+            max-width: 800px; /* Maximum width for the container */
+            text-align: center; /* Center the buttons and content */
+            padding-top: 80px; /* Space below the fixed navbar */
+        }
+        .btn {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .nav-wrapper {
+            padding: 0 10%; /* Add left and right padding to the navbar */
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-fixed">
+        <nav class="blue darken-3">
+            <div class="nav-wrapper">
+                <a href="#!" class="brand-logo">Logo</a>
+                <ul class="right hide-on-med-and-down">
+                    <li>
+                        <a href="/" class="waves-effect waves-light">
+                            <i class="material-icons left">home</i>HOME
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/view-images" class="waves-effect waves-light">
+                            <i class="material-icons left">photo_library</i>Image Library
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <h1>Welcome to Plant Disease Classification</h1>
+        <p>Select an option to proceed:</p>
+        <a href="record-video" class="waves-effect waves-light btn">
+            <i class="material-icons left">videocam</i>Live View
+        </a>
+        <a href="upload-images" class="waves-effect waves-light btn">
+            <i class="material-icons left">image</i>Image View
+        </a>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

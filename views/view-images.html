@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Images</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>
+        .gallery {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .gallery img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .gallery img:hover {
+            transform: scale(1.1);
+            cursor: pointer;
+        }
+        .image-count {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        .nav-wrapper {
+            padding: 0 10%; /* Add left and right padding to the navbar */
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-fixed">
+        <nav class="blue darken-3">
+            <div class="nav-wrapper">
+                <a href="#!" class="brand-logo">Logo</a>
+                <ul class="right hide-on-med-and-down">
+                    <li>
+                        <a href="/" class="waves-effect waves-light">
+                            <i class="material-icons left">home</i>HOME
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/view-images" class="waves-effect waves-light">
+                            <i class="material-icons left">photo_library</i>Image Library
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <h2>View Images</h2>
+        <p class="image-count" id="imageCount">Showing 0 out of 0 images</p>
+        <div class="gallery" id="imageGallery"></div>
+        <div class="buttons">
+            <button id="deleteImages" class="btn red">Delete Current Images</button>
+            <button id="uploadMoreImages" class="btn green">Upload More Images</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        async function fetchImages() {
+            const response = await fetch('/images');
+            const images = await response.json();
+            const gallery = document.getElementById('imageGallery');
+            const imageCount = document.getElementById('imageCount');
+            gallery.innerHTML = '';
+            images.forEach(image => {
+                const imgElement = document.createElement('img');
+                imgElement.src = `uploads/${image}`;
+                imgElement.alt = image;
+                imgElement.addEventListener('click', () => {
+                    window.open(imgElement.src, '_blank');
+                });
+                gallery.appendChild(imgElement);
+            });
+            imageCount.textContent = `Showing ${images.length} out of ${images.length} images`;
+        }
+
+        async function deleteImages() {
+            const response = await fetch('/delete-images', { method: 'DELETE' });
+            if (response.ok) {
+                fetchImages();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', fetchImages);
+        document.getElementById('deleteImages').addEventListener('click', deleteImages);
+        document.getElementById('uploadMoreImages').addEventListener('click', () => {
+            window.location.href = '/upload-images';
+        });
+    </script>
+</body>
+</html>

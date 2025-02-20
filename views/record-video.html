@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Record Video</title>
+    <!-- Materialize CSS CDN -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">      
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+
+    <style>
+        /* Custom CSS */
+        .video-container {
+            margin-top: 20px;
+            position: relative;
+        }
+        video {
+            width: 100%;
+            border-radius: 10px;
+            background-color: #000;
+        }
+        .controls {
+            margin-top: 20px;
+        }
+        .controls .btn {
+            margin-right: 10px;
+        }
+        .progress {
+            margin-top: 20px;
+        }
+        .nav-wrapper {
+            padding: 0 10%; /* Add left and right padding to the navbar */
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-fixed">
+        <nav class="blue darken-3">
+            <div class="nav-wrapper">
+                <a href="#!" class="brand-logo">Logo</a>
+                <ul class="right hide-on-med-and-down">
+                    <li>
+                        <a href="/" class="waves-effect waves-light">
+                            <i class="material-icons left">home</i>HOME
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/view-images" class="waves-effect waves-light">
+                            <i class="material-icons left">photo_library</i>Image Library
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <h2>Record Video</h2>
+        <div class="video-container">
+            <video id="video" autoplay muted></video>
+        </div>
+        <div class="controls">
+            <button id="connectCamera" class="btn blue">Connect Camera</button>
+            <button id="startRecording" class="btn green" disabled>Start Recording</button>
+            <button id="stopRecording" class="btn red" disabled>Stop Recording</button>
+        </div>
+        <div class="progress" id="progressBar" style="display: none;">
+            <div class="indeterminate"></div>
+        </div>
+    </div>
+
+    <!-- Materialize JS CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script>
+        // JavaScript code
+        const video = document.getElementById('video');
+        const connectCameraBtn = document.getElementById('connectCamera');
+        const startRecordingBtn = document.getElementById('startRecording');
+        const stopRecordingBtn = document.getElementById('stopRecording');
+        const progressBar = document.getElementById('progressBar');
+    
+        let mediaStream = null;
+        let recording = false;
+        let frameCaptureInterval = null;
+        let frameCounter = 0;
+    
+        // Connect to the webcam
+        connectCameraBtn.addEventListener('click', async () => {
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                video.srcObject = mediaStream;
+                await video.play();
+                startRecordingBtn.disabled = false;
+                M.toast({ html: 'Camera connected', classes: 'green' });
+                console.log('Camera connected');
+            } catch (err) {
+                console.error('Error accessing the camera:', err);
+                M.toast({ html: 'Failed to access camera', classes: 'red' });
+            }
+        });
+    
+        // Start recording
+        startRecordingBtn.addEventListener('click', () => {
+            if (!mediaStream) {
+                M.toast({ html: 'Please connect the camera first', classes: 'orange' });
+                return;
+            }
+    
+            recording = true;
+            progressBar.style.display = 'block';
+            startRecordingBtn.disabled = true;
+            stopRecordingBtn.disabled = false;
+            M.toast({ html: 'Recording started', classes: 'green' });
+            console.log('Recording started');
+    
+            // Start capturing frames
+            startFrameCapture();
+        });
+    
+        // Stop recording
+        stopRecordingBtn.addEventListener('click', () => {
+            if (recording) {
+                recording = false;
+                progressBar.style.display = 'none';
+                startRecordingBtn.disabled = false;
+                stopRecordingBtn.disabled = true;
+                M.toast({ html: 'Recording stopped', classes: 'green' });
+                console.log('Recording stopped');
+    
+                // Stop capturing frames
+                stopFrameCapture();
+    
+                // Redirect to view-images page
+                window.location.href = '/view-images';
+            }
+        });
+    
+        // Function to start capturing frames
+        function startFrameCapture() {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+    
+            // Ensure video dimensions are available
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+    
+            if (!canvas.width || !canvas.height) {
+                console.error('Failed to get video dimensions');
+            } else {
+                console.log('Canvas dimensions set:', canvas.width, 'x', canvas.height);
+            }
+    
+            frameCounter = 0;
+    
+            // Capture frames at intervals (e.g., every 500ms)
+            frameCaptureInterval = setInterval(() => {
+                if (!recording) return;
+    
+                frameCounter++;
+    
+                // Only process every 10th frame
+                if (frameCounter % 10 === 0) {
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    canvas.toBlob(async (blob) => {
+                        if (blob) {
+                            // Create a unique filename
+                            const filename = 'frame_' + Date.now() + '_' + frameCounter + '.jpg';
+                            console.log('Captured frame:', filename);
+    
+                            // Upload the frame
+                            await uploadFrame(blob, filename);
+                        } else {
+                            console.error('Failed to create blob from canvas');
+                        }
+                    }, 'image/jpeg', 0.8);
+                }
+            }, 100); // Adjust interval as needed
+        }
+    
+        // Function to stop capturing frames
+        function stopFrameCapture() {
+            if (frameCaptureInterval) {
+                clearInterval(frameCaptureInterval);
+                frameCaptureInterval = null;
+                console.log('Frame capture stopped');
+            }
+        }
+    
+        // Function to upload a single frame
+        async function uploadFrame(frameBlob, filename) {
+            console.log('Uploading frame:', filename);
+            const formData = new FormData();
+            formData.append('files', frameBlob, filename);
+    
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (response.ok) {
+                    console.log('Frame uploaded successfully:', filename);
+                } else {
+                    console.error('Failed to upload frame:', filename, 'Status:', response.status);
+                    const errorText = await response.text();
+                    console.error('Server response:', errorText);
+                }
+            } catch (error) {
+                console.error('Error uploading frame:', filename, error);
+            }
+        }
+    </script>
+    
+    
+    
+</body>
+</html>

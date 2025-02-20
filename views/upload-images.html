@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image View</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <style>
+        .file-list {
+            margin-top: 20px;
+        }
+        .file-list li {
+            list-style-type: none;
+            padding: 5px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .nav-wrapper {
+            padding: 0 10%; /* Add left and right padding to the navbar */
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-fixed">
+        <nav class="blue darken-3">
+            <div class="nav-wrapper">
+                <a href="#!" class="brand-logo">Logo</a>
+                <ul class="right hide-on-med-and-down">
+                    <li>
+                        <a href="/" class="waves-effect waves-light">
+                            <i class="material-icons left">home</i>HOME
+                        </a>
+                    </li>
+                    <li>
+                        <a href="/view-images" class="waves-effect waves-light">
+                            <i class="material-icons left">photo_library</i>Image Library
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+    <div class="container">
+        <h2>Image View</h2>
+        <div class="file-field input-field">
+            <div class="btn">
+                <span>Upload Pictures</span>
+                <input type="file" id="fileInput" multiple>
+            </div>
+            <div class="file-path-wrapper">
+                <input class="file-path validate" type="text" placeholder="Upload one or more files">
+            </div>
+        </div>
+        <ul class="file-list" id="fileList"></ul>
+        <button class="btn waves-effect waves-light" id="submitBtn">Submit</button>
+        <div id="responseMessage"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+<script>
+    const fileInput = document.getElementById('fileInput');
+    const fileList = document.getElementById('fileList');
+
+    fileInput.addEventListener('change', function() {
+        const files = fileInput.files;
+        fileList.innerHTML = '';
+        for (let i = 0; i < files.length; i++) {
+            const li = document.createElement('li');
+            li.textContent = files[i].name;
+            fileList.appendChild(li);
+        }
+    });
+
+    document.getElementById('submitBtn').addEventListener('click', async function() {
+        const files = fileInput.files;
+        const formData = new FormData();
+        for (let i = 0; i < files.length; i++) {
+            formData.append('files', files[i]);
+        }
+
+        const response = await fetch('/upload', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.json();
+        document.getElementById('responseMessage').innerText = result.message;
+
+        if (response.ok) {
+            window.location.href = '/view-images';
+        }
+    });
+</script>
+</body>
+</html>
