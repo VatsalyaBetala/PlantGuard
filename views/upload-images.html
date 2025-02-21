@@ -3,93 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image View</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>Upload Images</title>
+    
+    <!-- Materialize CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
     <style>
-        .file-list {
-            margin-top: 20px;
+        /* Global Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #2196F3, #64B5F6);
+            color: white;
+            transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
         }
+
+        /* Navbar */
+        .nav-wrapper {
+            padding: 0 10%;
+        }
+
+        .container {
+            margin: 0 auto;
+            width: 90%;
+            max-width: 900px;
+            text-align: center;
+            padding-top: 80px;
+        }
+
+        /* Upload Section */
+        .upload-box {
+            padding: 40px 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            margin: 20px 10px;
+            padding: 15px 30px;
+            border-radius: 5px;
+            font-size: 1.2em;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* File List */
         .file-list li {
             list-style-type: none;
             padding: 5px 0;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid white;
         }
-        .nav-wrapper {
-            padding: 0 10%; /* Add left and right padding to the navbar */
+
+        /* Footer */
+        footer {
+            margin-top: 50px;
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 2px solid white;
         }
     </style>
 </head>
 <body>
+    <!-- Navbar -->
     <div class="navbar-fixed">
         <nav class="blue darken-3">
             <div class="nav-wrapper">
-                <a href="#!" class="brand-logo">Logo</a>
+                <a href="#!" class="brand-logo">Image Uploader</a>
                 <ul class="right hide-on-med-and-down">
-                    <li>
-                        <a href="/" class="waves-effect waves-light">
-                            <i class="material-icons left">home</i>HOME
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/view-images" class="waves-effect waves-light">
-                            <i class="material-icons left">photo_library</i>Image Library
-                        </a>
-                    </li>
+                    <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>HOME</a></li>
+                    <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
                 </ul>
             </div>
         </nav>
     </div>
+
+    <!-- Upload Section -->
     <div class="container">
-        <h2>Image View</h2>
-        <div class="file-field input-field">
-            <div class="btn">
-                <span>Upload Pictures</span>
-                <input type="file" id="fileInput" multiple>
+        <div class="upload-box">
+            <h2>📸 Upload Your Images</h2>
+            <div class="file-field input-field">
+                <div class="btn blue darken-2">
+                    <span>Choose Files</span>
+                    <input type="file" id="fileInput" multiple>
+                </div>
+                <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text" placeholder="Upload one or more files">
+                </div>
             </div>
-            <div class="file-path-wrapper">
-                <input class="file-path validate" type="text" placeholder="Upload one or more files">
-            </div>
+            <ul class="file-list" id="fileList"></ul>
+            <button class="btn green darken-2 waves-effect waves-light" id="submitBtn">Submit</button>
+            <div id="responseMessage"></div>
         </div>
-        <ul class="file-list" id="fileList"></ul>
-        <button class="btn waves-effect waves-light" id="submitBtn">Submit</button>
-        <div id="responseMessage"></div>
     </div>
 
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Image Uploader. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-<script>
-    const fileInput = document.getElementById('fileInput');
-    const fileList = document.getElementById('fileList');
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
 
-    fileInput.addEventListener('change', function() {
-        const files = fileInput.files;
-        fileList.innerHTML = '';
-        for (let i = 0; i < files.length; i++) {
-            const li = document.createElement('li');
-            li.textContent = files[i].name;
-            fileList.appendChild(li);
-        }
-    });
-
-    document.getElementById('submitBtn').addEventListener('click', async function() {
-        const files = fileInput.files;
-        const formData = new FormData();
-        for (let i = 0; i < files.length; i++) {
-            formData.append('files', files[i]);
-        }
-
-        const response = await fetch('/upload', {
-            method: 'POST',
-            body: formData
+        fileInput.addEventListener('change', function() {
+            const files = fileInput.files;
+            fileList.innerHTML = '';
+            for (let i = 0; i < files.length; i++) {
+                const li = document.createElement('li');
+                li.textContent = files[i].name;
+                fileList.appendChild(li);
+            }
         });
 
-        const result = await response.json();
-        document.getElementById('responseMessage').innerText = result.message;
+        document.getElementById('submitBtn').addEventListener('click', async function() {
+            const files = fileInput.files;
+            const formData = new FormData();
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files', files[i]);
+            }
 
-        if (response.ok) {
-            window.location.href = '/view-images';
-        }
-    });
-</script>
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+            document.getElementById('responseMessage').innerText = result.message;
+
+            if (response.ok) {
+                window.location.href = '/view-images';
+            }
+        });
+    </script>
 </body>
 </html>
