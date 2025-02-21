@@ -6,6 +6,9 @@ import uvicorn
 import os
 from typing import List
 
+# Import the inference functions
+from src.inference import classify_plant, classify_disease
+
 app = FastAPI()
 
 # CORS Middleware to allow frontend to communicate with backend
@@ -43,12 +46,24 @@ async def record_video():
 async def upload_files(files: List[UploadFile] = File(...)):
     if not os.path.exists("uploads"):
         os.makedirs("uploads")
+    predictions = []
     for file in files:
         file_location = f"uploads/{file.filename}"
+        # Save the uploaded file to disk
         with open(file_location, "wb") as f:
             contents = await file.read()
             f.write(contents)
-    return {"message": "Files successfully uploaded"}
+        # Run the plant classification model
+        plant_prediction = classify_plant(file_location)
+        # Run the disease classification using the predicted plant type
+        disease_prediction = classify_disease(file_location, plant_prediction)
+        predictions.append({
+            "filename": file.filename,
+            "plant": plant_prediction,
+            "disease": disease_prediction
+        })
+    print(predictions)
+    return {"message": "Files successfully uploaded", "predictions": predictions}
 
 @app.get("/images")
 async def get_images():

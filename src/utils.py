@@ -16,3 +16,4 @@ def download_gdrive_folder(output_path="models/"):
 
     # Download the folder
     gdown.download_folder(gdrive_link, output=output_path, quiet=False, use_cookies=False)
+
