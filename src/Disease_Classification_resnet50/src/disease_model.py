@@ -8,7 +8,7 @@ class DiseaseClassifier(nn.Module):
 
         # Load ResNet50 and freeze weights
         self.model = models.resnet50(weights=None)
-        weight_path = "/data_home/vatsalya/PlantDiseaseClassification/Plant_Classification/src/TranferLearning/resnet50_weights.pth"
+        weight_path = "src/models/resnet50_weights.pth"
         self.model.load_state_dict(torch.load(weight_path, map_location=torch.device("cuda" if torch.cuda.is_available() else "cpu")))
 
         for param in self.model.parameters():

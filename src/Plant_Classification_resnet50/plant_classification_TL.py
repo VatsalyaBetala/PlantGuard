@@ -8,8 +8,7 @@ class PlantClassifierCNN(nn.Module):
 
         # Load ResNet50 without downloading
         self.model = models.resnet50(weights=None)
-        weight_path = "/data_home/vatsalya/PlantDiseaseClassification/Plant_Classification/src/TranferLearning/resnet50_weights.pth"
-
+        weight_path = r"src/models/resnet50_weights.pth"
         # Load manually downloaded weights
         self.model.load_state_dict(torch.load(weight_path, map_location=torch.device("cuda" if torch.cuda.is_available() else "cpu")))
 
