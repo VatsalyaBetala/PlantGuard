@@ -2,15 +2,8 @@ import os
 import gdown
 from dotenv import load_dotenv
 
-# Load environment variables from .env
-load_dotenv()
-
-# Get model directory from .env
-MODEL_DIR = os.getenv("MODEL_DIR", "src/models")  # Default: "src/models"
-
-# Get required models from .env and split into a list
-REQUIRED_MODELS = os.getenv("REQUIRED_MODELS", "").split(",")
-
+MODEL_DIR="src/models"
+REQUIRED_MODELS="Plant_Classification.pth,Apple_Disease_Classification.pth,Corn_(maize)_Disease_Classification.pth,Grape_Disease_Classification.pth,Pepper_bell_Disease_Classification.pth,Potato_Disease_Classification.pth,Tomato_Disease_Classification.pth"
 
 def check_and_download_models():
     """
@@ -30,7 +23,7 @@ def check_and_download_models():
     print(f"⚠️ Missing models: {missing_models}")
 
     # Get Google Drive folder link from .env
-    gdrive_link = os.getenv("G_DRIVE_LINK")
+    gdrive_link = "https://drive.google.com/drive/folders/1B0OFkmGCXMbl8Eokjw5MikacxaYQrzwM"
     if not gdrive_link:
         raise ValueError("❌ ERROR: `G_DRIVE_LINK` is not set in .env file.")
 
