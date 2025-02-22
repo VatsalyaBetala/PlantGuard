@@ -49,7 +49,7 @@ cd plant-disease-classification
 ### **2️⃣ Create a Virtual Environment (Recommended)**
 ```bash
 python -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+source venv/bin/activate  # Python >= 3.8, on Windows, use `venv\Scripts\activate`
 ```
 
 ### **3️⃣ Install Dependencies**
