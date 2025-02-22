@@ -60,7 +60,7 @@ def classify_plant(image_path: str, model_path: str="src/models/Plant_Classifica
         print(f"Predicted Class: {predicted_idx}, Probability: {predicted_prob}")
 
     plant_name = PLANT_CLASSES[predicted_idx]
-    if predicted_prob < 0.95:
+    if predicted_prob < 0.98:
         print(f"Low confidence prediction: {predicted_prob}")
         plant_name = "Unknown"
     print(f"Predicted Plant: {plant_name} (Index: {predicted_idx})")
