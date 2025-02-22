@@ -43,7 +43,8 @@ def classify_plant(image_path: str, model_path: str="src/models/Plant_Classifica
     device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
     # Load the plant classifier using the file path.
     import os
-    print(os.path.exists("src/models/Plant_Classification.pth"))  # Should return True
+    print(os.getcwd())
+    print(os.path.exists(r"src/models/Plant_Classification.pth"))  # Should return True
     model = load_model(PlantClassifierCNN, model_path, num_classes=len(PLANT_CLASSES), device=device)
     print("Hi")
     # Preprocess the image.
@@ -105,7 +106,7 @@ def classify_disease(image_path: str, plant_type: str) -> str:
         print(f"Predicted Class: {predicted_idx}, Probability: {predicted_prob}")
 
     disease_prediction = class_labels[predicted_idx]
-    if predicted_prob < 0.95:
+    if predicted_prob < 0.85:
         print(f"Low confidence prediction: {predicted_prob}")
         disease_prediction = "Unknown"
     print(f"Predicted Plant: {disease_prediction} (Index: {predicted_idx})")

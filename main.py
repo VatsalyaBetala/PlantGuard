@@ -27,6 +27,8 @@ app.add_middleware(
 
 # Serve static files (uploaded images)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+# Serve static files (images, CSS, JS)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # Ensure uploads directory exists
 if not os.path.exists("uploads"):
