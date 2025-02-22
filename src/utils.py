@@ -1,10 +1,17 @@
 import os
 import gdown
-from dotenv import load_dotenv
 
-MODEL_DIR="src/models"
-REQUIRED_MODELS="Plant_Classification.pth,Apple_Disease_Classification.pth,Corn_(maize)_Disease_Classification.pth,Grape_Disease_Classification.pth,Pepper_bell_Disease_Classification.pth,Potato_Disease_Classification.pth,Tomato_Disease_Classification.pth"
-
+MODEL_DIR = "src/models"
+REQUIRED_MODELS = [
+    "Apple_Disease_Classification.pth",
+    "Grape_Disease_Classification.pth",
+    "Plant_Classification.pth",
+    "Tomato_Disease_Classification.pth",
+    "Corn_(maize)_Disease_Classification.pth",
+    "Pepper_bell_Disease_Classification.pth",
+    "Potato_Disease_Classification.pth",
+    "resnet50_weights.pth"
+]
 def check_and_download_models():
     """
     Checks if all required models exist in the specified directory.

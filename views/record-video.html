@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Record Video</title>
-    <!-- Materialize CSS CDN -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">      
+
+    <!-- Materialize CSS -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
 
     <style>
-        /* Custom Theme */
+        /* Global Styles */
         body {
             font-family: 'Arial', sans-serif;
             background: linear-gradient(to right, #2196F3, #64B5F6);
@@ -29,6 +30,7 @@
             padding-top: 80px;
         }
 
+        /* Video Container */
         .video-container {
             margin-top: 20px;
             background: rgba(255, 255, 255, 0.15);
@@ -36,29 +38,44 @@
             border-radius: 10px;
             padding: 20px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            /* Ensure enough space for the video */
             min-height: 400px;
         }
 
         video {
             display: block;
             width: 100%;
+            max-width: 800px;
             height: auto;
             border-radius: 10px;
             background-color: black;
+            margin: 0 auto;
         }
 
+        /* Controls - Button Layout Fix */
         .controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
             margin-top: 20px;
         }
 
         .controls .btn {
-            margin: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
             padding: 15px 30px;
             border-radius: 5px;
             font-size: 1.2em;
-            line-height: 1.4em;
             transition: transform 0.3s ease-in-out;
+            width: auto;
+            min-width: 220px;
+        }
+
+        .controls .btn i {
+            font-size: 1.5rem;
+            margin-right: 8px;
         }
 
         .controls .btn:hover {
@@ -74,7 +91,6 @@
             padding: 20px;
             text-align: center;
             background: rgba(0, 0, 0, 0.2);
-            border-top: 2px solid white;
         }
     </style>
 </head>
@@ -83,20 +99,12 @@
         <nav class="blue darken-3">
             <div class="nav-wrapper">
                 <a href="#!" class="brand-logo">
-                    <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height: 50px; margin-right: 10px;"> <!-- Replace with actual logo path -->
+                    <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height: 50px; margin-right: 10px;">
                     PlantGuard
                 </a>
                 <ul class="right hide-on-med-and-down">
-                    <li>
-                        <a href="/" class="waves-effect waves-light">
-                            <i class="material-icons left">home</i>HOME
-                        </a>
-                    </li>
-                    <li>
-                        <a href="/view-images" class="waves-effect waves-light">
-                            <i class="material-icons left">photo_library</i>Image Library
-                        </a>
-                    </li>
+                    <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>HOME</a></li>
+                    <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
                 </ul>
             </div>
         </nav>
@@ -108,9 +116,15 @@
             <video id="video" autoplay muted></video>
         </div>
         <div class="controls">
-            <button id="connectCamera" class="btn blue darken-2">Connect Camera</button>
-            <button id="startRecording" class="btn green darken-2" disabled>Start Recording</button>
-            <button id="stopRecording" class="btn red darken-2" disabled>Stop Recording</button>
+            <button id="connectCamera" class="btn blue darken-2">
+                <i class="material-icons left">videocam</i>Connect Camera
+            </button>
+            <button id="startRecording" class="btn green darken-2" disabled>
+                <i class="material-icons left">play_arrow</i>Start Recording
+            </button>
+            <button id="stopRecording" class="btn red darken-2" disabled>
+                <i class="material-icons left">stop</i>Stop Recording
+            </button>
         </div>
         <div class="progress" id="progressBar" style="display: none;">
             <div class="indeterminate"></div>
@@ -124,7 +138,6 @@
     <!-- Materialize JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
-        // JavaScript code
         const video = document.getElementById('video');
         const connectCameraBtn = document.getElementById('connectCamera');
         const startRecordingBtn = document.getElementById('startRecording');
@@ -163,101 +176,64 @@
             startRecordingBtn.disabled = true;
             stopRecordingBtn.disabled = false;
             M.toast({ html: 'Recording started', classes: 'green' });
-            console.log('Recording started');
 
-            // Start capturing frames
             startFrameCapture();
         });
 
         // Stop recording
-        stopRecordingBtn.addEventListener('click', () => {
+        stopRecordingBtn.addEventListener('click', async () => {
             if (recording) {
                 recording = false;
                 progressBar.style.display = 'none';
                 startRecordingBtn.disabled = false;
                 stopRecordingBtn.disabled = true;
                 M.toast({ html: 'Recording stopped', classes: 'green' });
-                console.log('Recording stopped');
 
-                // Stop capturing frames
                 stopFrameCapture();
 
-                // Redirect to view-images page
+                // Wait for last uploads to complete, then redirect
+                await new Promise((resolve) => setTimeout(resolve, 1500));
                 window.location.href = '/view-images';
             }
         });
 
-        // Function to start capturing frames
         function startFrameCapture() {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
-            // Ensure video dimensions are available
             canvas.width = video.videoWidth || 640;
             canvas.height = video.videoHeight || 480;
-
-            if (!canvas.width || !canvas.height) {
-                console.error('Failed to get video dimensions');
-            } else {
-                console.log('Canvas dimensions set:', canvas.width, 'x', canvas.height);
-            }
+            if (!canvas.width || !canvas.height) return;
 
             frameCounter = 0;
 
-            // Capture frames at intervals (e.g., every 100ms)
             frameCaptureInterval = setInterval(() => {
                 if (!recording) return;
 
                 frameCounter++;
 
-                // Only process every 10th frame
                 if (frameCounter % 10 === 0) {
                     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                     canvas.toBlob(async (blob) => {
-                        if (blob) {
-                            // Create a unique filename
-                            const filename = 'frame_' + Date.now() + '_' + frameCounter + '.jpg';
-                            console.log('Captured frame:', filename);
-
-                            // Upload the frame
-                            await uploadFrame(blob, filename);
-                        } else {
-                            console.error('Failed to create blob from canvas');
-                        }
+                        if (blob) await uploadFrame(blob, `frame_${Date.now()}.jpg`);
                     }, 'image/jpeg', 0.8);
                 }
             }, 100);
         }
 
-        // Function to stop capturing frames
         function stopFrameCapture() {
-            if (frameCaptureInterval) {
-                clearInterval(frameCaptureInterval);
-                frameCaptureInterval = null;
-                console.log('Frame capture stopped');
-            }
+            if (frameCaptureInterval) clearInterval(frameCaptureInterval);
         }
 
-        // Function to upload a single frame
-        async function uploadFrame(frameBlob, filename) {
-            console.log('Uploading frame:', filename);
+        async function uploadFrame(blob, filename) {
             const formData = new FormData();
-            formData.append('files', frameBlob, filename);
+            formData.append('files', blob, filename);
 
             try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData
-                });
-                if (response.ok) {
-                    console.log('Frame uploaded successfully:', filename);
-                } else {
-                    console.error('Failed to upload frame:', filename, 'Status:', response.status);
-                    const errorText = await response.text();
-                    console.error('Server response:', errorText);
-                }
+                const response = await fetch('/upload', { method: 'POST', body: formData });
+                if (!response.ok) console.error('Failed to upload frame:', filename);
             } catch (error) {
-                console.error('Error uploading frame:', filename, error);
+                console.error('Error uploading frame:', error);
             }
         }
     </script>

@@ -43,11 +43,23 @@
 
         /* Buttons */
         .btn {
-            margin: 20px 10px;
-            padding: 15px 30px;
-            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            text-transform: uppercase;
+            font-weight: bold;
+            height: auto;
+            padding: 15px 20px;
+            line-height: normal;
             font-size: 1.2em;
+            border-radius: 5px;
             transition: transform 0.3s ease-in-out;
+        }
+
+        .btn i {
+            font-size: 1.5rem;
+            margin-right: 8px;
         }
 
         .btn:hover {
@@ -169,11 +181,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer>
-        <p>&copy; 2025 PlantGuard. All rights reserved.</p>
-    </footer>
 
     <!-- Dark Mode Toggle -->
     <div class="dark-mode-toggle" onclick="toggleDarkMode()">
