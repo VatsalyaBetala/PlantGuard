@@ -24,15 +24,15 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
+# Ensure uploads directory exists
+if not os.path.exists("uploads"):
+    os.makedirs("uploads")
 # Serve static files (uploaded images)
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 # Serve static files (images, CSS, JS)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-# Ensure uploads directory exists
-if not os.path.exists("uploads"):
-    os.makedirs("uploads")
+
 
 @app.on_event("startup")
 async def startup_event():
