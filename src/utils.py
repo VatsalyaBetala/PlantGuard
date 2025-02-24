@@ -10,7 +10,8 @@ REQUIRED_MODELS = [
     "Corn_(maize)_Disease_Classification.pth",
     "Pepper_bell_Disease_Classification.pth",
     "Potato_Disease_Classification.pth",
-    "resnet50_weights.pth"
+    "resnet50_weights.pth",
+    "yolov8n_leaf.pt"
 ]
 def check_and_download_models():
     """
