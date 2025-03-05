@@ -1,11 +1,11 @@
 import os
-
 import cv2
 import torch
 import numpy as np
 from PIL import Image
-from ultralytics import YOLO
-
+from ultralytics import YOLO  # (kept for any other parts; not used in detect_leaf)
+import onnxruntime as ort  # For running the ONNX model
+from torchvision.ops import nms
 from src.utils import check_and_download_models
 from src.data_preprocessing import preprocess_image
 from src.Plant_Classification_resnet50.plant_classification_TL import PlantClassifierCNN
@@ -13,18 +13,32 @@ from src.Disease_Classification_resnet50.src.disease_model import DiseaseClassif
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 1) Leaf detection function
+# 1) Leaf detection function using ONNX
+# ─────────────────────────────────────────────────────────────────────────────
+# ─────────────────────────────────────────────────────────────────────────────
+import os
+import cv2
+import torch
+import numpy as np
+from PIL import Image
+import onnxruntime as ort
+from torchvision.ops import nms  # Using torchvision's non-max suppression
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 1) Leaf detection function using ONNX with calibration adjustments
 # ─────────────────────────────────────────────────────────────────────────────
 def detect_leaf(image_path: str):
     """
-    Detects a leaf in the image using YOLOv8n and extracts it if confidence is above 50%.
+    Detects a leaf using the YOLOv8n ONNX model with output shape [1, 5, 8400].
     Returns the path to the cropped leaf image ('temp_leaf.jpg'), or None if detection fails.
     """
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    # Load YOLOv8 model with weights_only=False to allow model to unpickle.
-    YOLO_MODEL_PATH = "src/models/yolov8n_leaf.pt"
-    leaf_detector = YOLO(YOLO_MODEL_PATH).to(device)
+    # Load ONNX model
+    onnx_model_path = "src/models/yolov8n_leaf.onnx"
+    session = ort.InferenceSession(onnx_model_path)
+    input_name = session.get_inputs()[0].name
+    input_shape = session.get_inputs()[0].shape  # Expected: [1, 3, 640, 640]
+    input_height, input_width = input_shape[2:4]
 
     # Load image
     image = cv2.imread(image_path)
@@ -32,39 +46,88 @@ def detect_leaf(image_path: str):
         print("Error: Unable to load image.")
         return None
 
-    # Convert image to RGB (YOLO expects RGB images)
-    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    # Letterbox preprocessing
+    def letterbox(im, new_shape=(640, 640)):
+        shape = im.shape[:2]
+        r = min(new_shape[0] / shape[0], new_shape[1] / shape[1])
+        new_unpad = (int(round(shape[1] * r)), int(round(shape[0] * r)))
+        dw, dh = new_shape[1] - new_unpad[0], new_shape[0] - new_unpad[1]
+        dw /= 2
+        dh /= 2
+        if shape[::-1] != new_unpad:
+            im = cv2.resize(im, new_unpad, interpolation=cv2.INTER_LINEAR)
+        im = cv2.copyMakeBorder(im, int(dh), int(dh), int(dw), int(dw),
+                               cv2.BORDER_CONSTANT, value=(114, 114, 114))
+        return im, r, (dw, dh)
 
-    # Run YOLO inference
-    results = leaf_detector(image_rgb)
+    img = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    img, ratio, (dw, dh) = letterbox(img)
+    img = img.transpose((2, 0, 1))  # HWC to CHW
+    img = np.ascontiguousarray(img).astype(np.float32) / 255.0  # Normalize
+    img = np.expand_dims(img, axis=0)  # Add batch dimension
 
-    if not results or len(results[0].boxes) == 0:
-        print("No leaf detected.")
+    # Run inference
+    outputs = session.run(None, {input_name: img})
+    outputs = torch.tensor(outputs[0])  # Shape: [1, 5, 8400]
+
+    # Decode outputs
+    def decode_yolo_output(outputs, conf_thres=0.8, iou_thres=0.5):
+        # Reshape and filter outputs
+        outputs = outputs.squeeze(0)  # Remove batch dimension
+        outputs = outputs.permute(1, 0)  # [8400, 5]
+
+        # Split into boxes and confidence scores
+        boxes = outputs[:, :4]  # [x_center, y_center, width, height]
+        scores = outputs[:, 4]  # Confidence scores
+
+        # Convert boxes from [x_center, y_center, width, height] to [x1, y1, x2, y2]
+        boxes[:, 0] = (boxes[:, 0] - boxes[:, 2] / 2)  # x1
+        boxes[:, 1] = (boxes[:, 1] - boxes[:, 3] / 2)  # y1
+        boxes[:, 2] = (boxes[:, 0] + boxes[:, 2])  # x2
+        boxes[:, 3] = (boxes[:, 1] + boxes[:, 3])  # y2
+
+        # Apply confidence threshold
+        mask = scores > conf_thres
+        boxes = boxes[mask]
+        scores = scores[mask]
+
+        # Apply NMS
+        keep_indices = nms(boxes, scores, iou_thres)
+        return boxes[keep_indices], scores[keep_indices]
+
+    # Decode and filter outputs
+    boxes, scores = decode_yolo_output(outputs)
+
+    if boxes.shape[0] == 0:
+        print("No detections.")
         return None
 
-    # Extract the highest confidence leaf detection
-    for box in results[0].boxes.data.cpu().numpy():
-        x1, y1, x2, y2, confidence, class_id = box  # bounding box + confidence
-        if confidence < 0.70:
-            print(f"Detected leaf, but confidence ({confidence:.2f}) is too low.")
-            return None
+    # Use the first detection
+    box = boxes[0].numpy()
+    x1, y1, x2, y2 = box
 
-        # Convert coordinates to integers and crop
-        x1, y1, x2, y2 = map(int, [x1, y1, x2, y2])
-        leaf_crop = image_rgb[y1:y2, x1:x2]
+    # Scale coordinates back to the original image size
+    x1 = (x1 - dw) / ratio
+    y1 = (y1 - dh) / ratio
+    x2 = (x2 - dw) / ratio
+    y2 = (y2 - dh) / ratio
 
-        # Convert to PIL image, save the cropped leaf
-        cropped_leaf = Image.fromarray(leaf_crop)
-        cropped_leaf_path = "temp_leaf.jpg"
-        cropped_leaf.save(cropped_leaf_path)
+    # Clip coordinates to the image dimensions
+    x1 = max(0, int(x1))
+    y1 = max(0, int(y1))
+    x2 = min(image.shape[1], int(x2))
+    y2 = min(image.shape[0], int(y2))
 
-        print(f"Leaf detected with confidence {confidence:.2f} and saved to {cropped_leaf_path}")
-        return cropped_leaf_path
-
-    print("No confident leaf detection found.")
-    return None
-
-
+    # Crop the detected leaf and save the image
+    leaf_crop = image[y1:y2, x1:x2]
+    if leaf_crop.size == 0:
+        print("Warning: Cropped leaf is empty.")
+        return None
+    cropped_leaf = Image.fromarray(cv2.cvtColor(leaf_crop, cv2.COLOR_BGR2RGB))
+    cropped_leaf_path = "temp_leaf.jpg"
+    cropped_leaf.save(cropped_leaf_path)
+    print("Leaf detected and cropped! with Confidence: ", scores[0].item())
+    return cropped_leaf_path
 # ─────────────────────────────────────────────────────────────────────────────
 # 2) Helper to load a PyTorch model
 # ─────────────────────────────────────────────────────────────────────────────
@@ -75,8 +138,6 @@ def load_model(model_class, model_path, num_classes, device):
 
     model = model_class(num_classes)
     try:
-        # In PyTorch 2.6+, to forcibly allow pickling custom classes, pass weights_only=False if needed
-        # But if your classification .pth is purely weights, no need for that. We'll keep it as is:
         checkpoint = torch.load(model_path, map_location=device, weights_only=True)
         print("Checkpoint loaded successfully!")
 
