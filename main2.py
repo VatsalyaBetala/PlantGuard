@@ -1,4 +1,4 @@
-import os
+import RPi.GPIO as GPIO
 import time
 import threading
 import queue
@@ -6,16 +6,18 @@ import cv2
 import tempfile
 import logging
 import sys
+import os
 from dotenv import load_dotenv
 from src.LCD import LCD
-from src.Button import Button  # Import the button class
 from src.utils import check_and_download_models
 from src.inference import detect_leaf, classify_plant, classify_disease
+from src.hardware import PiController
 
-# Load environment variables
+# -----------------------------------------------------------------------------
+# Load Environment Variables and Logging Setup
+# -----------------------------------------------------------------------------
 load_dotenv()
 
-# Configure logging: log to file and console.
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s')
@@ -28,7 +30,7 @@ console_handler = logging.StreamHandler(sys.stdout)
 console_handler.setFormatter(formatter)
 logger.addHandler(console_handler)
 
-# Configuration parameters from environment variables (with defaults)
+# Configuration parameters (with defaults)
 UPLOADS_FOLDER = os.getenv("UPLOADS_FOLDER", "uploads")
 PHONE_CAM_URL = os.getenv("PHONE_CAM_URL", "http://10.10.105.29:4747/video")
 BUTTON_PIN = int(os.getenv("BUTTON_PIN", 18))
@@ -40,7 +42,6 @@ CAMERA_MAX_RETRIES = int(os.getenv("CAMERA_MAX_RETRIES", 5))
 CAMERA_RETRY_DELAY = int(os.getenv("CAMERA_RETRY_DELAY", 5))
 CAMERA_MAX_CONSECUTIVE_FAILURES = int(os.getenv("CAMERA_MAX_CONSECUTIVE_FAILURES", 5))
 
-# Ensure uploads folder exists
 if not os.path.exists(UPLOADS_FOLDER):
     os.makedirs(UPLOADS_FOLDER)
 
@@ -49,17 +50,21 @@ if not os.path.exists(UPLOADS_FOLDER):
 # Create a queue for inter-thread communication
 image_queue = queue.Queue(maxsize=QUEUE_MAXSIZE)
 
-# Global variables to track detection times and results
 last_detection_time = 0
 
-# Initialize hardware interfaces
-button = Button(button_pin=BUTTON_PIN)
+# Initialize hardware interfaces:
+# - Use PiController for both button and LED control.
+controller = PiController(button_pin=BUTTON_PIN)
 lcd = LCD()
 lcd.clear()
 
 # Event to signal threads to stop
 stop_event = threading.Event()
 
+
+# -----------------------------------------------------------------------------
+# Inference & Image Processing Functions
+# -----------------------------------------------------------------------------
 def run_inference(image_path):
     """
     Runs the inference pipeline: detect leaf, classify plant, classify disease.
@@ -79,16 +84,14 @@ def run_inference(image_path):
 def capture_frames():
     """
     Capture frames from the camera and add them to the processing queue.
-    Implements retry logic for the initial connection and reinitializes the camera
-    if consecutive frame capture failures occur.
-    If the queue is full, clears old frames so that only the latest frame is kept.
+    If there are camera errors (failure to capture frames or reinitialization issues),
+    the LED is set to blue.
     """
     consecutive_failures = 0
     cap = None
 
-    # Attempt to establish the camera connection with retries.
+    # Attempt initial camera connection with retries.
     for attempt in range(CAMERA_MAX_RETRIES):
-        # Use cv2.VideoCapture(0) for a local USB camera
         cap = cv2.VideoCapture(0)
         if cap.isOpened():
             logger.info("Camera connection established.")
@@ -99,46 +102,56 @@ def capture_frames():
 
     if cap is None or not cap.isOpened():
         logger.error("Max retries reached. Could not open the camera. Exiting capture thread.")
+        controller.blue(100)
         stop_event.set()
         return
 
     frame_counter = 0
     while not stop_event.is_set():
-        if not button.check_button():
+        # Process frames only when running
+        if not controller.running:
             time.sleep(0.1)
             continue
 
         ret, frame = cap.read()
         if not ret:
+            # Set LED to blue when a frame capture fails.
+            controller.blue(100)
             logger.warning("Frame capture failed. Attempting to reinitialize camera.")
             consecutive_failures += 1
             if consecutive_failures >= CAMERA_MAX_CONSECUTIVE_FAILURES:
                 logger.error("Too many consecutive frame failures. Reinitializing camera connection.")
                 cap.release()
+                # Indicate error state while reinitializing.
+                controller.blue(100)
                 for attempt in range(CAMERA_MAX_RETRIES):
                     cap = cv2.VideoCapture(0)
                     if cap.isOpened():
                         logger.info("Camera reinitialized successfully.")
                         consecutive_failures = 0
+                        # Restore running colour (green) if detection is active.
+                        if controller.running:
+                            controller.green(100)
                         break
                     else:
                         logger.error(f"Reinitialization attempt {attempt+1}/{CAMERA_MAX_RETRIES} failed. Retrying in {CAMERA_RETRY_DELAY} seconds.")
+                        controller.blue(100)
                         time.sleep(CAMERA_RETRY_DELAY)
                 if not cap.isOpened():
                     logger.error("Failed to reinitialize camera. Exiting capture thread.")
                     stop_event.set()
                     return
-
             time.sleep(0.1)
             continue
 
-        # Reset failure count on successful frame capture.
+        # On successful frame capture, if detection is active, set LED to green.
+        if controller.running:
+            controller.green(100)
         consecutive_failures = 0
         frame_counter += 1
         if frame_counter % FRAME_SKIP != 0:
             continue
 
-        # Save frame to a temporary file.
         try:
             temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".jpg", dir=UPLOADS_FOLDER)
             cv2.imwrite(temp_file.name, frame)
@@ -147,7 +160,7 @@ def capture_frames():
             logger.error(f"Error writing image: {e}")
             continue
 
-        # If the queue is full, clear it so that only the latest frame remains.
+        # Clear old frames if the queue is full.
         if image_queue.full():
             try:
                 while not image_queue.empty():
@@ -174,17 +187,16 @@ def capture_frames():
 def process_images():
     """
     Process images from the queue. Runs inference and updates the LCD if a detection occurs.
-    Processes only the most recent frame in the queue.
     """
     global last_detection_time
     while not stop_event.is_set() or not image_queue.empty():
-        if not button.check_button():
+        if not controller.running:
             time.sleep(0.1)
             continue
 
         try:
-            # Drain the queue to keep only the most recent frame.
             latest_image = None
+            # Drain the queue and keep only the most recent image.
             while not image_queue.empty():
                 latest_image = image_queue.get_nowait()
             if latest_image is None:
@@ -223,6 +235,10 @@ def process_images():
 
     logger.info("Processing thread exiting.")
 
+
+# -----------------------------------------------------------------------------
+# Cleanup Function
+# -----------------------------------------------------------------------------
 def on_closing():
     """
     Cleanup function to stop threads, clear the LCD display, and remove temporary files.
@@ -242,26 +258,41 @@ def on_closing():
         except Exception as e:
             logger.error(f"Error deleting file {file_path}: {e}")
 
+
+# -----------------------------------------------------------------------------
+# Main Function: Integrates Button/LED control with Inference Threads.
+# -----------------------------------------------------------------------------
 def main():
+    # Set default state to red (indicating the program is stopped).
+    controller.red(100)
     logger.info("Waiting for button press to start live detection...")
     try:
         while True:
-            if button.check_button():
+            # Continuously poll the button to update the running state.
+            controller.check_button()
+            if controller.running:
                 logger.info("Button pressed. Starting live detection!")
+                # Set LED to green while running.
+                controller.green(100)
                 stop_event.clear()
                 capture_thread = threading.Thread(target=capture_frames)
                 process_thread = threading.Thread(target=process_images)
                 capture_thread.start()
                 process_thread.start()
 
-                while button.check_button():
+                # While running, continue polling for button state changes.
+                while controller.running:
+                    controller.check_button()  # Allow toggling off.
                     if not process_thread.is_alive():
                         logger.error("Processing thread has exited unexpectedly. Stopping program.")
+                        controller.blue(100)  # Error state indicated by blue.
                         on_closing()
                         sys.exit(1)
                     time.sleep(0.1)
 
-                logger.info("Button released. Stopping live detection...")
+                logger.info("Button pressed again. Stopping live detection...")
+                # When detection stops (button pressed to stop), show red.
+                controller.red(100)
                 on_closing()
                 capture_thread.join()
                 process_thread.join()
@@ -269,7 +300,13 @@ def main():
             time.sleep(0.1)
     except KeyboardInterrupt:
         logger.info("KeyboardInterrupt detected. Exiting...")
+        controller.blue(100)  # Error state indicated by blue.
+        time.sleep(2)        # Allow time to see the blue LED
         on_closing()
+    finally:
+        # Turn LED off when fully exiting.
+        controller.off()
+        controller.cleanup()
 
 if __name__ == "__main__":
     main()

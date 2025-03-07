@@ -54,7 +54,16 @@ class RGBLed:
         """
         Clean up the GPIO pins before exiting.
         """
+        # Stop all PWM channels
         self.red_pwm.stop()
         self.green_pwm.stop()
         self.blue_pwm.stop()
+        
+        # Remove references to PWM objects to prevent further __del__ calls
+        self.red_pwm = None
+        self.green_pwm = None
+        self.blue_pwm = None
+        
+        # Finally, clean up the GPIO settings
         GPIO.cleanup()
+
