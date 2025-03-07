@@ -11,7 +11,8 @@ REQUIRED_MODELS = [
     "Pepper_bell_Disease_Classification.pth",
     "Potato_Disease_Classification.pth",
     "resnet50_weights.pth",
-    "yolov8n_leaf.pt"
+    "yolov8n_leaf.pt",
+    "yolov8n_leaf.onnx"
 ]
 def check_and_download_models():
     """

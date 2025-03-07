@@ -6,6 +6,7 @@ from PIL import Image
 from ultralytics import YOLO  # (kept for any other parts; not used in detect_leaf)
 import onnxruntime as ort  # For running the ONNX model
 from torchvision.ops import nms
+import time
 from src.utils import check_and_download_models
 from src.data_preprocessing import preprocess_image
 from src.Plant_Classification_resnet50.plant_classification_TL import PlantClassifierCNN
@@ -35,6 +36,7 @@ def detect_leaf(image_path: str):
     """
     # Load ONNX model
     onnx_model_path = "src/models/yolov8n_leaf.onnx"
+    start_time = time.time()
     session = ort.InferenceSession(onnx_model_path)
     input_name = session.get_inputs()[0].name
     input_shape = session.get_inputs()[0].shape  # Expected: [1, 3, 640, 640]
@@ -81,17 +83,18 @@ def detect_leaf(image_path: str):
         scores = outputs[:, 4]  # Confidence scores
 
         # Convert boxes from [x_center, y_center, width, height] to [x1, y1, x2, y2]
-        boxes[:, 0] = (boxes[:, 0] - boxes[:, 2] / 2)  # x1
-        boxes[:, 1] = (boxes[:, 1] - boxes[:, 3] / 2)  # y1
-        boxes[:, 2] = (boxes[:, 0] + boxes[:, 2])  # x2
-        boxes[:, 3] = (boxes[:, 1] + boxes[:, 3])  # y2
+        boxes[:, 0] = boxes[:, 0] - boxes[:, 2] / 2  # x1
+        boxes[:, 1] = boxes[:, 1] - boxes[:, 3] / 2  # y1
+        boxes[:, 2] = boxes[:, 0] + boxes[:, 2]      # x2
+        boxes[:, 3] = boxes[:, 1] + boxes[:, 3]      # y2
 
         # Apply confidence threshold
+        # print("Confidence scores:", scores)
         mask = scores > conf_thres
         boxes = boxes[mask]
         scores = scores[mask]
 
-        # Apply NMS
+        # Apply Non-Max Suppression (NMS)
         keep_indices = nms(boxes, scores, iou_thres)
         return boxes[keep_indices], scores[keep_indices]
 
@@ -117,7 +120,6 @@ def detect_leaf(image_path: str):
     y1 = max(0, int(y1))
     x2 = min(image.shape[1], int(x2))
     y2 = min(image.shape[0], int(y2))
-
     # Crop the detected leaf and save the image
     leaf_crop = image[y1:y2, x1:x2]
     if leaf_crop.size == 0:
@@ -126,6 +128,7 @@ def detect_leaf(image_path: str):
     cropped_leaf = Image.fromarray(cv2.cvtColor(leaf_crop, cv2.COLOR_BGR2RGB))
     cropped_leaf_path = "temp_leaf.jpg"
     cropped_leaf.save(cropped_leaf_path)
+    print(time.time()-start_time)
     print("Leaf detected and cropped! with Confidence: ", scores[0].item())
     return cropped_leaf_path
 # ─────────────────────────────────────────────────────────────────────────────
@@ -133,13 +136,13 @@ def detect_leaf(image_path: str):
 # ─────────────────────────────────────────────────────────────────────────────
 def load_model(model_class, model_path, num_classes, device):
     print(f"Loading model: {model_class.__name__}")
-    print(f"Model path: {model_path}")
-    print(f"Using device: {device}")
+    #print(f"Model path: {model_path}")
+    #print(f"Using device: {device}")
 
     model = model_class(num_classes)
     try:
         checkpoint = torch.load(model_path, map_location=device, weights_only=True)
-        print("Checkpoint loaded successfully!")
+        #print("Checkpoint loaded successfully!")
 
         if isinstance(checkpoint, dict) and "state_dict" in checkpoint:
             model.load_state_dict(checkpoint["state_dict"])
@@ -148,7 +151,7 @@ def load_model(model_class, model_path, num_classes, device):
 
         model.to(device)
         model.eval()
-        print("Model loaded and ready!")
+        #print("Model loaded and ready!")
         return model
     except Exception as e:
         print(f"Error loading model: {e}")
