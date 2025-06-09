@@ -107,6 +107,33 @@
       background: #ccc;
       transform: scale(1.1);
     }
+  #llmModal .modal-content {
+    background: #263238;
+    color: #ffffff;
+  }
+
+  #llmModal .modal-footer {
+    background: #1e1e1e;
+  }
+
+  #llmContent {
+    /* preserve newlines */
+    white-space: pre-wrap;
+    /* left-align for readability */
+    text-align: left;
+    /* padding & background to pop out */
+    padding: 1rem;
+    background: #37474F;
+    border-radius: 8px;
+    /* scroll if it's too long */
+    max-height: 60vh;
+    overflow-y: auto;
+    /* nicer typography */
+    font-size: 14px;
+    line-height: 1.6;
+    color: #fff;
+  }
+  
   </style>
 </head>
 <body>
@@ -116,8 +143,8 @@
     <nav class="blue darken-3">
       <div class="nav-wrapper">
         <a href="#!" class="brand-logo">
-                    <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height: 50px; margin-right: 10px;"> <!-- Replace with actual logo path -->
-                    PlantGuard
+          <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height: 50px; margin-right: 10px;">
+          PlantGuard
         </a>
         <ul class="right hide-on-med-and-down">
           <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>HOME</a></li>
@@ -151,6 +178,17 @@
     </div>
   </div>
 
+  <!-- LLM Explanation Modal -->
+  <div id="llmModal" class="modal">
+    <div class="modal-content">
+      <h5>Diagnosis Explanation</h5>
+      <div id="llmContent">Loading...</div>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close btn blue">Close</a>
+    </div>
+  </div>
+
   <!-- Dark Mode Toggle -->
   <div class="dark-mode-toggle" onclick="toggleDarkMode()">
     <i class="material-icons">brightness_4</i>
@@ -160,6 +198,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
   <script>
+    const explanationCache = {};  // key: "plant|disease", value: explanation string
+
     async function fetchImages() {
       const response = await fetch('/images');
       const images = await response.json();
@@ -179,6 +219,14 @@
         const overlay = document.createElement('div');
         overlay.classList.add('overlay');
         overlay.innerHTML = `<p>Plant: ${image.plant}</p><p>Disease: ${image.disease}</p>`;
+
+        const infoBtn = document.createElement('button');
+        infoBtn.className = 'btn blue';
+        infoBtn.style.marginTop = '5px';
+        infoBtn.textContent = 'More Info';
+        infoBtn.onclick = () => fetchLLMExplanation(image.plant, image.disease);
+
+        overlay.appendChild(infoBtn);
 
         container.appendChild(imgElement);
         container.appendChild(overlay);
@@ -201,9 +249,40 @@
       }
     }
 
+    async function fetchLLMExplanation(plant, disease) {
+  const key = `${plant}|${disease}`;
+  const content = document.getElementById('llmContent');
+  const llmModal = M.Modal.init(document.getElementById('llmModal'));
+
+  if (explanationCache[key]) {
+    content.innerHTML = explanationCache[key]; // use cached version
+    llmModal.open();
+    return;
+  }
+
+  content.innerHTML = "⏳ Generating explanation...";
+  llmModal.open();
+
+  try {
+    const res = await fetch('/explain-diagnosis', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ plant, disease })
+    });
+    if (!res.ok) throw new Error(await res.text());
+    const data = await res.json();
+
+    explanationCache[key] = data.explanation; // cache it
+    content.textContent = data.explanation;
+  } catch (err) {
+    content.innerHTML = "⚠️ Could not fetch explanation. Try again later.";
+    console.error(err);
+  }
+}
     document.addEventListener('DOMContentLoaded', () => {
       fetchImages();
       M.Modal.init(document.getElementById('imageModal'));
+      M.Modal.init(document.getElementById('llmModal'));
     });
 
     document.getElementById('deleteImages').addEventListener('click', deleteImages);
