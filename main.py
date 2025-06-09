@@ -2,6 +2,7 @@ import os
 import uuid
 import traceback
 from typing import List
+from pydantic import BaseModel
 
 import uvicorn
 from fastapi import FastAPI, File, UploadFile, HTTPException
@@ -11,7 +12,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 # Load environment variables
 from dotenv import load_dotenv
+from openai import OpenAI
+import openai
+import logging
+
 load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Local imports
 from src.utils import check_and_download_models
@@ -21,6 +27,12 @@ from src.inference import (
     classify_disease
 )
 
+class DiagnosisRequest(BaseModel):
+    plant: str
+    disease: str
+    
+logger = logging.getLogger("uvicorn.error")   
+   
 # Initialize FastAPI
 app = FastAPI()
 
@@ -138,6 +150,47 @@ async def get_images():
         })
     return results
 
+
+@app.post("/explain-diagnosis")
+async def explain_diagnosis(req: DiagnosisRequest):
+    plant, disease = req.plant, req.disease
+
+    if not openai.api_key:
+        logging.getLogger("uvicorn.error").error("OPENAI_API_KEY not set")
+        raise HTTPException(500, "Server misconfigured: missing API key")
+
+    prompt = (f"""
+You are a plant pathology expert. Provide a detailed explanation for the following diagnosis:
+
+- **Plant**: {plant}
+- **Disease**: {disease}
+
+Break your response into the following sections:
+
+1. Overview: A short description of the plant and its importance.
+2. About the Disease: What is this disease, and how does it affect the plant?
+3. Causes: What causes this disease (e.g., bacteria, fungi, environmental factors)?
+4. Symptoms: What are the common visual signs farmers should look for?
+5. Impact: How does this disease affect plant health or yield?
+6. Treatment: What are effective remedies or treatments?
+7. Prevention: How can farmers prevent this disease in the future?
+
+Write in simple, farmer-friendly language with bullet points where appropriate.
+"""
+    )
+
+    try:
+        resp = openai.chat.completions.create(
+            model="gpt-4",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+        )
+        explanation = resp.choices[0].message.content
+        return {"plant": plant, "disease": disease, "explanation": explanation}
+
+    except Exception as e:
+        logging.getLogger("uvicorn.error").exception("LLM call failed")
+        raise HTTPException(500, f"LLM error: {e}")
 
 @app.delete("/delete-images")
 async def delete_images():
