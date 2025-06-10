@@ -8,12 +8,13 @@
     <!-- Materialize CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
 
     <style>
         /* Global Styles */
         body {
-            font-family: 'Arial', sans-serif;
+            font-family: 'Montserrat', sans-serif;
             background: linear-gradient(to right, #2196F3, #64B5F6); /* Gradient background */
             color: white;
             transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
@@ -143,8 +144,10 @@
                     PlantGuard
                 </a>
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>HOME</a></li>
+                    <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>Home</a></li>
                     <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
+                    <li><a href="/about" class="waves-effect waves-light"><i class="material-icons left">info</i>About</a></li>
+                    <li><a href="/contact" class="waves-effect waves-light"><i class="material-icons left">contact_mail</i>Contact</a></li>
                 </ul>
             </div>
         </nav>
@@ -181,7 +184,18 @@
                 <p>Helping farmers reduce pesticide usage with early detection.</p>
             </div>
         </div>
+
+        <div class="section" style="margin-top:40px;">
+            <h4>Ready to get started?</h4>
+            <a href="/upload-images" class="btn-large orange darken-2 waves-effect waves-light">
+                <i class="material-icons left">cloud_upload</i>Upload Images
+            </a>
+        </div>
     </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 PlantGuard</p>
+    </footer>
 
     <!-- Dark Mode Toggle -->
     <div class="dark-mode-toggle" onclick="toggleDarkMode()">

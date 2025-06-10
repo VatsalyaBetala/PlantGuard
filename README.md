@@ -105,6 +105,15 @@ Our model achieves:
 
 ---
 
+## **Web Interface**
+PlantGuard comes with a lightweight web UI built with **FastAPI** and **Materialize CSS**. Features include:
+- Image uploads with live previews and progress indicator.
+- A gallery view with on-demand AI explanations and image download option.
+- Dark mode support with persistent preference.
+- Informative **About** and **Contact** pages.
+
+---
+
 ## **Deployment**
 ### **1️⃣ Running Inference Locally**
 Use `predict.py` to classify a single image:

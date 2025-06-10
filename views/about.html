@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About PlantGuard</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(to right, #42a5f5, #90caf9);
+            color: white;
+        }
+        .container {
+            margin-top: 60px;
+            max-width: 900px;
+        }
+        h2 {
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        .team {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .member {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(6px);
+            padding: 20px;
+            border-radius: 10px;
+            width: 220px;
+            text-align: center;
+        }
+        footer {
+            margin-top: 60px;
+            padding: 20px;
+            text-align: center;
+            background: rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar-fixed">
+        <nav class="blue darken-3">
+            <div class="nav-wrapper">
+                <a href="/" class="brand-logo">
+                    <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height:50px;margin-right:10px;">PlantGuard
+                </a>
+                <ul class="right hide-on-med-and-down">
+                    <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>Home</a></li>
+                    <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
+                    <li><a href="/about" class="waves-effect waves-light"><i class="material-icons left">info</i>About</a></li>
+                    <li><a href="/contact" class="waves-effect waves-light"><i class="material-icons left">contact_mail</i>Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <div class="container">
+        <h2>About PlantGuard</h2>
+        <p>PlantGuard is an open-source project that leverages deep learning to help farmers quickly identify plant diseases. Our goal is to make disease detection accessible and easy to use on any device.</p>
+
+        <h4>Meet the Team</h4>
+        <div class="team">
+            <div class="member">
+                <h6>Vatsalya Betala</h6>
+                <p>AI/ML Lead</p>
+            </div>
+            <div class="member">
+                <h6>Aarav Akali</h6>
+                <p>Hardware & IoT Lead</p>
+            </div>
+            <div class="member">
+                <h6>Sparsh Makharia</h6>
+                <p>Backend Developer & Business Lead</p>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>&copy; 2024 PlantGuard</p>
+    </footer>
+
+    <div class="dark-mode-toggle" onclick="toggleDarkMode()">
+        <i class="material-icons">brightness_4</i>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="/static/scripts.js"></script>
+</body>
+</html>
