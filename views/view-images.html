@@ -8,11 +8,13 @@
   <!-- Materialize CSS -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
 
   <style>
     /* General Styles */
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: 'Poppins', 'Arial', sans-serif;
       background: linear-gradient(to right, #1565C0, #64B5F6);
       color: white;
       transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
@@ -189,9 +191,25 @@
     </div>
   </div>
 
+  <!-- Help Modal -->
+  <div id="helpModal" class="modal">
+    <div class="modal-content">
+      <h5>Gallery Help</h5>
+      <p>Browse your uploaded images here. Click on any image to view it full screen or get more info.</p>
+    </div>
+    <div class="modal-footer">
+      <a href="#!" class="modal-close btn blue">Close</a>
+    </div>
+  </div>
+
   <!-- Dark Mode Toggle -->
-  <div class="dark-mode-toggle" onclick="toggleDarkMode()">
+  <div class="dark-mode-toggle tooltipped" data-tooltip="Toggle dark mode" onclick="toggleDarkMode()">
     <i class="material-icons">brightness_4</i>
+  </div>
+
+  <!-- Help Button -->
+  <div class="help-btn tooltipped" data-position="right" data-tooltip="How to use" onclick="openHelp()">
+    <i class="material-icons">help_outline</i>
   </div>
 
   <!-- Materialize JS -->
@@ -299,10 +317,8 @@
       });
     });
 
-    function toggleDarkMode() {
-      document.body.classList.toggle('dark-mode');
-    }
   </script>
 
+<script src="/static/scripts.js"></script>
 </body>
 </html>

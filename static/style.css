@@ -1,0 +1,48 @@
+/* Global Styles */
+body {
+    font-family: 'Poppins', 'Arial', sans-serif;
+}
+
+/* Persistent Dark Mode */
+.dark-mode {
+    background: #1e1e1e;
+    color: #ffffff;
+}
+
+.dark-mode-toggle {
+    cursor: pointer;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    color: black;
+    padding: 10px 15px;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+.dark-mode-toggle:hover {
+    background: #ccc;
+    transform: scale(1.1);
+}
+
+.help-btn {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    background: #2196F3;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+.help-btn:hover {
+    background: #1976D2;
+    transform: scale(1.1);
+}
