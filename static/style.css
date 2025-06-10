@@ -1,0 +1,29 @@
+/* Global Styles */
+body {
+    font-family: 'Arial', sans-serif;
+}
+
+/* Persistent Dark Mode */
+.dark-mode {
+    background: #1e1e1e;
+    color: #ffffff;
+}
+
+.dark-mode-toggle {
+    cursor: pointer;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: white;
+    color: black;
+    padding: 10px 15px;
+    border-radius: 50%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+.dark-mode-toggle:hover {
+    background: #ccc;
+    transform: scale(1.1);
+}
