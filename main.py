@@ -81,6 +81,14 @@ async def view_images():
 async def record_video():
     return FileResponse("views/record-video.html")
 
+@app.get("/about", response_class=HTMLResponse)
+async def about_page():
+    return FileResponse("views/about.html")
+
+@app.get("/contact", response_class=HTMLResponse)
+async def contact_page():
+    return FileResponse("views/contact.html")
+
 
 @app.post("/upload")
 async def upload_files(files: List[UploadFile] = File(...)):
