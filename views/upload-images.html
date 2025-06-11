@@ -34,12 +34,7 @@
         }
 
         /* Upload Section */
-        .upload-box {
-            padding: 40px 20px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        .upload-card {
             margin-bottom: 40px;
         }
 
@@ -57,6 +52,7 @@
             padding: 10px 20px;
             font-size: 1.1em;
             white-space: nowrap;
+            background: var(--accent-color);
         }
 
         /* Image Preview Section */
@@ -100,12 +96,6 @@
             font-size: 1rem;
         }
 
-        /* Centered Submit Button */
-        .submit-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
 
         .btn {
             display: flex;
@@ -143,7 +133,7 @@
 <body>
     <!-- Navbar -->
     <div class="navbar-fixed">
-        <nav class="blue darken-3">
+        <nav class="navbar-custom">
             <div class="nav-wrapper">
                 <a href="#!" class="brand-logo">
                     <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height: 50px; margin-right: 10px;">
@@ -162,34 +152,31 @@
 
     <!-- Upload Section -->
     <div class="container">
-        <div class="upload-box">
-            <h2>📸 Upload Your Images</h2>
-            <div class="file-field input-field">
-                <div class="btn blue darken-2">
-                    <i class="material-icons left">cloud_upload</i>
-                    <span>Choose Files</span>
-                    <input type="file" id="fileInput" multiple accept="image/*">
+        <div class="card upload-card">
+            <div class="card-content">
+                <span class="card-title">📸 Upload Plant Images</span>
+                <p>Select images and we'll diagnose them.</p>
+                <div class="file-field input-field" style="margin-top:20px;">
+                    <div class="btn accent-btn">
+                        <i class="material-icons left">cloud_upload</i>
+                        <span>Choose Files</span>
+                        <input type="file" id="fileInput" multiple accept="image/*">
+                    </div>
+                    <div class="file-path-wrapper">
+                        <input class="file-path validate" type="text" placeholder="Upload one or more images">
+                    </div>
                 </div>
-                <div class="file-path-wrapper">
-                    <input class="file-path validate" type="text" placeholder="Upload one or more images">
-                </div>
+                <div class="preview-container" id="previewContainer"></div>
+                <div id="responseMessage"></div>
             </div>
-
-            <!-- Image Preview -->
-            <div class="preview-container" id="previewContainer"></div>
-
-            <!-- Submit Button -->
-            <div class="submit-container">
-                <button class="btn green darken-2 waves-effect waves-light" id="submitBtn">
+            <div class="card-action center-align">
+                <button class="btn accent-btn waves-effect waves-light" id="submitBtn">
                     <i class="material-icons left">send</i>Submit
                 </button>
             </div>
-
             <div class="progress" id="uploadBar" style="display:none;">
                 <div class="indeterminate"></div>
             </div>
-
-        <div id="responseMessage"></div>
         </div>
     </div>
 
