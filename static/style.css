@@ -1,6 +1,13 @@
 /* Global Styles */
+:root {
+    --primary-gradient: linear-gradient(to right, #4caf50, #81c784);
+}
+
 body {
     font-family: 'Montserrat', sans-serif;
+    background: var(--primary-gradient);
+    color: white;
+    transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
 }
 
 /* Persistent Dark Mode */

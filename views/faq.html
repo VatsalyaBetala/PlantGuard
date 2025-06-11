@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us</title>
+    <title>FAQ</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
@@ -16,19 +16,11 @@
         }
         .container {
             margin-top: 60px;
-            max-width: 600px;
+            max-width: 900px;
         }
-        .card-panel {
+        .collapsible {
             background: rgba(255,255,255,0.15);
             backdrop-filter: blur(6px);
-            border-radius: 10px;
-            padding: 30px;
-        }
-        footer {
-            margin-top: 60px;
-            padding: 20px;
-            text-align: center;
-            background: rgba(0,0,0,0.2);
         }
     </style>
 </head>
@@ -51,14 +43,21 @@
     </div>
 
     <div class="container">
-        <div class="card-panel">
-            <h4>Contact Us</h4>
-            <p>If you have any questions or feedback about PlantGuard, feel free to reach out:</p>
-            <ul>
-                <li>Email: <a href="mailto:info@plantguard.ai">info@plantguard.ai</a></li>
-                <li>GitHub: <a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank">Project Repository</a></li>
-            </ul>
-        </div>
+        <h3>Frequently Asked Questions</h3>
+        <ul class="collapsible popout">
+            <li>
+                <div class="collapsible-header"><i class="material-icons">live_help</i>How do I upload images?</div>
+                <div class="collapsible-body"><span>Use the <strong>Upload Image</strong> page to select one or more images and submit them for analysis.</span></div>
+            </li>
+            <li>
+                <div class="collapsible-header"><i class="material-icons">assessment</i>What formats are supported?</div>
+                <div class="collapsible-body"><span>JPEG and PNG images are supported.</span></div>
+            </li>
+            <li>
+                <div class="collapsible-header"><i class="material-icons">security</i>Is my data stored?</div>
+                <div class="collapsible-body"><span>Uploaded images are kept temporarily for prediction display and can be removed using the <strong>Delete All Images</strong> option.</span></div>
+            </li>
+        </ul>
     </div>
 
     <footer class="footer">
@@ -71,5 +70,11 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="/static/scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var elems = document.querySelectorAll('.collapsible');
+            M.Collapsible.init(elems);
+        });
+    </script>
 </body>
 </html>

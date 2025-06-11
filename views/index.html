@@ -7,6 +7,7 @@
     
     <!-- Materialize CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
@@ -15,7 +16,7 @@
         /* Global Styles */
         body {
             font-family: 'Montserrat', sans-serif;
-            background: linear-gradient(to right, #2196F3, #64B5F6); /* Gradient background */
+            background: var(--primary-gradient);
             color: white;
             transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
         }
@@ -148,6 +149,7 @@
                     <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
                     <li><a href="/about" class="waves-effect waves-light"><i class="material-icons left">info</i>About</a></li>
                     <li><a href="/contact" class="waves-effect waves-light"><i class="material-icons left">contact_mail</i>Contact</a></li>
+                    <li><a href="/faq" class="waves-effect waves-light"><i class="material-icons left">help</i>FAQ</a></li>
                 </ul>
             </div>
         </nav>
@@ -155,7 +157,7 @@
 
     <!-- Hero Section -->
     <div class="container">
-        <div class="hero">
+        <div class="hero" data-aos="fade-up">
             <h1>🌿 Plant Disease Classification</h1>
             <p>Quickly identify and diagnose plant diseases using advanced AI technology.</p>
             <a href="record-video" class="waves-effect waves-light btn blue darken-2">
@@ -167,18 +169,18 @@
         </div>
 
         <!-- Features Section -->
-        <div class="features">
-            <div class="feature-card">
+        <div class="features" data-aos="fade-up" data-aos-delay="100">
+            <div class="feature-card" data-aos="zoom-in" data-aos-delay="200">
                 <i class="material-icons large">science</i>
                 <h5>AI-Powered Analysis</h5>
                 <p>Utilizing deep learning models for accurate disease detection.</p>
             </div>
-            <div class="feature-card">
+            <div class="feature-card" data-aos="zoom-in" data-aos-delay="300">
                 <i class="material-icons large">speed</i>
                 <h5>Fast & Reliable</h5>
                 <p>Get results within seconds with high precision.</p>
             </div>
-            <div class="feature-card">
+            <div class="feature-card" data-aos="zoom-in" data-aos-delay="400">
                 <i class="material-icons large">eco</i>
                 <h5>Eco-Friendly</h5>
                 <p>Helping farmers reduce pesticide usage with early detection.</p>
@@ -204,6 +206,10 @@
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script src="/static/scripts.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() { AOS.init(); });
+    </script>
 </body>
 </html>
