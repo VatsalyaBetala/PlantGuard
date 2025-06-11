@@ -89,6 +89,10 @@ async def about_page():
 async def contact_page():
     return FileResponse("views/contact.html")
 
+@app.get("/faq", response_class=HTMLResponse)
+async def faq_page():
+    return FileResponse("views/faq.html")
+
 
 @app.post("/upload")
 async def upload_files(files: List[UploadFile] = File(...)):
