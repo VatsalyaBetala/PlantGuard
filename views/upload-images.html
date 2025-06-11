@@ -2,270 +2,108 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Images</title>
-
-    <!-- Materialize CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-<link rel="stylesheet" href="/static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Upload Images - PlantGuard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
     <style>
-        /* Global Styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #2196F3, #64B5F6);
-            color: white;
-            transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
-        }
-
-        /* Navbar */
-        .nav-wrapper {
-            padding: 0 10%;
-        }
-
-        .container {
-            margin: 0 auto;
-            width: 90%;
-            max-width: 900px;
-            text-align: center;
-            padding-top: 80px;
-        }
-
-        /* Upload Section */
-        .upload-box {
-            padding: 40px 20px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            margin-bottom: 40px;
-        }
-
-        /* File Input Styling */
-        .file-field {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .file-field .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 10px 20px;
-            font-size: 1.1em;
-            white-space: nowrap;
-        }
-
-        /* Image Preview Section */
-        .preview-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
         .preview-box {
             position: relative;
             width: 120px;
             height: 120px;
-            border-radius: 10px;
+            border-radius: 8px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
         }
-
-        .preview-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
+        .preview-box img { width:100%; height:100%; object-fit:cover; }
         .remove-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(255, 0, 0, 0.7);
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1rem;
-        }
-
-        /* Centered Submit Button */
-        .submit-container {
-            display: flex;
-            justify-content: center;
-            margin-top: 20px;
-        }
-
-        .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: auto;
-            padding: 15px 30px;
-            font-size: 1.2em;
-            border-radius: 5px;
-            white-space: nowrap;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
-        }
-
-        /* Response Message Styling */
-        #responseMessage {
-            margin-top: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
-        }
-
-        /* Footer */
-        footer {
-            margin-top: 50px;
-            padding: 20px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.2);
-            border-top: 2px solid white;
+            position:absolute;top:5px;right:5px;background:#dc3545;color:#fff;border:none;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;cursor:pointer;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <div class="navbar-fixed">
-        <nav class="blue darken-3">
-            <div class="nav-wrapper">
-                <a href="#!" class="brand-logo">
-                    <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height: 50px; margin-right: 10px;">
-                    PlantGuard
-                </a>
-                <ul class="right hide-on-med-and-down">
-                    <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>HOME</a></li>
-                    <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
-                </ul>
-            </div>
-        </nav>
-    </div>
-
-    <!-- Upload Section -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-        <div class="upload-box">
-            <h2>📸 Upload Your Images</h2>
-            <div class="file-field input-field">
-                <div class="btn blue darken-2">
-                    <i class="material-icons left">cloud_upload</i>
-                    <span>Choose Files</span>
-                    <input type="file" id="fileInput" multiple accept="image/*">
-                </div>
-                <div class="file-path-wrapper">
-                    <input class="file-path validate" type="text" placeholder="Upload one or more images">
-                </div>
-            </div>
-
-            <!-- Image Preview -->
-            <div class="preview-container" id="previewContainer"></div>
-
-            <!-- Submit Button -->
-            <div class="submit-container">
-                <button class="btn green darken-2 waves-effect waves-light" id="submitBtn">
-                    <i class="material-icons left">send</i>Submit
-                </button>
-            </div>
-
-            <div id="responseMessage"></div>
+        <a class="navbar-brand" href="/">PlantGuard</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/view-images">Image Library</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="/faq">FAQ</a></li>
+            </ul>
         </div>
     </div>
-
-    <div class="dark-mode-toggle" onclick="toggleDarkMode()">
-        <i class="material-icons">brightness_4</i>
+</nav>
+<div class="container my-5 text-center">
+    <h1 class="mb-4">Upload Images</h1>
+    <div class="mb-3">
+        <input class="form-control" type="file" id="fileInput" multiple accept="image/*">
     </div>
-
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script>
-    const fileInput = document.getElementById('fileInput');
-    const previewContainer = document.getElementById('previewContainer');
-    const submitBtn = document.getElementById('submitBtn');
-    const responseMessage = document.getElementById('responseMessage');
-
-    let selectedFiles = [];
-
-    fileInput.addEventListener('change', function () {
-        previewContainer.innerHTML = '';
-        selectedFiles = Array.from(fileInput.files);
-
-        if (selectedFiles.length === 0) {
-            responseMessage.innerText = "No images selected.";
-            responseMessage.style.color = "red";
-            return;
-        }
-
-        selectedFiles.forEach((file, index) => {
-            if (file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    const div = document.createElement('div');
-                    div.classList.add('preview-box');
-                    div.innerHTML = `
-                        <img src="${event.target.result}" alt="Image Preview">
-                        <button class="remove-btn" onclick="removeImage(${index})">&times;</button>
-                    `;
-                    previewContainer.appendChild(div);
-                };
-                reader.readAsDataURL(file);
-            }
-        });
+    <div class="d-flex flex-wrap justify-content-center gap-2" id="previewContainer"></div>
+    <button class="btn btn-success mt-3" id="submitBtn">Submit</button>
+    <div class="progress mt-3" id="uploadBar" style="display:none;">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%"></div>
+    </div>
+    <div id="responseMessage" class="mt-3"></div>
+</div>
+<footer class="footer">
+    <div class="container">
+        &copy; 2024 PlantGuard
+    </div>
+</footer>
+<div class="dark-mode-toggle" onclick="toggleDarkMode()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-moon-fill" viewBox="0 0 16 16">
+        <path d="M6 0a6 6 0 0 0 0 12c.696 0 1.368-.094 2-.27a7 7 0 0 1 8 8c.176.632.27 1.304.27 2a6 6 0 1 1-10.27-7.73A7.001 7.001 0 0 1 6 0z"/>
+    </svg>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const fileInput = document.getElementById('fileInput');
+const previewContainer = document.getElementById('previewContainer');
+const submitBtn = document.getElementById('submitBtn');
+const responseMessage = document.getElementById('responseMessage');
+const uploadBar = document.getElementById('uploadBar');
+let selectedFiles = [];
+fileInput.addEventListener('change', () => {
+    previewContainer.innerHTML = '';
+    selectedFiles = Array.from(fileInput.files);
+    selectedFiles.forEach((file, index) => {
+        if (!file.type.startsWith('image/')) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const div = document.createElement('div');
+            div.className = 'preview-box';
+            div.innerHTML = `<img src="${e.target.result}" alt=""><button class="remove-btn" onclick="removeImage(${index})">&times;</button>`;
+            previewContainer.appendChild(div);
+        };
+        reader.readAsDataURL(file);
     });
-
-    function removeImage(index) {
-        selectedFiles.splice(index, 1); // Remove the file from the array
-
-        // Update the file input to remove the deleted file
-        const dataTransfer = new DataTransfer();
-        selectedFiles.forEach(file => dataTransfer.items.add(file));
-        fileInput.files = dataTransfer.files;
-
-        // Refresh the preview
-        fileInput.dispatchEvent(new Event('change'));
-    }
-
-    submitBtn.addEventListener('click', async function () {
-        if (selectedFiles.length === 0) {
-            responseMessage.innerText = "Please select at least one file to upload.";
-            responseMessage.style.color = "red";
-            return;
-        }
-
-        responseMessage.innerText = "Uploading...";
-        responseMessage.style.color = "yellow";
-
-        const formData = new FormData();
-        selectedFiles.forEach(file => formData.append('files', file));
-
-        const response = await fetch('/upload', {
-            method: 'POST',
-            body: formData
-        });
-
-        const result = await response.json();
-        responseMessage.innerText = result.message;
-        responseMessage.style.color = response.ok ? "green" : "red";
-
-        if (response.ok) {
-            setTimeout(() => {
-                window.location.href = '/view-images';
-            }, 1500);
-        }
-    });
+});
+function removeImage(idx){
+    selectedFiles.splice(idx,1);
+    const dt = new DataTransfer();
+    selectedFiles.forEach(f=>dt.items.add(f));
+    fileInput.files = dt.files;
+    fileInput.dispatchEvent(new Event('change'));
+}
+submitBtn.addEventListener('click', async ()=>{
+    if(!selectedFiles.length) return;
+    responseMessage.textContent='Uploading...';
+    uploadBar.style.display='block';
+    const formData=new FormData();
+    selectedFiles.forEach(f=>formData.append('files',f));
+    const res=await fetch('/upload',{method:'POST',body:formData});
+    const data=await res.json();
+    uploadBar.style.display='none';
+    responseMessage.textContent=data.message;
+    if(res.ok) setTimeout(()=>{window.location.href='/view-images';},1500);
+});
 </script>
 <script src="/static/scripts.js"></script>
 </body>

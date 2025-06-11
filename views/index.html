@@ -2,194 +2,128 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plant Disease Classification</title>
-    
-    <!-- Materialize CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PlantGuard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/style.css">
-
     <style>
-        /* Global Styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #2196F3, #64B5F6); /* Gradient background */
-            color: white;
-            transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
-        }
-
-        /* Navbar */
-        .nav-wrapper {
-            padding: 0 10%;
-        }
-
-        .container {
-            margin: 0 auto;
-            width: 90%;
-            max-width: 900px;
-            text-align: center;
-            padding-top: 80px;
-        }
-
-        /* Hero Section */
         .hero {
-            padding: 50px 20px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            margin-bottom: 40px;
-        }
-
-        /* Buttons */
-        .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            white-space: nowrap;
-            text-transform: uppercase;
-            font-weight: bold;
-            height: auto;
-            padding: 15px 20px;
-            line-height: normal;
-            font-size: 1.2em;
-            border-radius: 5px;
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .btn i {
-            font-size: 1.5rem;
-            margin-right: 8px;
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
-        }
-
-        /* Features Section */
-        .features {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 20px;
-            margin-top: 40px;
-        }
-
-        .feature-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            padding: 20px;
-            border-radius: 10px;
-            width: 250px;
+            background: linear-gradient(135deg, #0d6efd, #66b2ff);
+            color: #fff;
+            padding: 100px 0;
             text-align: center;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease-in-out;
         }
-
-        .feature-card:hover {
-            transform: scale(1.05);
+        .hero h1 {
+            font-weight: 600;
+            margin-bottom: 20px;
         }
-
-        /* Footer */
-        footer {
-            margin-top: 50px;
-            padding: 20px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.2);
-            border-top: 2px solid white;
+        .stats {
+            background: #ffffff;
+            padding: 60px 0;
         }
-
-        /* Dark Mode */
-        .dark-mode {
-            background: #1e1e1e;
-            color: #ffffff;
+        .stats h5 {
+            font-weight: 600;
+            margin-top: 15px;
         }
-
-        .dark-mode .feature-card {
-            background: rgba(255, 255, 255, 0.1);
+        .testimonials {
+            background: #f8f9fa;
+            padding: 60px 0;
         }
-
-        .dark-mode .hero {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .dark-mode-toggle {
-            cursor: pointer;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: white;
-            color: black;
-            padding: 10px 15px;
-            border-radius: 50%;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-            transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
-        }
-
-        .dark-mode-toggle:hover {
-            background: #ccc;
-            transform: scale(1.1);
+        .testimonial {
+            max-width: 500px;
+            margin: 0 auto 30px;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <div class="navbar-fixed">
-        <nav class="blue darken-3">
-            <div class="nav-wrapper">
-                <a href="#!" class="brand-logo">
-                    <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height: 50px; margin-right: 10px;"> <!-- Replace with actual logo path -->
-                    PlantGuard
-                </a>
-                <ul class="right hide-on-med-and-down">
-                    <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>HOME</a></li>
-                    <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
-                </ul>
-            </div>
-        </nav>
-    </div>
-
-    <!-- Hero Section -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-        <div class="hero">
-            <h1>🌿 Plant Disease Classification</h1>
-            <p>Quickly identify and diagnose plant diseases using advanced AI technology.</p>
-            <a href="record-video" class="waves-effect waves-light btn blue darken-2">
-                <i class="material-icons left">videocam</i>Live View
-            </a>
-            <a href="upload-images" class="waves-effect waves-light btn green darken-2">
-                <i class="material-icons left">image</i>Upload Image
-            </a>
+        <a class="navbar-brand" href="/">PlantGuard</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/view-images">Image Library</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="/faq">FAQ</a></li>
+            </ul>
         </div>
-
-        <!-- Features Section -->
-        <div class="features">
-            <div class="feature-card">
-                <i class="material-icons large">science</i>
-                <h5>AI-Powered Analysis</h5>
-                <p>Utilizing deep learning models for accurate disease detection.</p>
+    </div>
+</nav>
+<section class="hero">
+    <div class="container">
+        <h1 class="display-4">Intelligent Plant Disease Detection</h1>
+        <p class="lead">Leverage advanced AI to keep your crops healthy and productive.</p>
+        <a href="/upload-images" class="btn btn-light btn-lg me-2">Upload Images</a>
+        <a href="/record-video" class="btn btn-outline-light btn-lg">Live View</a>
+    </div>
+</section>
+<section class="stats text-center">
+    <div class="container">
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card border-0 card-hover">
+                    <div class="card-body">
+                        <div class="display-6">95%+</div>
+                        <h5>Accuracy</h5>
+                    </div>
+                </div>
             </div>
-            <div class="feature-card">
-                <i class="material-icons large">speed</i>
-                <h5>Fast & Reliable</h5>
-                <p>Get results within seconds with high precision.</p>
+            <div class="col-md-3">
+                <div class="card border-0 card-hover">
+                    <div class="card-body">
+                        <div class="display-6">1s</div>
+                        <h5>Avg. Inference</h5>
+                    </div>
+                </div>
             </div>
-            <div class="feature-card">
-                <i class="material-icons large">eco</i>
-                <h5>Eco-Friendly</h5>
-                <p>Helping farmers reduce pesticide usage with early detection.</p>
+            <div class="col-md-3">
+                <div class="card border-0 card-hover">
+                    <div class="card-body">
+                        <div class="display-6">30+</div>
+                        <h5>Diseases</h5>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card border-0 card-hover">
+                    <div class="card-body">
+                        <div class="display-6">24/7</div>
+                        <h5>Support</h5>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-
-    <!-- Dark Mode Toggle -->
-    <div class="dark-mode-toggle" onclick="toggleDarkMode()">
-        <i class="material-icons">brightness_4</i>
+</section>
+<section class="testimonials text-center">
+    <div class="container">
+        <h2 class="mb-5">Trusted by Professionals</h2>
+        <div class="testimonial">
+            <p class="fs-5 fst-italic">"PlantGuard has transformed how we monitor crop health. The accuracy is phenomenal!"</p>
+            <p class="fw-bold">— Happy Farmer</p>
+        </div>
+        <div class="testimonial">
+            <p class="fs-5 fst-italic">"A must-have tool for any modern agribusiness."</p>
+            <p class="fw-bold">— AgriTech CEO</p>
+        </div>
     </div>
-
-    <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script src="/static/scripts.js"></script>
+</section>
+<footer class="footer">
+    <div class="container">
+        &copy; 2024 PlantGuard
+    </div>
+</footer>
+<div class="dark-mode-toggle" onclick="toggleDarkMode()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-moon-fill" viewBox="0 0 16 16">
+        <path d="M6 0a6 6 0 0 0 0 12c.696 0 1.368-.094 2-.27a7 7 0 0 1 8 8c.176.632.27 1.304.27 2a6 6 0 1 1-10.27-7.73A7.001 7.001 0 0 1 6 0z"/>
+    </svg>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/static/scripts.js"></script>
 </body>
 </html>

@@ -2,242 +2,125 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Record Video</title>
-
-    <!-- Materialize CSS -->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-<link rel="stylesheet" href="/static/style.css">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Record Video - PlantGuard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
     <style>
-        /* Global Styles */
-        body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #2196F3, #64B5F6);
-            color: white;
-            transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
-        }
-
-        .nav-wrapper {
-            padding: 0 10%;
-        }
-
-        .container {
-            margin: 0 auto;
-            width: 90%;
-            max-width: 900px;
-            text-align: center;
-            padding-top: 80px;
-        }
-
-        /* Video Container */
-        .video-container {
-            margin-top: 20px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            min-height: 400px;
-        }
-
-        video {
-            display: block;
+        #video {
             width: 100%;
             max-width: 800px;
-            height: auto;
-            border-radius: 10px;
-            background-color: black;
-            margin: 0 auto;
-        }
-
-        /* Controls - Button Layout Fix */
-        .controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .controls .btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            white-space: nowrap;
-            padding: 15px 30px;
-            border-radius: 5px;
-            font-size: 1.2em;
-            transition: transform 0.3s ease-in-out;
-            width: auto;
-            min-width: 220px;
-        }
-
-        .controls .btn i {
-            font-size: 1.5rem;
-            margin-right: 8px;
-        }
-
-        .controls .btn:hover {
-            transform: scale(1.05);
-        }
-
-        .progress {
-            margin-top: 20px;
-        }
-
-        footer {
-            margin-top: 50px;
-            padding: 20px;
-            text-align: center;
-            background: rgba(0, 0, 0, 0.2);
+            background: #000;
+            border-radius: 8px;
         }
     </style>
 </head>
 <body>
-    <div class="navbar-fixed">
-        <nav class="blue darken-3">
-            <div class="nav-wrapper">
-                <a href="#!" class="brand-logo">
-                    <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height: 50px; margin-right: 10px;">
-                    PlantGuard
-                </a>
-                <ul class="right hide-on-med-and-down">
-                    <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>HOME</a></li>
-                    <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
-                </ul>
-            </div>
-        </nav>
-    </div>
-
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="container">
-        <h2>🎥 Record Video</h2>
-        <div class="video-container">
-            <video id="video" autoplay muted></video>
-        </div>
-        <div class="controls">
-            <button id="connectCamera" class="btn blue darken-2">
-                <i class="material-icons left">videocam</i>Connect Camera
-            </button>
-            <button id="startRecording" class="btn green darken-2" disabled>
-                <i class="material-icons left">play_arrow</i>Start Recording
-            </button>
-            <button id="stopRecording" class="btn red darken-2" disabled>
-                <i class="material-icons left">stop</i>Stop Recording
-            </button>
-        </div>
-        <div class="progress" id="progressBar" style="display: none;">
-            <div class="indeterminate"></div>
+        <a class="navbar-brand" href="/">PlantGuard</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/view-images">Image Library</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="/faq">FAQ</a></li>
+            </ul>
         </div>
     </div>
-
-
-    <div class="dark-mode-toggle" onclick="toggleDarkMode()">
-        <i class="material-icons">brightness_4</i>
+</nav>
+<div class="container my-5 text-center">
+    <h1 class="mb-4">Record Video</h1>
+    <video id="video" autoplay muted></video>
+    <div class="mt-3">
+        <button id="connectCamera" class="btn btn-primary me-2">Connect Camera</button>
+        <button id="startRecording" class="btn btn-success me-2" disabled>Start Recording</button>
+        <button id="stopRecording" class="btn btn-danger" disabled>Stop Recording</button>
     </div>
-    <!-- Materialize JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-    <script>
-        const video = document.getElementById('video');
-        const connectCameraBtn = document.getElementById('connectCamera');
-        const startRecordingBtn = document.getElementById('startRecording');
-        const stopRecordingBtn = document.getElementById('stopRecording');
-        const progressBar = document.getElementById('progressBar');
-
-        let mediaStream = null;
-        let recording = false;
-        let frameCaptureInterval = null;
-        let frameCounter = 0;
-
-        // Connect to the webcam
-        connectCameraBtn.addEventListener('click', async () => {
-            try {
-                mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
-                video.srcObject = mediaStream;
-                await video.play();
-                startRecordingBtn.disabled = false;
-                M.toast({ html: 'Camera connected', classes: 'green' });
-                console.log('Camera connected');
-            } catch (err) {
-                console.error('Error accessing the camera:', err);
-                M.toast({ html: 'Failed to access camera', classes: 'red' });
-            }
-        });
-
-        // Start recording
-        startRecordingBtn.addEventListener('click', () => {
-            if (!mediaStream) {
-                M.toast({ html: 'Please connect the camera first', classes: 'orange' });
-                return;
-            }
-
-            recording = true;
-            progressBar.style.display = 'block';
-            startRecordingBtn.disabled = true;
-            stopRecordingBtn.disabled = false;
-            M.toast({ html: 'Recording started', classes: 'green' });
-
-            startFrameCapture();
-        });
-
-        // Stop recording
-        stopRecordingBtn.addEventListener('click', async () => {
-            if (recording) {
-                recording = false;
-                progressBar.style.display = 'none';
-                startRecordingBtn.disabled = false;
-                stopRecordingBtn.disabled = true;
-                M.toast({ html: 'Recording stopped', classes: 'green' });
-
-                stopFrameCapture();
-
-                // Wait for last uploads to complete, then redirect
-                await new Promise((resolve) => setTimeout(resolve, 1500));
-                window.location.href = '/view-images';
-            }
-        });
-
-        function startFrameCapture() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-            if (!canvas.width || !canvas.height) return;
-
-            frameCounter = 0;
-
-            frameCaptureInterval = setInterval(() => {
-                if (!recording) return;
-
-                frameCounter++;
-
-                if (frameCounter % 10 === 0) {
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    canvas.toBlob(async (blob) => {
-                        if (blob) await uploadFrame(blob, `frame_${Date.now()}.jpg`);
-                    }, 'image/jpeg', 0.8);
-                }
-            }, 100);
+    <div class="progress mt-3" style="display:none;" id="progressBar">
+        <div class="progress-bar progress-bar-striped progress-bar-animated" style="width:100%"></div>
+    </div>
+</div>
+<footer class="footer">
+    <div class="container">
+        &copy; 2024 PlantGuard
+    </div>
+</footer>
+<div class="dark-mode-toggle" onclick="toggleDarkMode()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-moon-fill" viewBox="0 0 16 16">
+        <path d="M6 0a6 6 0 0 0 0 12c.696 0 1.368-.094 2-.27a7 7 0 0 1 8 8c.176.632.27 1.304.27 2a6 6 0 1 1-10.27-7.73A7.001 7.001 0 0 1 6 0z"/>
+    </svg>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const video = document.getElementById('video');
+const connectCameraBtn = document.getElementById('connectCamera');
+const startRecordingBtn = document.getElementById('startRecording');
+const stopRecordingBtn = document.getElementById('stopRecording');
+const progressBar = document.getElementById('progressBar');
+let mediaStream = null;
+let recording = false;
+let frameInterval = null;
+let frameCounter = 0;
+connectCameraBtn.addEventListener('click', async () => {
+    try {
+        mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        video.srcObject = mediaStream;
+        await video.play();
+        startRecordingBtn.disabled = false;
+    } catch (err) {
+        console.error('Camera access failed:', err);
+    }
+});
+startRecordingBtn.addEventListener('click', () => {
+    if (!mediaStream) return;
+    recording = true;
+    progressBar.style.display = 'block';
+    startRecordingBtn.disabled = true;
+    stopRecordingBtn.disabled = false;
+    startCapture();
+});
+stopRecordingBtn.addEventListener('click', async () => {
+    if (!recording) return;
+    recording = false;
+    progressBar.style.display = 'none';
+    startRecordingBtn.disabled = false;
+    stopRecordingBtn.disabled = true;
+    stopCapture();
+    await new Promise(r => setTimeout(r, 1500));
+    window.location.href = '/view-images';
+});
+function startCapture() {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    frameCounter = 0;
+    frameInterval = setInterval(() => {
+        if (!recording) return;
+        frameCounter++;
+        if (frameCounter % 10 === 0) {
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(async (blob) => {
+                if (!blob) return;
+                const formData = new FormData();
+                formData.append('files', blob, `frame_${Date.now()}.jpg`);
+                try {
+                    await fetch('/upload', { method: 'POST', body: formData });
+                } catch (e) { console.error(e); }
+            }, 'image/jpeg', 0.8);
         }
-
-        function stopFrameCapture() {
-            if (frameCaptureInterval) clearInterval(frameCaptureInterval);
-        }
-
-        async function uploadFrame(blob, filename) {
-            const formData = new FormData();
-            formData.append('files', blob, filename);
-
-            try {
-                const response = await fetch('/upload', { method: 'POST', body: formData });
-                if (!response.ok) console.error('Failed to upload frame:', filename);
-            } catch (error) {
-                console.error('Error uploading frame:', error);
-            }
-        }
-    </script>
+    }, 100);
+}
+function stopCapture() {
+    if (frameInterval) clearInterval(frameInterval);
+}
+</script>
 <script src="/static/scripts.js"></script>
 </body>
 </html>

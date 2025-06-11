@@ -1,307 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>View Images</title>
-
-  <!-- Materialize CSS -->
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-<link rel="stylesheet" href="/static/style.css">
-
-  <style>
-    /* General Styles */
-    body {
-      font-family: 'Arial', sans-serif;
-      background: linear-gradient(to right, #1565C0, #64B5F6);
-      color: white;
-      transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
-    }
-
-    .container {
-      margin-top: 40px;
-      text-align: center;
-    }
-
-    /* Navbar */
-    .nav-wrapper {
-      padding: 0 10%;
-    }
-
-    /* Search Box */
-    .search-box {
-      margin: 20px auto;
-      max-width: 400px;
-    }
-
-    /* Image Gallery */
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 15px;
-      margin-top: 20px;
-    }
-
-    .image-container {
-      position: relative;
-      width: 200px;
-      height: 200px;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-      cursor: pointer;
-      transition: transform 0.2s ease-in-out;
-    }
-
-    .image-container:hover {
-      transform: scale(1.1);
-    }
-
-    .image-container img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-
-    .overlay {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      background: rgba(0, 0, 0, 0.6);
-      color: white;
-      padding: 5px;
-      font-size: 14px;
-      text-align: center;
-    }
-
-    /* Modal Styles */
-    .modal img {
-      width: 100%;
-    }
-
-    /* Dark Mode */
-    .dark-mode {
-      background: #1e1e1e;
-      color: white;
-    }
-
-    .dark-mode .modal-content {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .dark-mode-toggle {
-      cursor: pointer;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: white;
-      color: black;
-      padding: 10px 15px;
-      border-radius: 50%;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-      transition: background 0.3s ease-in-out, transform 0.3s ease-in-out;
-    }
-
-    .dark-mode-toggle:hover {
-      background: #ccc;
-      transform: scale(1.1);
-    }
-  #llmModal .modal-content {
-    background: #263238;
-    color: #ffffff;
-  }
-
-  #llmModal .modal-footer {
-    background: #1e1e1e;
-  }
-
-  #llmContent {
-    /* preserve newlines */
-    white-space: pre-wrap;
-    /* left-align for readability */
-    text-align: left;
-    /* padding & background to pop out */
-    padding: 1rem;
-    background: #37474F;
-    border-radius: 8px;
-    /* scroll if it's too long */
-    max-height: 60vh;
-    overflow-y: auto;
-    /* nicer typography */
-    font-size: 14px;
-    line-height: 1.6;
-    color: #fff;
-  }
-  
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>View Images - PlantGuard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        .image-container { position:relative;width:200px;height:200px;border-radius:8px;overflow:hidden;box-shadow:0 4px 6px rgba(0,0,0,0.3); }
+        .image-container img { width:100%;height:100%;object-fit:cover; }
+        .overlay { position:absolute;bottom:0;width:100%;background:rgba(0,0,0,0.6);color:#fff;padding:5px;font-size:14px;text-align:center; }
+    </style>
 </head>
 <body>
-
-  <!-- Navbar -->
-  <div class="navbar-fixed">
-    <nav class="blue darken-3">
-      <div class="nav-wrapper">
-        <a href="#!" class="brand-logo">
-          <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height: 50px; margin-right: 10px;">
-          PlantGuard
-        </a>
-        <ul class="right hide-on-med-and-down">
-          <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>HOME</a></li>
-          <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
-        </ul>
+<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+        <a class="navbar-brand" href="/">PlantGuard</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/dashboard">Dashboard</a></li>
+                <li class="nav-item"><a class="nav-link" href="/view-images">Image Library</a></li>
+                <li class="nav-item"><a class="nav-link" href="/about">About</a></li>
+                <li class="nav-item"><a class="nav-link" href="/contact">Contact</a></li>
+                <li class="nav-item"><a class="nav-link" href="/faq">FAQ</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="container my-5">
+    <h1 class="mb-4 text-center">Image Library</h1>
+    <input type="text" id="searchBox" class="form-control mb-3" placeholder="Search by plant or disease">
+    <p id="imageCount"></p>
+    <div class="d-flex flex-wrap gap-3" id="imageGallery"></div>
+    <div class="mt-4">
+        <button id="deleteImages" class="btn btn-danger">Delete All Images</button>
+        <button id="uploadMoreImages" class="btn btn-success ms-2">Upload More Images</button>
+    </div>
+</div>
+<div class="modal fade" id="imageModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-body p-0">
+        <img id="modalImage" src="" alt="Image" class="img-fluid rounded-start">
       </div>
-    </nav>
-  </div>
-
-  <!-- Image Search -->
-  <div class="container">
-    <h2>📷 View Images</h2>
-    <input type="text" id="searchBox" class="search-box browser-default" placeholder="Search by Plant or Disease">
-    <p class="image-count" id="imageCount">Showing 0 out of 0 images</p>
-    <div class="gallery" id="imageGallery"></div>
-
-    <!-- Buttons -->
-    <div class="buttons">
-      <button id="deleteImages" class="btn red"><i class="material-icons left">delete</i>Delete All Images</button>
-      <button id="uploadMoreImages" class="btn green"><i class="material-icons left">cloud_upload</i>Upload More Images</button>
     </div>
   </div>
-
-  <!-- Fullscreen Image Modal -->
-  <div id="imageModal" class="modal">
+</div>
+<div class="modal fade" id="llmModal" tabindex="-1">
+  <div class="modal-dialog">
     <div class="modal-content">
-      <img id="modalImage" src="" alt="Image Preview">
-    </div>
-    <div class="modal-footer">
-      <a href="#!" class="modal-close btn red">Close</a>
-    </div>
-  </div>
-
-  <!-- LLM Explanation Modal -->
-  <div id="llmModal" class="modal">
-    <div class="modal-content">
-      <h5>Diagnosis Explanation</h5>
-      <div id="llmContent">Loading...</div>
-    </div>
-    <div class="modal-footer">
-      <a href="#!" class="modal-close btn blue">Close</a>
+      <div class="modal-header">
+        <h5 class="modal-title">Diagnosis Explanation</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body" id="llmContent">Loading...</div>
     </div>
   </div>
-
-  <!-- Dark Mode Toggle -->
-  <div class="dark-mode-toggle" onclick="toggleDarkMode()">
-    <i class="material-icons">brightness_4</i>
-  </div>
-
-  <!-- Materialize JS -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
-
-  <script>
-    const explanationCache = {};  // key: "plant|disease", value: explanation string
-
-    async function fetchImages() {
-      const response = await fetch('/images');
-      const images = await response.json();
-      const gallery = document.getElementById('imageGallery');
-      const imageCount = document.getElementById('imageCount');
-      gallery.innerHTML = '';
-
-      images.forEach(image => {
-        const container = document.createElement('div');
-        container.classList.add('image-container');
-
-        const imgElement = document.createElement('img');
-        imgElement.src = `uploads/${image.filename}`;
-        imgElement.alt = image.filename;
-        imgElement.addEventListener('click', () => openModal(imgElement.src));
-
-        const overlay = document.createElement('div');
-        overlay.classList.add('overlay');
-        overlay.innerHTML = `<p>Plant: ${image.plant}</p><p>Disease: ${image.disease}</p>`;
-
-        const infoBtn = document.createElement('button');
-        infoBtn.className = 'btn blue';
-        infoBtn.style.marginTop = '5px';
-        infoBtn.textContent = 'More Info';
-        infoBtn.onclick = () => fetchLLMExplanation(image.plant, image.disease);
-
-        overlay.appendChild(infoBtn);
-
-        container.appendChild(imgElement);
-        container.appendChild(overlay);
-        gallery.appendChild(container);
-      });
-
-      imageCount.textContent = `Showing ${images.length} out of ${images.length} images`;
-    }
-
-    function openModal(imageSrc) {
-      document.getElementById('modalImage').src = imageSrc;
-      const modal = M.Modal.init(document.getElementById('imageModal'));
-      modal.open();
-    }
-
-    async function deleteImages() {
-      const response = await fetch('/delete-images', { method: 'DELETE' });
-      if (response.ok) {
-        fetchImages();
-      }
-    }
-
-    async function fetchLLMExplanation(plant, disease) {
-  const key = `${plant}|${disease}`;
-  const content = document.getElementById('llmContent');
-  const llmModal = M.Modal.init(document.getElementById('llmModal'));
-
-  if (explanationCache[key]) {
-    content.innerHTML = explanationCache[key]; // use cached version
-    llmModal.open();
-    return;
-  }
-
-  content.innerHTML = "⏳ Generating explanation...";
-  llmModal.open();
-
-  try {
-    const res = await fetch('/explain-diagnosis', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plant, disease })
-    });
-    if (!res.ok) throw new Error(await res.text());
-    const data = await res.json();
-
-    explanationCache[key] = data.explanation; // cache it
-    content.textContent = data.explanation;
-  } catch (err) {
-    content.innerHTML = "⚠️ Could not fetch explanation. Try again later.";
-    console.error(err);
-  }
+</div>
+<footer class="footer">
+    <div class="container">
+        &copy; 2024 PlantGuard
+    </div>
+</footer>
+<div class="dark-mode-toggle" onclick="toggleDarkMode()">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-moon-fill" viewBox="0 0 16 16">
+        <path d="M6 0a6 6 0 0 0 0 12c.696 0 1.368-.094 2-.27a7 7 0 0 1 8 8c.176.632.27 1.304.27 2a6 6 0 1 1-10.27-7.73A7.001 7.001 0 0 1 6 0z"/>
+    </svg>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const explanationCache={};
+async function fetchImages(){
+  const res=await fetch('/images');
+  const images=await res.json();
+  const gallery=document.getElementById('imageGallery');
+  const count=document.getElementById('imageCount');
+  gallery.innerHTML='';
+  images.forEach(img=>{
+    const c=document.createElement('div');c.className='image-container';
+    const imageEl=document.createElement('img');imageEl.src=`uploads/${img.filename}`;imageEl.alt=img.filename;imageEl.onclick=()=>openModal(imageEl.src);
+    const overlay=document.createElement('div');overlay.className='overlay';overlay.innerHTML=`<p>Plant: ${img.plant}</p><p>Disease: ${img.disease}</p>`;
+    const infoBtn=document.createElement('button');infoBtn.className='btn btn-sm btn-primary mt-1';infoBtn.textContent='More Info';infoBtn.onclick=()=>fetchLLMExplanation(img.plant,img.disease);
+    const downloadBtn=document.createElement('button');downloadBtn.className='btn btn-sm btn-success mt-1 ms-1';downloadBtn.textContent='Download';downloadBtn.onclick=()=>window.open(imageEl.src,'_blank');
+    overlay.appendChild(infoBtn);overlay.appendChild(downloadBtn);
+    c.appendChild(imageEl);c.appendChild(overlay);gallery.appendChild(c);
+  });
+  count.textContent=`Showing ${images.length} images`;
 }
-    document.addEventListener('DOMContentLoaded', () => {
-      fetchImages();
-      M.Modal.init(document.getElementById('imageModal'));
-      M.Modal.init(document.getElementById('llmModal'));
-    });
-
-    document.getElementById('deleteImages').addEventListener('click', deleteImages);
-    document.getElementById('uploadMoreImages').addEventListener('click', () => {
-      window.location.href = '/upload-images';
-    });
-
-    document.getElementById('searchBox').addEventListener('keyup', function () {
-      const searchText = this.value.toLowerCase();
-      const images = document.querySelectorAll('.image-container');
-      images.forEach(img => {
-        const overlayText = img.querySelector('.overlay').innerText.toLowerCase();
-        img.style.display = overlayText.includes(searchText) ? 'block' : 'none';
-      });
-    });
-
-  </script>
-
+function openModal(src){document.getElementById('modalImage').src=src;new bootstrap.Modal(document.getElementById('imageModal')).show();}
+async function deleteImages(){const r=await fetch('/delete-images',{method:'DELETE'});if(r.ok)fetchImages();}
+async function fetchLLMExplanation(plant,disease){const key=`${plant}|${disease}`;const content=document.getElementById('llmContent');const modal=new bootstrap.Modal(document.getElementById('llmModal'));if(explanationCache[key]){content.textContent=explanationCache[key];modal.show();return;}content.textContent='Generating explanation...';modal.show();try{const res=await fetch('/explain-diagnosis',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({plant,disease})});if(!res.ok)throw new Error();const data=await res.json();explanationCache[key]=data.explanation;content.textContent=data.explanation;}catch(e){content.textContent='Could not fetch explanation.';}}
+document.addEventListener('DOMContentLoaded',()=>{fetchImages();document.getElementById('deleteImages').onclick=deleteImages;document.getElementById('uploadMoreImages').onclick=()=>location.href='/upload-images';document.getElementById('searchBox').addEventListener('keyup',function(){const q=this.value.toLowerCase();document.querySelectorAll('.image-container').forEach(el=>{const t=el.querySelector('.overlay').innerText.toLowerCase();el.style.display=t.includes(q)?'block':'none';});});});
+</script>
 <script src="/static/scripts.js"></script>
 </body>
 </html>

@@ -1,11 +1,19 @@
 /* Global Styles */
+:root {
+    --primary-color: #198754;
+}
+
 body {
-    font-family: 'Arial', sans-serif;
+    font-family: 'Montserrat', sans-serif;
+    background: #f5f7fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Persistent Dark Mode */
 .dark-mode {
-    background: #1e1e1e;
+    background: #121212;
     color: #ffffff;
 }
 
@@ -27,3 +35,22 @@ body {
     background: #ccc;
     transform: scale(1.1);
 }
+
+.footer {
+    background: var(--primary-color);
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+    margin-top: auto;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.bg-primary,
+.navbar.bg-primary {
+    background-color: var(--primary-color) !important;
+}
+.navbar-dark .nav-link { color: #fff; }

@@ -105,6 +105,18 @@ Our model achieves:
 
 ---
 
+## **Web Interface**
+PlantGuard ships with a polished web application powered by **FastAPI** and **Bootstrap 5**. Highlights include:
+- Sleek landing page with statistics and testimonials.
+- Image uploads with previews, progress bar and drag‑to‑remove support.
+- Live video capture for continuous monitoring.
+- Gallery view with downloadable images and LLM powered explanations.
+- Built‑in dark mode with persistent preference and informative **About**/**Contact** pages.
+- Interactive **Dashboard** with charts showing uploads and diagnoses.
+- Helpful **FAQ** page answering common questions.
+
+---
+
 ## **Deployment**
 ### **1️⃣ Running Inference Locally**
 Use `predict.py` to classify a single image:
