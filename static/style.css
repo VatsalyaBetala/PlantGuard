@@ -1,6 +1,10 @@
 /* Global Styles */
 :root {
-    --primary-gradient: linear-gradient(to right, #4caf50, #81c784);
+    --primary-color: #2e7d32;
+    --secondary-color: #81c784;
+    --accent-color: #ffb74d;
+    --navbar-color: #1b5e20;
+    --primary-gradient: linear-gradient(to right, var(--primary-color), var(--secondary-color));
 }
 
 body {
@@ -40,4 +44,27 @@ body {
     padding: 20px;
     text-align: center;
     margin-top: 40px;
+}
+
+/* Navbar */
+.navbar-custom {
+    background: var(--navbar-color);
+}
+
+.navbar-custom a {
+    color: white;
+}
+
+/* Buttons */
+.accent-btn {
+    background: var(--accent-color);
+}
+
+/* Upload Card */
+.upload-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    padding: 20px;
 }

@@ -142,7 +142,7 @@
 
   <!-- Navbar -->
   <div class="navbar-fixed">
-    <nav class="blue darken-3">
+    <nav class="navbar-custom">
       <div class="nav-wrapper">
         <a href="#!" class="brand-logo">
           <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height: 50px; margin-right: 10px;">
@@ -169,7 +169,7 @@
     <!-- Buttons -->
     <div class="buttons">
       <button id="deleteImages" class="btn red"><i class="material-icons left">delete</i>Delete All Images</button>
-      <button id="uploadMoreImages" class="btn green"><i class="material-icons left">cloud_upload</i>Upload More Images</button>
+      <button id="uploadMoreImages" class="btn accent-btn"><i class="material-icons left">cloud_upload</i>Upload More Images</button>
     </div>
   </div>
 
@@ -190,7 +190,7 @@
       <div id="llmContent">Loading...</div>
     </div>
     <div class="modal-footer">
-      <a href="#!" class="modal-close btn blue">Close</a>
+      <a href="#!" class="modal-close btn accent-btn">Close</a>
     </div>
   </div>
 
@@ -230,13 +230,13 @@
         overlay.innerHTML = `<p>Plant: ${image.plant}</p><p>Disease: ${image.disease}</p>`;
 
         const infoBtn = document.createElement('button');
-        infoBtn.className = 'btn blue';
+        infoBtn.className = 'btn accent-btn';
         infoBtn.style.marginTop = '5px';
         infoBtn.textContent = 'More Info';
         infoBtn.onclick = () => fetchLLMExplanation(image.plant, image.disease);
 
         const downloadBtn = document.createElement('button');
-        downloadBtn.className = 'btn green';
+        downloadBtn.className = 'btn accent-btn';
         downloadBtn.style.marginTop = '5px';
         downloadBtn.style.marginLeft = '5px';
         downloadBtn.textContent = 'Download';
