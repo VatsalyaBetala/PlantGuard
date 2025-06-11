@@ -217,5 +217,23 @@ async def delete_images():
         raise HTTPException(status_code=500, detail=f"Failed to delete images: {str(e)}")
 
 
+@app.delete("/images/{filename}")
+async def delete_image(filename: str):
+    """Delete a single uploaded image and its cached prediction."""
+    try:
+        file_path = os.path.join("uploads", filename)
+        if not os.path.exists(file_path):
+            raise HTTPException(status_code=404, detail="Image not found")
+
+        os.remove(file_path)
+        if filename in PREDICTIONS:
+            del PREDICTIONS[filename]
+        return {"message": f"{filename} deleted"}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to delete image: {e}")
+
+
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8000)
