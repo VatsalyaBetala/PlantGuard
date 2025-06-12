@@ -268,11 +268,20 @@
       infoBtn.href = '#!';
       infoBtn.textContent = 'Info';
       infoBtn.onclick = () => fetchLLMExplanation(image.plant, image.disease);
+      const heatmapBtn = document.createElement('a');
+      heatmapBtn.href = '#!';
+      heatmapBtn.textContent = 'Heatmap';
+      if (image.heatmap) {
+        heatmapBtn.onclick = () => openModal(`heatmaps/${image.heatmap}`);
+      } else {
+        heatmapBtn.className = 'disabled';
+      }
       const downloadBtn = document.createElement('a');
       downloadBtn.href = `uploads/${image.filename}`;
       downloadBtn.textContent = 'Download';
       downloadBtn.target = '_blank';
       action.appendChild(infoBtn);
+      action.appendChild(heatmapBtn);
       action.appendChild(downloadBtn);
 
       card.appendChild(imgWrap);
