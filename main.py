@@ -26,6 +26,7 @@ from src.inference import (
     classify_plant,
     classify_disease
 )
+from src.grad_cam import generate_grad_cam
 
 class DiagnosisRequest(BaseModel):
     plant: str
@@ -52,9 +53,14 @@ app.add_middleware(
 if not os.path.exists("uploads"):
     os.makedirs("uploads")
 
+# Ensure heatmaps directory
+if not os.path.exists("heatmaps"):
+    os.makedirs("heatmaps")
+
 # Serve static files
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/heatmaps", StaticFiles(directory="heatmaps"), name="heatmaps")
 
 @app.on_event("startup")
 async def startup_event():
@@ -124,6 +130,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
             if cropped_leaf_path is None:
                 plant_prediction = "No Leaf Detected"
                 disease_prediction = "Unknown"
+                heatmap_path = None
             else:
                 # 2) Classify plant
                 plant_prediction = classify_plant(cropped_leaf_path)
@@ -133,11 +140,14 @@ async def upload_files(files: List[UploadFile] = File(...)):
                 disease_prediction = classify_disease(cropped_leaf_path, plant_prediction)
                 print(f"Disease prediction: {disease_prediction}")
 
+                # 4) Generate Grad-CAM heatmap
+                heatmap_path = generate_grad_cam(cropped_leaf_path, plant_prediction)
             # Store prediction
             pred = {
                 "filename": unique_name,
                 "plant": plant_prediction,
-                "disease": disease_prediction
+                "disease": disease_prediction,
+                "heatmap": os.path.basename(heatmap_path) if heatmap_path else None,
             }
             predictions.append(pred)
             PREDICTIONS[unique_name] = pred
@@ -154,11 +164,12 @@ async def get_images():
     files = os.listdir("uploads")
     results = []
     for file in files:
-        pred = PREDICTIONS.get(file, {"plant": "", "disease": ""})
+        pred = PREDICTIONS.get(file, {"plant": "", "disease": "", "heatmap": None})
         results.append({
             "filename": file,
             "plant": pred.get("plant", ""),
-            "disease": pred.get("disease", "")
+            "disease": pred.get("disease", ""),
+            "heatmap": pred.get("heatmap")
         })
     return results
 
@@ -210,6 +221,9 @@ async def delete_images():
         files = os.listdir("uploads")
         for file in files:
             os.remove(f"uploads/{file}")
+            heatmap_path = os.path.join("heatmaps", file)
+            if os.path.exists(heatmap_path):
+                os.remove(heatmap_path)
             if file in PREDICTIONS:
                 del PREDICTIONS[file]
         return {"message": "All images deleted"}
@@ -226,6 +240,9 @@ async def delete_image(filename: str):
             raise HTTPException(status_code=404, detail="Image not found")
 
         os.remove(file_path)
+        heatmap_path = os.path.join("heatmaps", filename)
+        if os.path.exists(heatmap_path):
+            os.remove(heatmap_path)
         if filename in PREDICTIONS:
             del PREDICTIONS[filename]
         return {"message": f"{filename} deleted"}
