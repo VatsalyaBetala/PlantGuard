@@ -13,6 +13,10 @@ class DiseaseClassifier(nn.Module):
 
         for param in self.model.parameters():
             param.requires_grad = False  # Freeze all layers except the last one
+        
+        # Unfreeze the last conv block (layer4) for Grad-CAM
+        for param in self.model.layer4.parameters():
+            param.requires_grad = True
 
         num_features = self.model.fc.in_features
         self.model.fc = nn.Sequential(
