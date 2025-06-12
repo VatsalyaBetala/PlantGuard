@@ -1,15 +1,12 @@
 import os
 from typing import Optional
-
 import cv2
 import numpy as np
 import torch
 from PIL import Image
 from torchvision import transforms
-
 from src.Disease_Classification_resnet50.src.disease_model import DiseaseClassifier
 
-# Mapping plant type to disease labels (same as in inference.py)
 DISEASE_LABELS = {
     "Apple": ["Apple Scab", "Apple Black Rot", "Cedar Apple Rust", "Apple Healthy"],
     "Corn_(maize)": ["Cercospora_leaf_spot Gray_leaf_spot", "Common Rush", "Northern_Leaf_Blight", "Healthy"],
@@ -23,24 +20,33 @@ DISEASE_LABELS = {
     ],
 }
 
+# The underlying understanding of how GradCams works lies the understanding of the gradients: 
+
+# NOTE:GradCams looks at the last convolution layer, just before the fully-connected layer(s) (the last Conv-layer is unfreezed to capture gradients). 
+
+# STEP1: Firstly, the feature maps are calculated by convolving each filter (in this case 2048) over the output of the previous layer.
+
+# STEP2: This leaves you with this activations of dimension : [1,2048,7,7]. (2048 filters, each outputting 7x7 feature map)
+
+# STEP3: Then, for each filter map is AveragePooled, which leaves you with one value for each feature map: [1,2048]. 
+
+# STEP4: We calculte the weighted sum of feature maps. Following is the dimensional understanding: 
+# activation[i]      |  [7, 7]  | The i-th feature map A^i from layer4      |
+# w                  |  scalar  | a(i), the importance of that feature map  |
+# w * activation[i]  |  [7, 7]  | Scaled feature map                        |
+# cam += ...         |  [7, 7]  | Running sum of all weighted feature maps  |
+
+# RESULT: A [1,7,7], which serves as the GRAD-CAM heatmap, where each pixel tells you how important that spatial location was for the predicted class
+
+# POSTPROCESSING: Finally, we apply ReLU, resize it, and normalize it.
+
+# We apply a visual overlay on the original image.    
+
 def generate_grad_cam(image_path: str, plant_type: str) -> Optional[str]:
-    """Generate a Grad-CAM heatmap overlay for the given cropped leaf image.
-
-    Parameters
-    ----------
-    image_path : str
-        Path to the cropped leaf image.
-    plant_type : str
-        Plant prediction used to select the correct disease model.
-
-    Returns
-    -------
-    Optional[str]
-        Path to the saved heatmap image, or ``None`` if generation failed.
-    """
     if plant_type not in DISEASE_LABELS:
         return None
 
+    # We retrive the respective model.
     model_path = os.path.join("src", "models", f"{plant_type}_Disease_Classification.pth")
     if not os.path.exists(model_path):
         return None
@@ -48,15 +54,16 @@ def generate_grad_cam(image_path: str, plant_type: str) -> Optional[str]:
     num_classes = len(DISEASE_LABELS[plant_type])
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-    # Load disease classification model
     model = DiseaseClassifier(num_classes)
     checkpoint = torch.load(model_path, map_location=device)
+    
     if isinstance(checkpoint, dict) and "state_dict" in checkpoint:
         model.load_state_dict(checkpoint["state_dict"])
     else:
         model.load_state_dict(checkpoint)
+    
     model.to(device)
-    model.eval()
+    model.eval() # Eval mode - for inference
 
     gradients = []
     activations = []
@@ -65,7 +72,7 @@ def generate_grad_cam(image_path: str, plant_type: str) -> Optional[str]:
         activations.append(out)
         out.register_hook(lambda grad: gradients.append(grad))
 
-    handle = model.model.layer4[-1].register_forward_hook(save_activation)
+    handle = model.model.layer4[-1].register_forward_hook(save_activation) # Layer-4 of the CNN (ResNet50)
 
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
@@ -76,6 +83,7 @@ def generate_grad_cam(image_path: str, plant_type: str) -> Optional[str]:
     img = Image.open(image_path).convert("RGB")
     input_tensor = transform(img).unsqueeze(0).to(device)
 
+    # Model Inference (forward pass)
     output = model(input_tensor)
     class_idx = output.argmax(dim=1).item()
 
