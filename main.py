@@ -204,7 +204,7 @@ Write in simple, farmer-friendly language with bullet points where appropriate.
 
     try:
         resp = openai.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
         )
