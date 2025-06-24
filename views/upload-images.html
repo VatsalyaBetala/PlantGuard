@@ -3,272 +3,1672 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Images</title>
+    <title>PlantGuard - AI-Powered Plant Disease Analysis</title>
 
-    <!-- Materialize CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="stylesheet" href="/static/style.css">
 
-<link rel="stylesheet" href="/static/style.css">
     <style>
-        /* Global Styles */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            --surface-primary: #ffffff;
+            --surface-secondary: #f8fafc;
+            --surface-tertiary: #f1f5f9;
+            --surface-glass: rgba(255, 255, 255, 0.8);
+            --border-primary: #e2e8f0;
+            --border-secondary: #cbd5e1;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #8b5cf6;
+            --accent-tertiary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-3xl: 2rem;
+        }
+
+        [data-theme="dark"] {
+            --surface-primary: #0f172a;
+            --surface-secondary: #1e293b;
+            --surface-tertiary: #334155;
+            --surface-glass: rgba(15, 23, 42, 0.8);
+            --border-primary: #475569;
+            --border-secondary: #64748b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --hero-gradient: linear-gradient(135deg, #000000 0%, #1e293b 50%, #334155 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Montserrat', sans-serif;
-            background: var(--primary-gradient);
-            color: white;
-            transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--surface-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-x: hidden;
         }
 
-        /* Navbar */
+        /* Professional Navigation */
+        .navbar-fixed {
+            z-index: 1000;
+        }
+
+        .navbar-custom {
+            background: var(--surface-glass);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-primary);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
         .nav-wrapper {
-            padding: 0 10%;
-        }
-
-        .container {
+            padding: 0 10rem;
+            height: 80px;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
             margin: 0 auto;
-            width: 90%;
-            max-width: 900px;
+            width: 100%;
+        }
+
+        .brand-logo {
+            display: flex !important;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.75rem;
+            color: var(--text-primary) !important;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .brand-logo:hover {
+            transform: scale(1.02);
+        }
+
+        .brand-logo img {
+            height: 45px;
+            margin-right: 15px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-wrapper ul {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            list-style: none;
+            gap: 0.5rem;
+        }
+
+        .nav-wrapper ul li a {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem !important;
+            border-radius: var(--radius-lg);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-wrapper ul li a:hover {
+            color: var(--accent-primary) !important;
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: var(--hero-gradient);
+            color: white;
+            padding: 4rem 0;
+            margin-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
             text-align: center;
-            padding-top: 80px;
+            position: relative;
+            z-index: 1;
         }
 
-        /* Upload Section */
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 9999px;
+            color: var(--accent-primary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.125rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Upload Process Steps */
+        .process-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .step-card {
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-2xl);
+            padding: 2rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        }
+
+        .step-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .step-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0 auto 1rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .step-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* Enhanced Upload Card */
         .upload-card {
-            margin-bottom: 40px;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-3xl);
+            box-shadow: var(--shadow-2xl);
+            overflow: hidden;
+            margin-bottom: 3rem;
+            position: relative;
         }
 
-        /* File Input Styling */
-        .file-field {
+        .upload-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .card-header h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .card-header p {
+            opacity: 0.95;
+            font-size: 1.125rem;
+        }
+
+        .card-content {
+            padding: 3rem;
+        }
+
+        /* Advanced File Upload Zone */
+        .file-upload-zone {
+            border: 3px dashed var(--border-secondary);
+            border-radius: var(--radius-2xl);
+            padding: 4rem 2rem;
+            text-align: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--surface-secondary);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-upload-zone::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at center, rgba(59, 130, 246, 0.05) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .file-upload-zone:hover::before,
+        .file-upload-zone.dragover::before {
+            opacity: 1;
+        }
+
+        .file-upload-zone:hover {
+            border-color: var(--accent-primary);
+            background: rgba(59, 130, 246, 0.05);
+            transform: scale(1.02);
+        }
+
+        .file-upload-zone.dragover {
+            border-color: var(--accent-primary);
+            background: rgba(59, 130, 246, 0.1);
+            transform: scale(1.02);
+            border-style: solid;
+        }
+
+        .upload-icon {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 2rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            box-shadow: var(--shadow-xl);
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-zone:hover .upload-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .upload-text {
+            margin-bottom: 2rem;
+        }
+
+        .upload-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.75rem;
+        }
+
+        .upload-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+        }
+
+        .upload-specs {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .spec-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .spec-item i {
+            color: var(--accent-primary);
+        }
+
+        .upload-button {
+            padding: 1rem 2.5rem !important;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: var(--radius-xl) !important;
+            font-size: 1.125rem !important;
+            font-weight: 600 !important;
+            text-transform: none !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+            text-decoration: none !important;
+            cursor: pointer !important;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .upload-button:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .file-input-hidden {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Enhanced Format Info */
+        .format-info {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(139, 92, 246, 0.05));
+            border: 1px solid rgba(59, 130, 246, 0.1);
+            border-radius: var(--radius-xl);
+        }
+
+        .format-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.125rem;
+        }
+
+        .format-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .format-item {
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 1rem;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            transition: all 0.2s ease;
         }
 
-        .file-field .btn {
+        .format-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .format-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: var(--accent-primary);
+        }
+
+        .format-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+        }
+
+        .format-size {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        /* Enhanced Preview Section */
+        .preview-section {
+            margin-top: 3rem;
+        }
+
+        .preview-header {
             display: flex;
             align-items: center;
-            justify-content: center;
-            padding: 10px 20px;
-            font-size: 1.1em;
-            white-space: nowrap;
-            background: var(--accent-color);
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
         }
 
-        /* Image Preview Section */
-        .preview-container {
+        .preview-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 20px;
+            align-items: center;
+            gap: 0.75rem;
         }
 
-        .preview-box {
+        .preview-count {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-md);
+        }
+
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .preview-item {
             position: relative;
-            width: 120px;
-            height: 120px;
-            border-radius: 10px;
+            aspect-ratio: 1;
+            border-radius: var(--radius-xl);
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid var(--border-primary);
+            background: var(--surface-tertiary);
         }
 
-        .preview-box img {
+        .preview-item:hover {
+            transform: scale(1.05) rotate(1deg);
+            box-shadow: var(--shadow-2xl);
+            border-color: var(--accent-primary);
+        }
+
+        .preview-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .preview-item:hover img {
+            transform: scale(1.1);
         }
 
         .remove-btn {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(255, 0, 0, 0.7);
+            top: 0.75rem;
+            right: 0.75rem;
+            width: 36px;
+            height: 36px;
+            background: rgba(239, 68, 68, 0.9);
             color: white;
             border: none;
-            cursor: pointer;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
+            cursor: pointer;
             font-size: 1rem;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            transform: scale(0.8);
         }
 
+        .preview-item:hover .remove-btn {
+            opacity: 1;
+            transform: scale(1);
+        }
 
-        .btn {
+        .remove-btn:hover {
+            background: var(--error);
+            transform: scale(1.15) !important;
+        }
+
+        .file-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.8));
+            padding: 1rem 0.75rem 0.75rem;
+            color: white;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .preview-item:hover .file-info {
+            transform: translateY(0);
+        }
+
+        .file-name {
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            word-break: break-word;
+        }
+
+        .file-details {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        /* Enhanced Action Buttons */
+        .action-section {
+            padding: 2.5rem 3rem;
+            background: var(--surface-secondary);
+            border-top: 1px solid var(--border-primary);
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .main-btn {
+            padding: 1.25rem 3rem !important;
+            border-radius: var(--radius-xl) !important;
+            font-size: 1.125rem !important;
+            font-weight: 600 !important;
+            text-transform: none !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+            min-width: 200px;
+            justify-content: center !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .main-btn:hover::before {
+            left: 100%;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--success), #059669) !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+        }
+
+        .clear-btn {
+            background: var(--surface-primary) !important;
+            color: var(--text-primary) !important;
+            border: 2px solid var(--border-primary) !important;
+        }
+
+        .clear-btn:hover {
+            background: var(--surface-tertiary) !important;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Enhanced Progress Section */
+        .progress-section {
+            padding: 2rem 3rem;
+            background: var(--surface-tertiary);
+            border-top: 1px solid var(--border-primary);
+        }
+
+        .progress-container {
+            display: none;
+        }
+
+        .progress-container.active {
+            display: block;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .progress-percentage {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: var(--border-primary);
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 9999px;
+            transition: width 0.3s ease;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: progress-shimmer 2s infinite;
+        }
+
+        @keyframes progress-shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .progress-step {
             display: flex;
             align-items: center;
-            justify-content: center;
-            height: auto;
-            padding: 15px 30px;
-            font-size: 1.2em;
-            border-radius: 5px;
-            white-space: nowrap;
-            transition: transform 0.3s ease-in-out;
+            gap: 0.5rem;
         }
 
-        .btn:hover {
-            transform: scale(1.05);
+        .progress-step.active {
+            color: var(--accent-primary);
+            font-weight: 600;
         }
 
-        /* Response Message Styling */
-        #responseMessage {
-            margin-top: 10px;
-            font-size: 1.1em;
-            font-weight: bold;
+        .progress-step.completed {
+            color: var(--success);
+        }
+
+        /* Enhanced Response Messages */
+        .response-message {
+            margin-top: 2rem;
+            padding: 1.5rem 2rem;
+            border-radius: var(--radius-xl);
+            font-weight: 500;
+            display: none;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .response-message i {
+            font-size: 1.5rem;
+        }
+
+        .response-message.success {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border: 2px solid rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+
+        .response-message.error {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+            border: 2px solid rgba(239, 68, 68, 0.2);
+            color: var(--error);
+        }
+
+        .response-message.warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
+            border: 2px solid rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+
+        .response-message.info {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            color: var(--accent-primary);
         }
 
         /* Footer */
-        footer {
-            margin-top: 50px;
-            padding: 20px;
+        .footer {
+            background: var(--surface-primary);
+            border-top: 1px solid var(--border-primary);
+            padding: 3rem 0;
             text-align: center;
-            background: rgba(0, 0, 0, 0.2);
-            border-top: 2px solid white;
+            color: var(--text-secondary);
+            margin-top: 4rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            color: var(--text-primary);
+            border-radius: 50%;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(180deg);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--border-primary);
+            border-top: 3px solid var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Tips Section */
+        .tips-section {
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-2xl);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .tips-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            padding: 1rem;
+            background: var(--surface-secondary);
+            border-radius: var(--radius-lg);
+            transition: all 0.2s ease;
+        }
+
+        .tip-item:hover {
+            background: var(--surface-tertiary);
+            transform: translateY(-2px);
+        }
+
+        .tip-icon {
+            color: var(--accent-primary);
+            font-size: 1.25rem;
+            margin-top: 0.125rem;
+        }
+
+        .tip-content {
+            flex: 1;
+        }
+
+        .tip-text {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nav-wrapper ul {
+                display: none;
+            }
+
+            .process-steps {
+                grid-template-columns: 1fr;
+            }
+
+            .upload-specs {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-wrapper {
+                padding: 0 1rem;
+                justify-content: center;
+            }
+
+            .hero-section {
+                padding: 3rem 0;
+            }
+
+            .main-container {
+                padding: 2rem 1rem;
+            }
+
+            .card-content {
+                padding: 2rem;
+            }
+
+            .file-upload-zone {
+                padding: 3rem 1rem;
+            }
+
+            .action-section {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .preview-grid {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+
+            .theme-toggle {
+                bottom: 1rem;
+                right: 1rem;
+                width: 50px;
+                height: 50px;
+            }
+
+            .tips-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus styles */
+        button:focus, 
+        input:focus {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
+        }
+
+        /* Fade in animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
         }
     </style>
 </head>
 <body>
-    <!-- Navbar -->
+    <!-- Professional Navigation -->
     <div class="navbar-fixed">
         <nav class="navbar-custom">
             <div class="nav-wrapper">
                 <a href="#!" class="brand-logo">
-                    <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height: 50px; margin-right: 10px;">
+                    <img src="../static/logo.jpeg" alt="PlantGuard Logo">
                     PlantGuard
                 </a>
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>Home</a></li>
-                    <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
-                    <li><a href="/about" class="waves-effect waves-light"><i class="material-icons left">info</i>About</a></li>
-                    <li><a href="/contact" class="waves-effect waves-light"><i class="material-icons left">contact_mail</i>Contact</a></li>
-                    <li><a href="/faq" class="waves-effect waves-light"><i class="material-icons left">help</i>FAQ</a></li>
+                    <li><a href="/" class="waves-effect waves-light">
+                        <i class="material-icons">home</i>Home
+                    </a></li>
+                    <li><a href="/view-images" class="waves-effect waves-light">
+                        <i class="material-icons">photo_library</i>Image Library
+                    </a></li>
+                    <li><a href="/about" class="waves-effect waves-light">
+                        <i class="material-icons">info</i>About
+                    </a></li>
+                    <li><a href="/contact" class="waves-effect waves-light">
+                        <i class="material-icons">contact_mail</i>Contact
+                    </a></li>
+                    <li><a href="/faq" class="waves-effect waves-light">
+                        <i class="material-icons">help</i>FAQ
+                    </a></li>
                 </ul>
             </div>
         </nav>
     </div>
 
-    <!-- Upload Section -->
-    <div class="container">
-        <div class="card upload-card">
-            <div class="card-content">
-                <span class="card-title">📸 Upload Plant Images</span>
-                <p>Select images and we'll diagnose them.</p>
-                <div class="file-field input-field" style="margin-top:20px;">
-                    <div class="btn accent-btn">
-                        <i class="material-icons left">cloud_upload</i>
-                        <span>Choose Files</span>
-                        <input type="file" id="fileInput" multiple accept="image/*">
-                    </div>
-                    <div class="file-path-wrapper">
-                        <input class="file-path validate" type="text" placeholder="Upload one or more images">
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content" data-aos="fade-up">
+            <div class="hero-badge" data-aos="fade-up" data-aos-delay="100">
+                <i class="fas fa-seedling"></i>
+                <span>Advanced Plant Disease Detection</span>
+            </div>
+            
+            <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">
+                Upload & Analyze Plant Images
+            </h1>
+            
+            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="300">
+                Get instant AI-powered disease detection and detailed analysis reports for your plant images. 
+                Our advanced algorithms provide accurate results in seconds.
+            </p>
+        </div>
+    </section>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Process Steps -->
+        <div class="process-steps" data-aos="fade-up">
+            <div class="step-card" data-aos="zoom-in" data-aos-delay="100">
+                <div class="step-number">1</div>
+                <h3 class="step-title">Upload Images</h3>
+                <p class="step-description">Drag & drop or select high-quality images of your plants showing symptoms clearly.</p>
+            </div>
+            
+            <div class="step-card" data-aos="zoom-in" data-aos-delay="200">
+                <div class="step-number">2</div>
+                <h3 class="step-title">AI Analysis</h3>
+                <p class="step-description">Our advanced AI algorithms analyze your images for disease detection and classification.</p>
+            </div>
+            
+            <div class="step-card" data-aos="zoom-in" data-aos-delay="300">
+                <div class="step-number">3</div>
+                <h3 class="step-title">Get Results</h3>
+                <p class="step-description">Receive detailed reports with disease identification, severity, and treatment recommendations.</p>
+            </div>
+        </div>
+
+        <!-- Tips Section -->
+        <div class="tips-section" data-aos="fade-up" data-aos-delay="100">
+            <h3 class="tips-title">
+                <i class="fas fa-lightbulb"></i>
+                Tips for Best Results
+            </h3>
+            <div class="tips-grid">
+                <div class="tip-item">
+                    <i class="fas fa-camera tip-icon"></i>
+                    <div class="tip-content">
+                        <div class="tip-text">Take clear, well-lit photos showing disease symptoms clearly</div>
                     </div>
                 </div>
-                <div class="preview-container" id="previewContainer"></div>
-                <div id="responseMessage"></div>
+                <div class="tip-item">
+                    <i class="fas fa-expand tip-icon"></i>
+                    <div class="tip-content">
+                        <div class="tip-text">Include close-up shots of affected areas for detailed analysis</div>
+                    </div>
+                </div>
+                <div class="tip-item">
+                    <i class="fas fa-images tip-icon"></i>
+                    <div class="tip-content">
+                        <div class="tip-text">Upload multiple angles of the same plant for comprehensive analysis</div>
+                    </div>
+                </div>
+                <div class="tip-item">
+                    <i class="fas fa-sun tip-icon"></i>
+                    <div class="tip-content">
+                        <div class="tip-text">Avoid shadows and ensure good natural lighting conditions</div>
+                    </div>
+                </div>
             </div>
-            <div class="card-action center-align">
-                <button class="btn accent-btn waves-effect waves-light" id="submitBtn">
-                    <i class="material-icons left">send</i>Submit
+        </div>
+
+        <!-- Enhanced Upload Card -->
+        <div class="upload-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="card-header">
+                <h3>
+                    <i class="fas fa-microscope"></i>
+                    AI Disease Analysis Platform
+                </h3>
+                <p>Upload your plant images for instant professional-grade disease detection</p>
+            </div>
+
+            <div class="card-content">
+                <!-- Advanced File Upload Zone -->
+                <div class="file-upload-zone" id="uploadZone">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <div class="upload-text">
+                        <div class="upload-title">Drop your plant images here</div>
+                        <div class="upload-subtitle">or click to browse and select files</div>
+                    </div>
+                    <div class="upload-specs">
+                        <div class="spec-item">
+                            <i class="fas fa-file-image"></i>
+                            <span>JPG, PNG, WEBP</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-weight-hanging"></i>
+                            <span>Max 10MB per file</span>
+                        </div>
+                        <div class="spec-item">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Multiple files supported</span>
+                        </div>
+                    </div>
+                    <button class="upload-button" type="button" id="chooseFilesBtn">
+                        <i class="fas fa-folder-open"></i>
+                        Choose Files
+                    </button>
+                    <input type="file" id="fileInput" class="file-input-hidden" multiple accept="image/*">
+                </div>
+
+                <!-- Enhanced Format Info -->
+                <div class="format-info">
+                    <div class="format-title">
+                        <i class="fas fa-info-circle"></i>
+                        Supported File Formats
+                    </div>
+                    <div class="format-grid">
+                        <div class="format-item">
+                            <i class="fas fa-file-image format-icon"></i>
+                            <div class="format-name">JPEG</div>
+                            <div class="format-size">Up to 10MB</div>
+                        </div>
+                        <div class="format-item">
+                            <i class="fas fa-file-image format-icon"></i>
+                            <div class="format-name">PNG</div>
+                            <div class="format-size">Up to 10MB</div>
+                        </div>
+                        <div class="format-item">
+                            <i class="fas fa-file-image format-icon"></i>
+                            <div class="format-name">WEBP</div>
+                            <div class="format-size">Up to 10MB</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enhanced Preview Section -->
+                <div class="preview-section" id="previewSection" style="display: none;">
+                    <div class="preview-header">
+                        <div class="preview-title">
+                            <i class="fas fa-images"></i>
+                            Selected Images
+                        </div>
+                        <div class="preview-count" id="previewCount">0 files</div>
+                    </div>
+                    <div class="preview-grid" id="previewContainer"></div>
+                </div>
+
+                <!-- Enhanced Response Message -->
+                <div class="response-message" id="responseMessage">
+                    <i class="fas fa-check-circle"></i>
+                    <div>
+                        <div id="responseText"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Enhanced Action Section -->
+            <div class="action-section">
+                <button class="main-btn clear-btn" id="clearBtn" style="display: none;">
+                    <i class="fas fa-trash-alt"></i>
+                    Clear All Files
+                </button>
+                <button class="main-btn submit-btn" id="submitBtn" disabled>
+                    <i class="fas fa-brain"></i>
+                    Start AI Analysis
                 </button>
             </div>
-            <div class="progress" id="uploadBar" style="display:none;">
-                <div class="indeterminate"></div>
+
+            <!-- Enhanced Progress Section -->
+            <div class="progress-section">
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-header">
+                        <div class="progress-title" id="progressText">Uploading images...</div>
+                        <div class="progress-percentage" id="progressPercent">0%</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-steps">
+                        <div class="progress-step" id="step1">
+                            <i class="fas fa-upload"></i>
+                            <span>Uploading</span>
+                        </div>
+                        <div class="progress-step" id="step2">
+                            <i class="fas fa-cog"></i>
+                            <span>Processing</span>
+                        </div>
+                        <div class="progress-step" id="step3">
+                            <i class="fas fa-brain"></i>
+                            <span>AI Analysis</span>
+                        </div>
+                        <div class="progress-step" id="step4">
+                            <i class="fas fa-check"></i>
+                            <span>Complete</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
+    <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2024 PlantGuard</p>
+        <p>&copy; 2024 PlantGuard - Advanced Plant Disease Detection Platform</p>
     </footer>
 
-    <div class="dark-mode-toggle" onclick="toggleDarkMode()">
-        <i class="material-icons">brightness_4</i>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+        <i class="fas fa-moon" id="themeIcon"></i>
     </div>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-    const fileInput = document.getElementById('fileInput');
-    const previewContainer = document.getElementById('previewContainer');
-    const submitBtn = document.getElementById('submitBtn');
-    const responseMessage = document.getElementById('responseMessage');
-    const uploadBar = document.getElementById('uploadBar');
+        // Initialize AOS animations
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true,
+                offset: 100
+            });
+        });
 
-    let selectedFiles = [];
+        // State management
+        let selectedFiles = [];
+        let isUploading = false;
 
-    fileInput.addEventListener('change', function () {
-        previewContainer.innerHTML = '';
-        selectedFiles = Array.from(fileInput.files);
+        // DOM elements - moved inside DOMContentLoaded
+        let fileInput, uploadZone, previewSection, previewContainer, previewCount;
+        let submitBtn, clearBtn, responseMessage, responseText, progressContainer;
+        let progressText, progressPercent, progressFill;
 
-        if (selectedFiles.length === 0) {
-            responseMessage.innerText = "No images selected.";
-            responseMessage.style.color = "red";
-            return;
+        // Theme Management
+        function toggleDarkMode() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
         }
 
-        selectedFiles.forEach((file, index) => {
-            if (file.type.startsWith('image/')) {
+        // Initialize theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            document.getElementById('themeIcon').className = 'fas fa-sun';
+        }
+
+        // File validation
+        function isValidImageFile(file) {
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            
+            if (!validTypes.includes(file.type)) {
+                return { valid: false, error: 'Invalid file type. Please use JPG, PNG, or WEBP.' };
+            }
+            
+            if (file.size > maxSize) {
+                return { valid: false, error: 'File too large. Maximum size is 10MB.' };
+            }
+            
+            return { valid: true };
+        }
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Show message
+        function showMessage(message, type = 'info') {
+            responseMessage.className = `response-message ${type}`;
+            responseText.textContent = message;
+            responseMessage.style.display = 'flex';
+            
+            // Auto hide after 5 seconds for non-error messages
+            if (type !== 'error') {
+                setTimeout(() => {
+                    responseMessage.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // Update UI state
+        function updateUI() {
+            const hasFiles = selectedFiles.length > 0;
+            
+            // Update preview section visibility
+            previewSection.style.display = hasFiles ? 'block' : 'none';
+            
+            // Update buttons
+            submitBtn.disabled = !hasFiles || isUploading;
+            clearBtn.style.display = hasFiles ? 'inline-flex' : 'none';
+            
+            // Update preview count
+            previewCount.textContent = `${selectedFiles.length} ${selectedFiles.length === 1 ? 'file' : 'files'}`;
+            
+            // Update submit button text
+            if (isUploading) {
+                submitBtn.innerHTML = '<div class="loading-spinner"></div> Analyzing...';
+            } else {
+                submitBtn.innerHTML = '<i class="fas fa-brain"></i> Start AI Analysis';
+            }
+        }
+
+        // Render preview
+        function renderPreview() {
+            previewContainer.innerHTML = '';
+            
+            selectedFiles.forEach((file, index) => {
                 const reader = new FileReader();
-                reader.onload = function (event) {
-                    const div = document.createElement('div');
-                    div.classList.add('preview-box');
-                    div.innerHTML = `
-                        <img src="${event.target.result}" alt="Image Preview">
-                        <button class="remove-btn" onclick="removeImage(${index})">&times;</button>
+                reader.onload = function(e) {
+                    const previewItem = document.createElement('div');
+                    previewItem.className = 'preview-item fade-in-up';
+                    previewItem.innerHTML = `
+                        <img src="${e.target.result}" alt="Preview ${index + 1}">
+                        <button class="remove-btn" onclick="removeImage(${index})" title="Remove image">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="file-info">
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-details">${formatFileSize(file.size)}</div>
+                        </div>
                     `;
-                    previewContainer.appendChild(div);
+                    previewContainer.appendChild(previewItem);
                 };
                 reader.readAsDataURL(file);
+            });
+            
+            updateUI();
+        }
+
+        // Add files
+        function addFiles(files) {
+            let validFiles = [];
+            let errors = [];
+            
+            Array.from(files).forEach(file => {
+                const validation = isValidImageFile(file);
+                if (validation.valid) {
+                    // Check if file already exists
+                    if (!selectedFiles.some(existingFile => 
+                        existingFile.name === file.name && existingFile.size === file.size
+                    )) {
+                        validFiles.push(file);
+                    }
+                } else {
+                    errors.push(`${file.name}: ${validation.error}`);
+                }
+            });
+            
+            if (validFiles.length > 0) {
+                selectedFiles = [...selectedFiles, ...validFiles];
+                renderPreview();
+                
+                if (errors.length === 0) {
+                    showMessage(`Successfully added ${validFiles.length} image${validFiles.length === 1 ? '' : 's'}`, 'success');
+                }
+            }
+            
+            if (errors.length > 0) {
+                showMessage(`Some files were skipped: ${errors.join(', ')}`, 'warning');
+            }
+        }
+
+        // Remove image
+        function removeImage(index) {
+            selectedFiles.splice(index, 1);
+            renderPreview();
+            
+            // Update file input
+            const dataTransfer = new DataTransfer();
+            selectedFiles.forEach(file => dataTransfer.items.add(file));
+            fileInput.files = dataTransfer.files;
+            
+            if (selectedFiles.length === 0) {
+                showMessage('Image removed successfully', 'info');
+            }
+        }
+
+        // Clear all files
+        function clearAllFiles() {
+            selectedFiles = [];
+            fileInput.value = '';
+            renderPreview();
+            responseMessage.style.display = 'none';
+            showMessage('All images cleared', 'info');
+        }
+
+        // Update progress with steps
+        function updateProgress(percent, text = 'Processing...', step = 1) {
+            progressText.textContent = text;
+            progressPercent.textContent = `${percent}%`;
+            progressFill.style.width = `${percent}%`;
+            
+            // Update step indicators
+            const steps = ['step1', 'step2', 'step3', 'step4'];
+            steps.forEach((stepId, index) => {
+                const stepElement = document.getElementById(stepId);
+                if (index < step) {
+                    stepElement.classList.add('completed');
+                    stepElement.classList.remove('active');
+                } else if (index === step - 1) {
+                    stepElement.classList.add('active');
+                    stepElement.classList.remove('completed');
+                } else {
+                    stepElement.classList.remove('active', 'completed');
+                }
+            });
+        }
+
+        // Submit files
+        async function submitFiles() {
+            if (selectedFiles.length === 0 || isUploading) return;
+            
+            isUploading = true;
+            updateUI();
+            
+            // Show progress
+            progressContainer.classList.add('active');
+            updateProgress(0, 'Preparing upload...', 1);
+            
+            try {
+                const formData = new FormData();
+                selectedFiles.forEach(file => formData.append('files', file));
+                
+                updateProgress(25, 'Uploading images...', 1);
+                
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                updateProgress(50, 'Processing images...', 2);
+                
+                setTimeout(() => {
+                    updateProgress(75, 'Running AI analysis...', 3);
+                }, 500);
+                
+                const result = await response.json();
+                
+                updateProgress(100, 'Analysis complete!', 4);
+                
+                if (response.ok) {
+                    showMessage(result.message || 'Images analyzed successfully! Redirecting to results...', 'success');
+                    
+                    // Redirect after success
+                    setTimeout(() => {
+                        window.location.href = '/view-images';
+                    }, 1500);
+                } else {
+                    throw new Error(result.message || 'Upload failed');
+                }
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                showMessage(error.message || 'Upload failed. Please try again.', 'error');
+                updateProgress(0, 'Upload failed', 1);
+                progressContainer.classList.remove('active');
+            }
+            
+            isUploading = false;
+            updateUI();
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize DOM elements
+            fileInput = document.getElementById('fileInput');
+            uploadZone = document.getElementById('uploadZone');
+            previewSection = document.getElementById('previewSection');
+            previewContainer = document.getElementById('previewContainer');
+            previewCount = document.getElementById('previewCount');
+            submitBtn = document.getElementById('submitBtn');
+            clearBtn = document.getElementById('clearBtn');
+            responseMessage = document.getElementById('responseMessage');
+            responseText = document.getElementById('responseText');
+            progressContainer = document.getElementById('progressContainer');
+            progressText = document.getElementById('progressText');
+            progressPercent = document.getElementById('progressPercent');
+            progressFill = document.getElementById('progressFill');
+            
+            // Verify elements exist
+            console.log('File input found:', !!fileInput);
+            console.log('Choose button found:', !!document.getElementById('chooseFilesBtn'));
+            
+            // Initialize event listeners
+            initializeEventListeners();
+            
+            updateUI();
+            
+            // Initialize Materialize components
+            if (typeof M !== 'undefined') {
+                M.AutoInit();
             }
         });
-    });
 
-    function removeImage(index) {
-        selectedFiles.splice(index, 1); // Remove the file from the array
+        function initializeEventListeners() {
+            // Choose files button
+            const chooseBtn = document.getElementById('chooseFilesBtn');
+            if (chooseBtn && fileInput) {
+                chooseBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Choose button clicked');
+                    fileInput.click();
+                });
+            }
+            
+            // File input change
+            if (fileInput) {
+                fileInput.addEventListener('change', function(e) {
+                    console.log('File input changed:', e.target.files.length);
+                    if (e.target.files.length > 0) {
+                        addFiles(e.target.files);
+                    }
+                });
+            }
 
-        // Update the file input to remove the deleted file
-        const dataTransfer = new DataTransfer();
-        selectedFiles.forEach(file => dataTransfer.items.add(file));
-        fileInput.files = dataTransfer.files;
+            // Drag and drop
+            if (uploadZone) {
+                uploadZone.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    uploadZone.classList.add('dragover');
+                });
 
-        // Refresh the preview
-        fileInput.dispatchEvent(new Event('change'));
-    }
+                uploadZone.addEventListener('dragleave', function(e) {
+                    e.preventDefault();
+                    uploadZone.classList.remove('dragover');
+                });
 
-    submitBtn.addEventListener('click', async function () {
-        if (selectedFiles.length === 0) {
-            responseMessage.innerText = "Please select at least one file to upload.";
-            responseMessage.style.color = "red";
-            return;
+                uploadZone.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    uploadZone.classList.remove('dragover');
+                    
+                    const files = e.dataTransfer.files;
+                    if (files.length > 0) {
+                        addFiles(files);
+                    }
+                });
+
+                // Also make the upload zone clickable
+                uploadZone.addEventListener('click', function(e) {
+                    // Only trigger if not clicking on the button itself
+                    if (e.target !== document.getElementById('chooseFilesBtn') && 
+                        !document.getElementById('chooseFilesBtn').contains(e.target)) {
+                        fileInput.click();
+                    }
+                });
+            }
+
+            // Button clicks
+            if (submitBtn) {
+                submitBtn.addEventListener('click', submitFiles);
+            }
+            
+            if (clearBtn) {
+                clearBtn.addEventListener('click', clearAllFiles);
+            }
         }
+    </script>
 
-        responseMessage.innerText = "Uploading...";
-        responseMessage.style.color = "yellow";
-        uploadBar.style.display = 'block';
-
-        const formData = new FormData();
-        selectedFiles.forEach(file => formData.append('files', file));
-
-        const response = await fetch('/upload', {
-            method: 'POST',
-            body: formData
-        });
-
-        const result = await response.json();
-        uploadBar.style.display = 'none';
-        responseMessage.innerText = result.message;
-        responseMessage.style.color = response.ok ? "green" : "red";
-
-        if (response.ok) {
-            setTimeout(() => {
-                window.location.href = '/view-images';
-            }, 1500);
-        }
-    });
-</script>
-<script src="/static/scripts.js"></script>
+    <script src="/static/scripts.js"></script>
 </body>
 </html>
