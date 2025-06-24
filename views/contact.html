@@ -3,32 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Us</title>
+    <title>Contact PlantGuard - Get in Touch</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="stylesheet" href="/static/style.css">
+    
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --surface-primary: #ffffff;
+            --surface-secondary: #f8fafc;
+            --border-primary: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #8b5cf6;
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+        }
+
+        [data-theme="dark"] {
+            --surface-primary: #0f172a;
+            --surface-secondary: #1e293b;
+            --border-primary: #475569;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
         body {
-            font-family: 'Montserrat', sans-serif;
-            background: var(--primary-gradient);
-            color: white;
+            font-family: 'Inter', sans-serif;
+            background: var(--surface-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
         }
+
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        [data-theme="dark"] .navbar-custom { background: rgba(15, 23, 42, 0.95); }
+
+        .nav-wrapper {
+            padding: 0 10rem;
+            height: 72px;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .brand-logo {
+            display: flex !important;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text-primary) !important;
+            text-decoration: none;
+        }
+
+        .brand-logo img {
+            height: 40px;
+            margin-right: 12px;
+            border-radius: var(--radius-xl);
+        }
+
+        .nav-wrapper ul li a {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            padding: 0.75rem 1rem !important;
+            border-radius: var(--radius-xl);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-wrapper ul li a:hover {
+            color: var(--accent-primary) !important;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
         .container {
-            margin-top: 60px;
-            max-width: 600px;
+            max-width: 800px;
+            margin: 100px auto 0;
+            padding: 2rem;
         }
-        .card-panel {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(6px);
-            border-radius: 10px;
-            padding: 30px;
-        }
-        footer {
-            margin-top: 60px;
-            padding: 20px;
+
+        .hero-section {
             text-align: center;
-            background: rgba(0,0,0,0.2);
+            margin-bottom: 3rem;
+        }
+
+        .hero-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .contact-card {
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-2xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+        }
+
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .contact-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .contact-info {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            text-decoration: none;
+            border-radius: var(--radius-xl);
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .contact-link:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .team-section {
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-2xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+            margin-bottom: 2rem;
+        }
+
+        .team-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .team-member {
+            text-align: center;
+            padding: 1rem;
+            background: var(--surface-secondary);
+            border-radius: var(--radius-xl);
+            transition: all 0.2s ease;
+        }
+
+        .team-member:hover { transform: translateY(-2px); }
+
+        .member-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .member-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.25rem;
+        }
+
+        .member-role {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .footer {
+            background: var(--surface-primary);
+            border-top: 1px solid var(--border-primary);
+            padding: 2rem 0;
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 3rem;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 56px;
+            height: 56px;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            color: var(--text-primary);
+            border-radius: 50%;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover { transform: scale(1.1); }
+
+        @media (max-width: 768px) {
+            .nav-wrapper { padding: 0 1rem; justify-content: center; }
+            .nav-wrapper ul { display: none; }
+            .container { padding: 1rem; }
+            .hero-title { font-size: 2rem; }
+            .contact-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
@@ -37,38 +283,104 @@
         <nav class="navbar-custom">
             <div class="nav-wrapper">
                 <a href="/" class="brand-logo">
-                    <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height:50px;margin-right:10px;">PlantGuard
+                    <img src="../static/logo.jpeg" alt="PlantGuard Logo">
+                    PlantGuard
                 </a>
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>Home</a></li>
-                    <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
-                    <li><a href="/about" class="waves-effect waves-light"><i class="material-icons left">info</i>About</a></li>
-                    <li><a href="/contact" class="waves-effect waves-light"><i class="material-icons left">contact_mail</i>Contact</a></li>
-                    <li><a href="/faq" class="waves-effect waves-light"><i class="material-icons left">help</i>FAQ</a></li>
+                    <li><a href="/"><i class="material-icons">home</i>Home</a></li>
+                    <li><a href="/view-images"><i class="material-icons">photo_library</i>Image Library</a></li>
+                    <li><a href="/about"><i class="material-icons">info</i>About</a></li>
+                    <li><a href="/contact"><i class="material-icons">contact_mail</i>Contact</a></li>
+                    <li><a href="/faq"><i class="material-icons">help</i>FAQ</a></li>
                 </ul>
             </div>
         </nav>
     </div>
 
     <div class="container">
-        <div class="card-panel">
-            <h4>Contact Us</h4>
-            <p>If you have any questions or feedback about PlantGuard, feel free to reach out:</p>
-            <ul>
-                <li>GitHub: <a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank">Project Repository</a></li>
-            </ul>
+        <div class="hero-section">
+            <h1 class="hero-title">Get in Touch</h1>
+            <p class="hero-subtitle">Have questions about PlantGuard? We'd love to hear from you. Reach out through any of the channels below.</p>
+        </div>
+
+        <div class="contact-grid">
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fab fa-github"></i>
+                </div>
+                <h3 class="contact-title">GitHub Repository</h3>
+                <p class="contact-info">View source code, report issues, and contribute to the project</p>
+                <a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank" class="contact-link">
+                    <i class="fas fa-external-link-alt"></i>
+                    Visit Repository
+                </a>
+            </div>
+
+            <div class="contact-card">
+                <div class="contact-icon">
+                    <i class="fas fa-bug"></i>
+                </div>
+                <h3 class="contact-title">Report Issues</h3>
+                <p class="contact-info">Found a bug or have a feature request? Let us know on GitHub</p>
+                <a href="https://github.com/VatsalyaBetala/plant-disease-classification/issues" target="_blank" class="contact-link">
+                    <i class="fas fa-exclamation-circle"></i>
+                    Report Issue
+                </a>
+            </div>
+        </div>
+
+        <div class="team-section">
+            <h3 class="team-title">Meet the Team</h3>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar">VB</div>
+                    <div class="member-name">Vatsalya Betala</div>
+                    <div class="member-role">AI/ML Lead</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">AA</div>
+                    <div class="member-name">Aarav Akali</div>
+                    <div class="member-role">Hardware & IoT</div>
+                </div>
+                <div class="team-member">
+                    <div class="member-avatar">SM</div>
+                    <div class="member-name">Sparsh Makharia</div>
+                    <div class="member-role">Backend & Business</div>
+                </div>
+            </div>
         </div>
     </div>
 
     <footer class="footer">
-        <p>&copy; 2024 PlantGuard</p>
+        <p>&copy; 2024 PlantGuard - Advanced Plant Disease Detection Platform</p>
     </footer>
 
-    <div class="dark-mode-toggle" onclick="toggleDarkMode()">
-        <i class="material-icons">brightness_4</i>
+    <div class="theme-toggle" onclick="toggleDarkMode()">
+        <i class="fas fa-moon" id="themeIcon"></i>
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="/static/scripts.js"></script>
+    <script>
+        function toggleDarkMode() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            document.getElementById('themeIcon').className = 'fas fa-sun';
+        }
+    </script>
 </body>
 </html>
