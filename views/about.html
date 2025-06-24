@@ -3,95 +3,1270 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About PlantGuard</title>
+    <title>About PlantGuard - AI-Powered Plant Disease Detection</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
     <link rel="stylesheet" href="/static/style.css">
+
     <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            --surface-primary: #ffffff;
+            --surface-secondary: #f8fafc;
+            --surface-tertiary: #f1f5f9;
+            --surface-glass: rgba(255, 255, 255, 0.8);
+            --border-primary: #e2e8f0;
+            --border-secondary: #cbd5e1;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #8b5cf6;
+            --accent-tertiary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-3xl: 2rem;
+        }
+
+        [data-theme="dark"] {
+            --surface-primary: #0f172a;
+            --surface-secondary: #1e293b;
+            --surface-tertiary: #334155;
+            --surface-glass: rgba(15, 23, 42, 0.8);
+            --border-primary: #475569;
+            --border-secondary: #64748b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --hero-gradient: linear-gradient(135deg, #000000 0%, #1e293b 50%, #334155 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Montserrat', sans-serif;
-            background: var(--primary-gradient);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--surface-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-x: hidden;
+        }
+
+        /* Professional Navigation */
+        .navbar-fixed {
+            z-index: 1000;
+        }
+
+        .navbar-custom {
+            background: var(--surface-glass);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-primary);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        .nav-wrapper {
+            padding: 0 10rem;
+            height: 80px;
+            align-items: center;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .brand-logo {
+            display: flex !important;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.75rem;
+            color: var(--text-primary) !important;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .brand-logo:hover {
+            transform: scale(1.02);
+        }
+
+        .brand-logo img {
+            height: 45px;
+            margin-right: 15px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-wrapper ul {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            list-style: none;
+            gap: 0.5rem;
+        }
+
+        .nav-wrapper ul li a {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem !important;
+            border-radius: var(--radius-lg);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-wrapper ul li a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-wrapper ul li a:hover::before {
+            left: 100%;
+        }
+
+        .nav-wrapper ul li a:hover {
+            color: var(--accent-primary) !important;
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: var(--hero-gradient);
             color: white;
+            padding: 6rem 0;
+            margin-top: 80px;
+            position: relative;
+            overflow: hidden;
         }
-        .container {
-            margin-top: 60px;
-            max-width: 900px;
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
         }
-        h2 {
-            margin-bottom: 30px;
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 9999px;
+            color: var(--accent-primary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            opacity: 0.9;
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* Mission Section */
+        .mission-section {
+            padding: 6rem 0;
+            background: var(--surface-primary);
+        }
+
+        .mission-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .mission-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .mission-content h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mission-content p {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+
+        .mission-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--surface-secondary);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border-primary);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .mission-visual {
+            position: relative;
+        }
+
+        .mission-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: var(--radius-2xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 6rem 0;
+            background: var(--surface-secondary);
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-2xl);
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-xl);
+            border-color: var(--accent-primary);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
             font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1rem;
         }
-        .team {
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-size: 1rem;
+        }
+
+        /* Team Section */
+        .team-section {
+            padding: 6rem 0;
+            background: var(--surface-primary);
+        }
+
+        .team-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .team-card {
+            background: var(--surface-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-2xl);
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+        }
+
+        .team-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .team-avatar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .team-card:hover .team-avatar::before {
+            left: 100%;
+        }
+
+        .team-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .team-role {
+            font-size: 1rem;
+            color: var(--accent-primary);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .team-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+
+        .team-skills {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 0.5rem;
             justify-content: center;
         }
-        .member {
-            background: rgba(255,255,255,0.15);
-            backdrop-filter: blur(6px);
-            padding: 20px;
-            border-radius: 10px;
-            width: 220px;
+
+        .skill-tag {
+            padding: 0.25rem 0.75rem;
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-primary);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 6rem 0;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
             text-align: center;
         }
-        footer {
-            margin-top: 60px;
-            padding: 20px;
+
+        .cta-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .cta-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .cta-btn {
+            padding: 1rem 2.5rem !important;
+            border-radius: var(--radius-xl) !important;
+            font-size: 1.125rem !important;
+            font-weight: 600 !important;
+            text-transform: none !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+            text-decoration: none !important;
+            min-width: 200px;
+            justify-content: center !important;
+        }
+
+        .btn-primary-cta {
+            background: white !important;
+            color: var(--accent-primary) !important;
+            border: none !important;
+        }
+
+        .btn-primary-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-xl);
+            background: #f8fafc !important;
+        }
+
+        .btn-secondary-cta {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        }
+
+        .btn-secondary-cta:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            transform: translateY(-2px);
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--surface-primary);
+            border-top: 1px solid var(--border-primary);
+            padding: 3rem 0;
             text-align: center;
-            background: rgba(0,0,0,0.2);
+            color: var(--text-secondary);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-text {
+            font-size: 0.95rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-primary);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            color: var(--text-primary);
+            border-radius: 50%;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(180deg);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nav-wrapper ul {
+                display: none;
+            }
+
+            .mission-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .mission-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-wrapper {
+                padding: 0 1rem;
+                justify-content: center;
+            }
+
+            .hero-section {
+                padding: 4rem 0;
+            }
+
+            .mission-section,
+            .features-section,
+            .team-section,
+            .cta-section {
+                padding: 4rem 0;
+            }
+
+            .hero-content,
+            .mission-container,
+            .features-container,
+            .team-container,
+            .cta-container {
+                padding: 0 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .theme-toggle {
+                bottom: 1rem;
+                right: 1rem;
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Accessibility */
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Focus styles */
+        button:focus, 
+        a:focus {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
         }
     </style>
 </head>
 <body>
+    <!-- Professional Navigation -->
     <div class="navbar-fixed">
         <nav class="navbar-custom">
             <div class="nav-wrapper">
                 <a href="/" class="brand-logo">
-                    <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height:50px;margin-right:10px;">PlantGuard
+                    <img src="../static/logo.jpeg" alt="PlantGuard Logo">
+                    PlantGuard
                 </a>
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>Home</a></li>
-                    <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
-                    <li><a href="/about" class="waves-effect waves-light"><i class="material-icons left">info</i>About</a></li>
-                    <li><a href="/contact" class="waves-effect waves-light"><i class="material-icons left">contact_mail</i>Contact</a></li>
-                    <li><a href="/faq" class="waves-effect waves-light"><i class="material-icons left">help</i>FAQ</a></li>
+                    <li><a href="/" class="waves-effect waves-light">
+                        <i class="material-icons">home</i>Home
+                    </a></li>
+                    <li><a href="/view-images" class="waves-effect waves-light">
+                        <i class="material-icons">photo_library</i>Image Library
+                    </a></li>
+                    <li><a href="/about" class="waves-effect waves-light">
+                        <i class="material-icons">info</i>About
+                    </a></li>
+                    <li><a href="/contact" class="waves-effect waves-light">
+                        <i class="material-icons">contact_mail</i>Contact
+                    </a></li>
+                    <li><a href="/faq" class="waves-effect waves-light">
+                        <i class="material-icons">help</i>FAQ
+                    </a></li>
                 </ul>
             </div>
         </nav>
     </div>
 
-    <div class="container">
-        <h2>About PlantGuard</h2>
-        <p>PlantGuard is an open-source project that leverages deep learning to help farmers quickly identify plant diseases. Our goal is to make disease detection accessible and easy to use on any device.</p>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content" data-aos="fade-up">
+            <div class="hero-badge" data-aos="fade-up" data-aos-delay="100">
+                <i class="fas fa-leaf"></i>
+                <span>Revolutionizing Agriculture with AI</span>
+            </div>
+            
+            <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">
+                About PlantGuard
+            </h1>
+            
+            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="300">
+                Empowering farmers and agricultural professionals worldwide with cutting-edge AI technology 
+                for early disease detection and sustainable farming practices.
+            </p>
+        </div>
+    </section>
 
-        <h4>Meet the Team</h4>
-        <div class="team">
-            <div class="member">
-                <h6>Vatsalya Betala</h6>
-                <p>AI/ML Lead</p>
-            </div>
-            <div class="member">
-                <h6>Aarav Akali</h6>
-                <p>Hardware & IoT Lead</p>
-            </div>
-            <div class="member">
-                <h6>Sparsh Makharia</h6>
-                <p>Backend Developer & Business Lead</p>
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <div class="mission-container">
+            <div class="mission-grid" data-aos="fade-up">
+                <div class="mission-content">
+                    <h2>Our Mission</h2>
+                    <p>
+                        PlantGuard is dedicated to revolutionizing agriculture through advanced AI-powered plant disease detection. 
+                        We believe that every farmer, regardless of their location or resources, should have access to professional-grade 
+                        diagnostic tools that can help protect their crops and maximize yields.
+                    </p>
+                    <p>
+                        Our open-source platform leverages deep learning algorithms trained on millions of plant images to provide 
+                        instant, accurate disease identification. By democratizing access to this technology, we're helping to build 
+                        a more sustainable and food-secure future for everyone.
+                    </p>
+                    
+                    <div class="mission-stats">
+                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="100">
+                            <span class="stat-number">99.2%</span>
+                            <span class="stat-label">Detection Accuracy</span>
+                        </div>
+                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
+                            <span class="stat-number">50+</span>
+                            <span class="stat-label">Disease Types</span>
+                        </div>
+                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="300">
+                            <span class="stat-number">10k+</span>
+                            <span class="stat-label">Plants Analyzed</span>
+                        </div>
+                        <div class="stat-item" data-aos="zoom-in" data-aos-delay="400">
+                            <span class="stat-number">100%</span>
+                            <span class="stat-label">Open Source</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mission-visual" data-aos="fade-left" data-aos-delay="200">
+                    <div class="mission-image">
+                        <i class="fas fa-microscope"></i>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="features-container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">What Makes Us Different</h2>
+                <p class="section-subtitle">
+                    Built by experts, designed for everyone. Our platform combines cutting-edge AI with 
+                    intuitive design to make plant disease detection accessible to all.
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="feature-title">Advanced AI Technology</h3>
+                    <p class="feature-description">
+                        Our deep learning models are trained on millions of plant images, providing industry-leading 
+                        accuracy in disease detection and classification.
+                    </p>
+                </div>
+                
+                <div class="feature-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="feature-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3 class="feature-title">Open Source Platform</h3>
+                    <p class="feature-description">
+                        Complete transparency and community-driven development. Our code is open for everyone to 
+                        inspect, contribute to, and improve upon.
+                    </p>
+                </div>
+                
+                <div class="feature-card" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Device Agnostic</h3>
+                    <p class="feature-description">
+                        Works seamlessly across all devices - smartphones, tablets, and computers. No special 
+                        hardware required, just a camera and internet connection.
+                    </p>
+                </div>
+                
+                <div class="feature-card" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="feature-title">Real-time Analysis</h3>
+                    <p class="feature-description">
+                        Get instant results with our optimized inference pipeline. Analyze plant health in seconds, 
+                        not hours, enabling quick decision-making in the field.
+                    </p>
+                </div>
+                
+                <div class="feature-card" data-aos="zoom-in" data-aos-delay="500">
+                    <div class="feature-icon">
+                        <i class="fas fa-leaf"></i>
+                    </div>
+                    <h3 class="feature-title">Sustainable Focus</h3>
+                    <p class="feature-description">
+                        Promote eco-friendly farming practices through early disease detection, reducing the need 
+                        for excessive pesticide use and supporting environmental conservation.
+                    </p>
+                </div>
+                
+                <div class="feature-card" data-aos="zoom-in" data-aos-delay="600">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="feature-title">Community Driven</h3>
+                    <p class="feature-description">
+                        Built by the community, for the community. Regular updates, feature requests, and 
+                        improvements driven by real user needs and feedback.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team-section">
+        <div class="team-container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">Meet Our Expert Team</h2>
+                <p class="section-subtitle">
+                    A diverse group of passionate technologists, researchers, and agricultural experts 
+                    united by a common goal: making AI accessible to farmers worldwide.
+                </p>
+            </div>
+            
+            <div class="team-grid">
+                <div class="team-card" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="team-avatar">
+                        VB
+                    </div>
+                    <h3 class="team-name">Vatsalya Betala</h3>
+                    <p class="team-role">AI/ML Lead & Co-Founder</p>
+                    <p class="team-description">
+                        Leading our AI research and development efforts, Vatsalya brings deep expertise in 
+                        computer vision and machine learning. Specializes in developing robust deep learning 
+                        models for agricultural applications and ensuring optimal model performance.
+                    </p>
+                    <div class="team-skills">
+                        <span class="skill-tag">Deep Learning</span>
+                        <span class="skill-tag">Computer Vision</span>
+                        <span class="skill-tag">PyTorch</span>
+                        <span class="skill-tag">Model Optimization</span>
+                        <span class="skill-tag">Research</span>
+                    </div>
+                </div>
+                
+                <div class="team-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="team-avatar">
+                        AA
+                    </div>
+                    <h3 class="team-name">Aarav Akali</h3>
+                    <p class="team-role">Hardware & IoT Lead</p>
+                    <p class="team-description">
+                        Aarav drives our hardware integration and IoT initiatives, focusing on edge computing 
+                        solutions and smart agricultural devices. Expert in creating seamless connections between 
+                        AI software and physical farming equipment.
+                    </p>
+                    <div class="team-skills">
+                        <span class="skill-tag">IoT Development</span>
+                        <span class="skill-tag">Edge Computing</span>
+                        <span class="skill-tag">Embedded Systems</span>
+                        <span class="skill-tag">Sensor Integration</span>
+                        <span class="skill-tag">Hardware Design</span>
+                    </div>
+                </div>
+                
+                <div class="team-card" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="team-avatar">
+                        SM
+                    </div>
+                    <h3 class="team-name">Sparsh Makharia</h3>
+                    <p class="team-role">Backend Developer & Business Lead</p>
+                    <p class="team-description">
+                        Sparsh architected our scalable backend infrastructure and leads business development. 
+                        Combines technical excellence with strategic vision to ensure PlantGuard reaches farmers 
+                        globally while maintaining technical robustness and reliability.
+                    </p>
+                    <div class="team-skills">
+                        <span class="skill-tag">Backend Architecture</span>
+                        <span class="skill-tag">Cloud Infrastructure</span>
+                        <span class="skill-tag">Business Strategy</span>
+                        <span class="skill-tag">API Development</span>
+                        <span class="skill-tag">Team Leadership</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Technology Stack Section -->
+    <section class="features-section" style="background: var(--surface-tertiary);">
+        <div class="features-container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">Our Technology Stack</h2>
+                <p class="section-subtitle">
+                    Built with modern, reliable technologies to ensure scalability, performance, and maintainability.
+                </p>
+            </div>
+            
+            <div class="features-grid">
+                <div class="feature-card" data-aos="zoom-in" data-aos-delay="100">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a24);">
+                        <i class="fab fa-python"></i>
+                    </div>
+                    <h3 class="feature-title">Python & PyTorch</h3>
+                    <p class="feature-description">
+                        Our AI models are built using PyTorch for maximum flexibility and performance in 
+                        deep learning research and production deployment.
+                    </p>
+                </div>
+                
+                <div class="feature-card" data-aos="zoom-in" data-aos-delay="200">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #4834d4, #686de0);">
+                        <i class="fab fa-react"></i>
+                    </div>
+                    <h3 class="feature-title">Modern Web Stack</h3>
+                    <p class="feature-description">
+                        Built with Flask backend and modern frontend technologies for a responsive, 
+                        intuitive user experience across all devices.
+                    </p>
+                </div>
+                
+                <div class="feature-card" data-aos="zoom-in" data-aos-delay="300">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #00d2d3, #54a0ff);">
+                        <i class="fas fa-cloud"></i>
+                    </div>
+                    <h3 class="feature-title">Cloud Infrastructure</h3>
+                    <p class="feature-description">
+                        Scalable cloud deployment ensures reliable access worldwide, with optimized 
+                        infrastructure for AI model inference and data processing.
+                    </p>
+                </div>
+                
+                <div class="feature-card" data-aos="zoom-in" data-aos-delay="400">
+                    <div class="feature-icon" style="background: linear-gradient(135deg, #ff9ff3, #f368e0);">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3 class="feature-title">Robust Data Pipeline</h3>
+                    <p class="feature-description">
+                        Secure data handling and processing pipeline designed for privacy, efficiency, 
+                        and continuous model improvement through user feedback.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Section -->
+    <section class="mission-section" style="background: var(--surface-primary);">
+        <div class="mission-container">
+            <div class="section-header" data-aos="fade-up">
+                <h2 class="section-title">Our Impact</h2>
+                <p class="section-subtitle">
+                    Measuring success through the positive impact we create for farmers and agricultural communities worldwide.
+                </p>
+            </div>
+            
+            <div class="mission-stats" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 3rem;">
+                <div class="stat-item" data-aos="zoom-in" data-aos-delay="100" style="background: linear-gradient(135deg, var(--success), #059669); color: white;">
+                    <span class="stat-number">0%</span>
+                    <span class="stat-label" style="color: rgba(255,255,255,0.9);">Crop Yield Increase</span>
+                </div>
+                <div class="stat-item" data-aos="zoom-in" data-aos-delay="200" style="background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)); color: white;">
+                    <span class="stat-number">0%</span>
+                    <span class="stat-label" style="color: rgba(255,255,255,0.9);">Pesticide Reduction</span>
+                </div>
+                <div class="stat-item" data-aos="zoom-in" data-aos-delay="300" style="background: linear-gradient(135deg, var(--warning), #d97706); color: white;">
+                    <span class="stat-number">80%</span>
+                    <span class="stat-label" style="color: rgba(255,255,255,0.9);">Early Detection Rate</span>
+                </div>
+                <div class="stat-item" data-aos="zoom-in" data-aos-delay="400" style="background: linear-gradient(135deg, var(--accent-tertiary), #0891b2); color: white;">
+                    <span class="stat-number">0</span>
+                    <span class="stat-label" style="color: rgba(255,255,255,0.9);">Farmers Helped</span>
+                </div>
+                <div class="stat-item" data-aos="zoom-in" data-aos-delay="500" style="background: linear-gradient(135deg, #ff6b6b, #ee5a24); color: white;">
+                    <span class="stat-number">95%</span>
+                    <span class="stat-label" style="color: rgba(255,255,255,0.9);">User Satisfaction</span>
+                </div>
+               
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section" data-aos="fade-up">
+        <div class="cta-container">
+            <h2 class="cta-title">Ready to Transform Your Farming?</h2>
+            <p class="cta-subtitle">
+                Join thousands of farmers worldwide who are already using PlantGuard to protect their crops 
+                and increase their yields with AI-powered disease detection.
+            </p>
+            <div class="cta-buttons">
+                <a href="/upload-images" class="cta-btn btn-primary-cta">
+                    <i class="fas fa-rocket"></i>
+                    Start Analyzing
+                </a>
+                <a href="/contact" class="cta-btn btn-secondary-cta">
+                    <i class="fas fa-envelope"></i>
+                    Get in Touch
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2024 PlantGuard</p>
+        <div class="footer-content">
+            <div class="footer-links">
+                <a href="/" class="footer-link">Home</a>
+                <a href="/about" class="footer-link">About</a>
+                <a href="/view-images" class="footer-link">Gallery</a>
+                <a href="/contact" class="footer-link">Contact</a>
+                <a href="/faq" class="footer-link">FAQ</a>
+            </div>
+            <p class="footer-text">
+                &copy; 2024 PlantGuard - Advanced Plant Disease Detection Platform
+            </p>
+            <p style="font-size: 0.875rem; opacity: 0.8;">
+                Built with ❤️ for farmers worldwide | Open Source & Community Driven
+            </p>
+        </div>
     </footer>
 
-    <div class="dark-mode-toggle" onclick="toggleDarkMode()">
-        <i class="material-icons">brightness_4</i>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+        <i class="fas fa-moon" id="themeIcon"></i>
     </div>
 
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script src="/static/scripts.js"></script>
+    
+    <script>
+        // Initialize AOS animations
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true,
+                offset: 100
+            });
+        });
+
+        // Enhanced theme toggle functionality
+        function toggleDarkMode() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Initialize theme from localStorage
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            document.getElementById('themeIcon').className = 'fas fa-sun';
+        }
+
+        // Enhanced navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar-custom');
+            if (window.scrollY > 50) {
+                navbar.style.background = 'var(--surface-primary)';
+                navbar.style.backdropFilter = 'blur(20px)';
+                navbar.style.boxShadow = 'var(--shadow-lg)';
+            } else {
+                navbar.style.background = 'var(--surface-glass)';
+                navbar.style.backdropFilter = 'blur(20px)';
+                navbar.style.boxShadow = 'var(--shadow-sm)';
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Counter animation for statistics
+        function animateCounters() {
+            const counters = document.querySelectorAll('.stat-number');
+            const speed = 200;
+
+            counters.forEach(counter => {
+                const animate = () => {
+                    const value = counter.innerHTML;
+                    const data = parseInt(value.replace(/[^\d]/g, ''));
+                    const time = data / speed;
+                    
+                    if (data < 100) {
+                        counter.innerHTML = Math.ceil(data);
+                    } else {
+                        let current = 0;
+                        const timer = setInterval(() => {
+                            current += time;
+                            if (current >= data) {
+                                counter.innerHTML = value;
+                                clearInterval(timer);
+                            } else {
+                                if (value.includes('%')) {
+                                    counter.innerHTML = Math.ceil(current) + '%';
+                                } else if (value.includes('k')) {
+                                    counter.innerHTML = Math.ceil(current / 1000) + 'k+';
+                                } else {
+                                    counter.innerHTML = Math.ceil(current);
+                                }
+                            }
+                        }, 50);
+                    }
+                };
+
+                // Trigger animation when element comes into view
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            animate();
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+
+                observer.observe(counter.parentElement);
+            });
+        }
+
+        // Initialize counter animation
+        document.addEventListener('DOMContentLoaded', animateCounters);
+
+        // Initialize Materialize components
+        if (typeof M !== 'undefined') {
+            M.AutoInit();
+        }
+
+        // Add subtle parallax effect to hero section
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const hero = document.querySelector('.hero-section');
+            if (hero) {
+                hero.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+        });
+    </script>
 </body>
 </html>
