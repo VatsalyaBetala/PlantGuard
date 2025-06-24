@@ -3,189 +3,793 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Record Video</title>
+    <title>PlantGuard - Live Plant Analysis</title>
 
-    <!-- Materialize CSS -->
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="stylesheet" href="/static/style.css">
 
     <style>
-        /* Global Styles */
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            --surface-primary: #ffffff;
+            --surface-secondary: #f8fafc;
+            --surface-tertiary: #f1f5f9;
+            --surface-glass: rgba(255, 255, 255, 0.8);
+            --border-primary: #e2e8f0;
+            --border-secondary: #cbd5e1;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #8b5cf6;
+            --accent-tertiary: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-3xl: 2rem;
+        }
+
+        [data-theme="dark"] {
+            --surface-primary: #0f172a;
+            --surface-secondary: #1e293b;
+            --surface-tertiary: #334155;
+            --surface-glass: rgba(15, 23, 42, 0.8);
+            --border-primary: #475569;
+            --border-secondary: #64748b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --hero-gradient: linear-gradient(135deg, #000000 0%, #1e293b 50%, #334155 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: 'Montserrat', sans-serif;
-            background: var(--primary-gradient);
-            color: white;
-            transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--surface-secondary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-x: hidden;
+        }
+
+        /* Professional Navigation */
+        .navbar-fixed {
+            z-index: 1000;
+        }
+
+        .navbar-custom {
+            background: var(--surface-glass);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-primary);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
         }
 
         .nav-wrapper {
-            padding: 0 10%;
-        }
-
-        .container {
-            margin: 0 auto;
-            width: 90%;
-            max-width: 900px;
-            text-align: center;
-            padding-top: 80px;
-        }
-
-        /* Video Container */
-        .video-container {
-            margin-top: 20px;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            border-radius: 10px;
-            padding: 20px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-            min-height: 400px;
-        }
-
-        video {
-            display: block;
-            width: 100%;
-            max-width: 800px;
-            height: auto;
-            border-radius: 10px;
-            background-color: black;
-            margin: 0 auto;
-        }
-
-        /* Controls - Button Layout Fix */
-        .controls {
-            display: flex;
-            flex-direction: column;
+            padding: 0 10rem;
+            height: 80px;
             align-items: center;
-            gap: 15px;
-            margin-top: 20px;
+            justify-content: space-between;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
         }
 
-        .controls .btn {
+        .brand-logo {
+            display: flex !important;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.75rem;
+            color: var(--text-primary) !important;
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        .brand-logo:hover {
+            transform: scale(1.02);
+        }
+
+        .brand-logo img {
+            height: 45px;
+            margin-right: 15px;
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-wrapper ul {
+            display: flex;
+            align-items: center;
+            margin: 0;
+            list-style: none;
+            gap: 0.5rem;
+        }
+
+        .nav-wrapper ul li a {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem !important;
+            border-radius: var(--radius-lg);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+        }
+
+        .nav-wrapper ul li a:hover {
+            color: var(--accent-primary) !important;
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: var(--hero-gradient);
+            color: white;
+            padding: 4rem 0;
+            margin-top: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 9999px;
+            color: var(--accent-primary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.125rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Video Card */
+        .video-card {
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-3xl);
+            box-shadow: var(--shadow-2xl);
+            overflow: hidden;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .video-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            padding: 2.5rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+
+        .card-header h3 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            white-space: nowrap;
-            padding: 15px 30px;
-            border-radius: 5px;
-            font-size: 1.2em;
-            transition: transform 0.3s ease-in-out;
-            width: auto;
-            min-width: 220px;
+            gap: 1rem;
         }
 
-        .controls .btn i {
-            font-size: 1.5rem;
-            margin-right: 8px;
+        .card-header p {
+            opacity: 0.95;
+            font-size: 1.125rem;
         }
 
-        .controls .btn:hover {
-            transform: scale(1.05);
+        .video-container {
+            padding: 3rem;
+            background: var(--surface-secondary);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 500px;
         }
 
-        .progress {
-            margin-top: 20px;
+        #video {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-xl);
+            background: #000;
+            border: 3px solid var(--border-primary);
+            transition: all 0.3s ease;
         }
 
-        footer {
-            margin-top: 50px;
-            padding: 20px;
+        #video.recording {
+            border-color: var(--error);
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+        }
+
+        .video-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            background: var(--surface-tertiary);
+            border: 2px dashed var(--border-secondary);
+            border-radius: var(--radius-2xl);
+            color: var(--text-muted);
+        }
+
+        .placeholder-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--accent-primary);
+        }
+
+        .placeholder-text {
+            font-size: 1.125rem;
+            font-weight: 500;
+        }
+
+        /* Controls Section */
+        .controls-section {
+            padding: 2.5rem 3rem;
+            background: var(--surface-secondary);
+            border-top: 1px solid var(--border-primary);
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 1.25rem 3rem !important;
+            border-radius: var(--radius-xl) !important;
+            font-size: 1.125rem !important;
+            font-weight: 600 !important;
+            text-transform: none !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.75rem !important;
+            min-width: 200px;
+            justify-content: center !important;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .control-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s;
+        }
+
+        .control-btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-connect {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-connect:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .btn-start {
+            background: linear-gradient(135deg, var(--success), #059669) !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-start:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .btn-stop {
+            background: linear-gradient(135deg, var(--error), #dc2626) !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-stop:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        .control-btn:disabled {
+            opacity: 0.5 !important;
+            cursor: not-allowed !important;
+            transform: none !important;
+        }
+
+        /* Status Indicator */
+        .status-section {
+            padding: 2rem 3rem;
+            background: var(--surface-tertiary);
+            border-top: 1px solid var(--border-primary);
+            display: none;
+        }
+
+        .status-section.active {
+            display: block;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .recording-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--error);
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .status-text {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .frame-counter {
             text-align: center;
-            background: rgba(0, 0, 0, 0.2);
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            padding: 1.5rem 3rem;
+            background: var(--surface-tertiary);
+            border-top: 1px solid var(--border-primary);
+            display: none;
+        }
+
+        .progress-section.active {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--border-primary);
+            border-radius: 9999px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            border-radius: 9999px;
+            animation: progress-shimmer 2s infinite;
+        }
+
+        @keyframes progress-shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--surface-primary);
+            border-top: 1px solid var(--border-primary);
+            padding: 3rem 0;
+            text-align: center;
+            color: var(--text-secondary);
+            margin-top: 4rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 60px;
+            height: 60px;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            color: var(--text-primary);
+            border-radius: 50%;
+            box-shadow: var(--shadow-xl);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(180deg);
+            box-shadow: var(--shadow-2xl);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .nav-wrapper ul {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-wrapper {
+                padding: 0 1rem;
+                justify-content: center;
+            }
+
+            .hero-section {
+                padding: 3rem 0;
+            }
+
+            .main-container {
+                padding: 2rem 1rem;
+            }
+
+            .video-container {
+                padding: 2rem;
+            }
+
+            .controls-section {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+            }
+
+            .theme-toggle {
+                bottom: 1rem;
+                right: 1rem;
+                width: 50px;
+                height: 50px;
+            }
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 3px solid var(--border-primary);
+            border-top: 3px solid var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
+    <!-- Professional Navigation -->
     <div class="navbar-fixed">
         <nav class="navbar-custom">
             <div class="nav-wrapper">
                 <a href="#!" class="brand-logo">
-                    <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height: 50px; margin-right: 10px;">
+                    <img src="../static/logo.jpeg" alt="PlantGuard Logo">
                     PlantGuard
                 </a>
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>Home</a></li>
-                    <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
-                    <li><a href="/about" class="waves-effect waves-light"><i class="material-icons left">info</i>About</a></li>
-                    <li><a href="/contact" class="waves-effect waves-light"><i class="material-icons left">contact_mail</i>Contact</a></li>
-                    <li><a href="/faq" class="waves-effect waves-light"><i class="material-icons left">help</i>FAQ</a></li>
+                    <li><a href="/" class="waves-effect waves-light">
+                        <i class="material-icons">home</i>Home
+                    </a></li>
+                    <li><a href="/view-images" class="waves-effect waves-light">
+                        <i class="material-icons">photo_library</i>Image Library
+                    </a></li>
+                    <li><a href="/about" class="waves-effect waves-light">
+                        <i class="material-icons">info</i>About
+                    </a></li>
+                    <li><a href="/contact" class="waves-effect waves-light">
+                        <i class="material-icons">contact_mail</i>Contact
+                    </a></li>
+                    <li><a href="/faq" class="waves-effect waves-light">
+                        <i class="material-icons">help</i>FAQ
+                    </a></li>
                 </ul>
             </div>
         </nav>
     </div>
 
-    <div class="container">
-        <h2>🎥 Record Video</h2>
-        <div class="video-container">
-            <video id="video" autoplay muted></video>
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content" data-aos="fade-up">
+            <div class="hero-badge" data-aos="fade-up" data-aos-delay="100">
+                <i class="fas fa-video"></i>
+                <span>Real-time Plant Analysis</span>
+            </div>
+            
+            <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">
+                Live Plant Disease Detection
+            </h1>
+            
+            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="300">
+                Use your camera to record and analyze plant health in real-time. 
+                Our AI continuously monitors your plants for disease detection.
+            </p>
         </div>
-        <div class="controls">
-            <button id="connectCamera" class="btn accent-btn">
-                <i class="material-icons left">videocam</i>Connect Camera
-            </button>
-            <button id="startRecording" class="btn accent-btn" disabled>
-                <i class="material-icons left">play_arrow</i>Start Recording
-            </button>
-            <button id="stopRecording" class="btn red darken-2" disabled>
-                <i class="material-icons left">stop</i>Stop Recording
-            </button>
-        </div>
-        <div class="progress" id="progressBar" style="display: none;">
-            <div class="indeterminate"></div>
+    </section>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Video Recording Card -->
+        <div class="video-card" data-aos="fade-up" data-aos-delay="200">
+            <div class="card-header">
+                <h3>
+                    <i class="fas fa-video"></i>
+                    Live Camera Feed
+                </h3>
+                <p>Connect your camera and start recording for real-time plant analysis</p>
+            </div>
+
+            <div class="video-container">
+                <div class="video-placeholder" id="videoPlaceholder">
+                    <i class="fas fa-video-slash placeholder-icon"></i>
+                    <div class="placeholder-text">Camera not connected</div>
+                </div>
+                <video id="video" autoplay muted style="display: none;"></video>
+            </div>
+
+            <!-- Controls Section -->
+            <div class="controls-section">
+                <button id="connectCamera" class="control-btn btn-connect">
+                    <i class="fas fa-camera"></i>
+                    Connect Camera
+                </button>
+                <button id="startRecording" class="control-btn btn-start" disabled>
+                    <i class="fas fa-play"></i>
+                    Start Recording
+                </button>
+                <button id="stopRecording" class="control-btn btn-stop" disabled>
+                    <i class="fas fa-stop"></i>
+                    Stop Recording
+                </button>
+            </div>
+
+            <!-- Status Section -->
+            <div class="status-section" id="statusSection">
+                <div class="status-indicator">
+                    <div class="recording-dot"></div>
+                    <div class="status-text">Recording in progress...</div>
+                </div>
+                <div class="frame-counter" id="frameCounter">Frames captured: 0</div>
+            </div>
+
+            <!-- Progress Section -->
+            <div class="progress-section" id="progressSection">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2024 PlantGuard</p>
+        <p>&copy; 2024 PlantGuard - Advanced Plant Disease Detection Platform</p>
     </footer>
 
-
-    <div class="dark-mode-toggle" onclick="toggleDarkMode()">
-        <i class="material-icons">brightness_4</i>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+        <i class="fas fa-moon" id="themeIcon"></i>
     </div>
-    <!-- Materialize JS -->
+
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
+        // Initialize AOS animations
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true,
+                offset: 100
+            });
+        });
+
+        // Theme Management
+        function toggleDarkMode() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Initialize theme
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            document.getElementById('themeIcon').className = 'fas fa-sun';
+        }
+
+        // Video Recording Logic
         const video = document.getElementById('video');
+        const videoPlaceholder = document.getElementById('videoPlaceholder');
         const connectCameraBtn = document.getElementById('connectCamera');
         const startRecordingBtn = document.getElementById('startRecording');
         const stopRecordingBtn = document.getElementById('stopRecording');
-        const progressBar = document.getElementById('progressBar');
+        const statusSection = document.getElementById('statusSection');
+        const progressSection = document.getElementById('progressSection');
+        const frameCounter = document.getElementById('frameCounter');
 
         let mediaStream = null;
         let recording = false;
         let frameCaptureInterval = null;
-        let frameCounter = 0;
+        let frameCount = 0;
 
         // Connect to the webcam
         connectCameraBtn.addEventListener('click', async () => {
             try {
-                mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+                connectCameraBtn.innerHTML = '<div class="loading-spinner"></div> Connecting...';
+                connectCameraBtn.disabled = true;
+
+                mediaStream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 1280, height: 720 } 
+                });
+                
                 video.srcObject = mediaStream;
                 await video.play();
+                
+                // Hide placeholder and show video
+                videoPlaceholder.style.display = 'none';
+                video.style.display = 'block';
+                
                 startRecordingBtn.disabled = false;
-                M.toast({ html: 'Camera connected', classes: 'green' });
+                connectCameraBtn.innerHTML = '<i class="fas fa-camera"></i> Camera Connected';
+                connectCameraBtn.style.background = 'linear-gradient(135deg, var(--success), #059669)';
+                
+                M.toast({ html: '📹 Camera connected successfully!', classes: 'green' });
                 console.log('Camera connected');
             } catch (err) {
                 console.error('Error accessing the camera:', err);
-                M.toast({ html: 'Failed to access camera', classes: 'red' });
+                connectCameraBtn.innerHTML = '<i class="fas fa-camera"></i> Connect Camera';
+                connectCameraBtn.disabled = false;
+                M.toast({ html: '❌ Failed to access camera. Please check permissions.', classes: 'red' });
             }
         });
 
         // Start recording
         startRecordingBtn.addEventListener('click', () => {
             if (!mediaStream) {
-                M.toast({ html: 'Please connect the camera first', classes: 'orange' });
+                M.toast({ html: '⚠️ Please connect the camera first', classes: 'orange' });
                 return;
             }
 
             recording = true;
-            progressBar.style.display = 'block';
+            frameCount = 0;
+            
+            // Update UI
+            video.classList.add('recording');
+            statusSection.classList.add('active');
+            progressSection.classList.add('active');
             startRecordingBtn.disabled = true;
             stopRecordingBtn.disabled = false;
-            M.toast({ html: 'Recording started', classes: 'green' });
-
+            startRecordingBtn.innerHTML = '<i class="fas fa-play"></i> Recording...';
+            
+            M.toast({ html: '🎬 Recording started!', classes: 'green' });
             startFrameCapture();
         });
 
@@ -193,16 +797,26 @@
         stopRecordingBtn.addEventListener('click', async () => {
             if (recording) {
                 recording = false;
-                progressBar.style.display = 'none';
+                
+                // Update UI
+                video.classList.remove('recording');
+                statusSection.classList.remove('active');
+                progressSection.classList.remove('active');
                 startRecordingBtn.disabled = false;
                 stopRecordingBtn.disabled = true;
-                M.toast({ html: 'Recording stopped', classes: 'green' });
-
+                startRecordingBtn.innerHTML = '<i class="fas fa-play"></i> Start Recording';
+                stopRecordingBtn.innerHTML = '<div class="loading-spinner"></div> Processing...';
+                
+                M.toast({ html: '🛑 Recording stopped, processing frames...', classes: 'blue' });
                 stopFrameCapture();
 
-                // Wait for last uploads to complete, then redirect
-                await new Promise((resolve) => setTimeout(resolve, 1500));
-                window.location.href = '/view-images';
+                // Wait for uploads to complete, then redirect
+                await new Promise((resolve) => setTimeout(resolve, 2000));
+                M.toast({ html: '✅ Analysis complete! Redirecting to results...', classes: 'green' });
+                
+                setTimeout(() => {
+                    window.location.href = '/view-images';
+                }, 1500);
             }
         });
 
@@ -212,26 +826,38 @@
 
             canvas.width = video.videoWidth || 640;
             canvas.height = video.videoHeight || 480;
-            if (!canvas.width || !canvas.height) return;
+            
+            if (!canvas.width || !canvas.height) {
+                console.error('Invalid canvas dimensions');
+                return;
+            }
 
-            frameCounter = 0;
+            frameCount = 0;
 
             frameCaptureInterval = setInterval(() => {
                 if (!recording) return;
 
-                frameCounter++;
+                frameCount++;
+                frameCounter.textContent = `Frames captured: ${Math.floor(frameCount / 10)}`;
 
-                if (frameCounter % 10 === 0) {
+                // Capture every 10th frame (1 frame per second at 10fps interval)
+                if (frameCount % 10 === 0) {
                     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
                     canvas.toBlob(async (blob) => {
-                        if (blob) await uploadFrame(blob, `frame_${Date.now()}.jpg`);
+                        if (blob) {
+                            const filename = `frame_${Date.now()}_${Math.floor(frameCount / 10)}.jpg`;
+                            await uploadFrame(blob, filename);
+                        }
                     }, 'image/jpeg', 0.8);
                 }
-            }, 100);
+            }, 100); // 100ms interval for smooth frame counting
         }
 
         function stopFrameCapture() {
-            if (frameCaptureInterval) clearInterval(frameCaptureInterval);
+            if (frameCaptureInterval) {
+                clearInterval(frameCaptureInterval);
+                frameCaptureInterval = null;
+            }
         }
 
         async function uploadFrame(blob, filename) {
@@ -239,13 +865,35 @@
             formData.append('files', blob, filename);
 
             try {
-                const response = await fetch('/upload', { method: 'POST', body: formData });
-                if (!response.ok) console.error('Failed to upload frame:', filename);
+                const response = await fetch('/upload', { 
+                    method: 'POST', 
+                    body: formData 
+                });
+                
+                if (!response.ok) {
+                    console.error('Failed to upload frame:', filename);
+                } else {
+                    console.log('Successfully uploaded frame:', filename);
+                }
             } catch (error) {
                 console.error('Error uploading frame:', error);
             }
         }
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
+            stopFrameCapture();
+        });
+
+        // Initialize Materialize components
+        if (typeof M !== 'undefined') {
+            M.AutoInit();
+        }
     </script>
-<script src="/static/scripts.js"></script>
+
+    <script src="/static/scripts.js"></script>
 </body>
 </html>
