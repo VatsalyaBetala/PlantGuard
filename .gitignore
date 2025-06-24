@@ -5,6 +5,8 @@ __pycache__/
 src/models
 # C extensions
 *.so
+/uploads
+/heatmaps
 
 # Distribution / packaging
 .Python
