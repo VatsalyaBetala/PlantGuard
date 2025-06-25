@@ -1,0 +1,1094 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - PlantGuard AI Plant Disease Detection</title>
+    
+    <!-- Fonts & Icons -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+            --surface-primary: #ffffff;
+            --surface-secondary: #f8fafc;
+            --surface-tertiary: #f1f5f9;
+            --surface-glass: rgba(255, 255, 255, 0.1);
+            --border-primary: #e2e8f0;
+            --border-secondary: #cbd5e1;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --text-inverse: #ffffff;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #8b5cf6;
+            --accent-success: #10b981;
+            --accent-warning: #f59e0b;
+            --accent-error: #ef4444;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
+            --radius-sm: 0.375rem;
+            --radius-md: 0.5rem;
+            --radius-lg: 0.75rem;
+            --radius-xl: 1rem;
+            --radius-2xl: 1.5rem;
+            --radius-3xl: 2rem;
+        }
+
+        [data-theme="dark"] {
+            --surface-primary: #0f172a;
+            --surface-secondary: #1e293b;
+            --surface-tertiary: #334155;
+            --surface-glass: rgba(15, 23, 42, 0.8);
+            --border-primary: #475569;
+            --border-secondary: #64748b;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: var(--text-primary);
+            background: var(--surface-secondary);
+            overflow-x: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-primary);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .navbar-custom {
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid var(--border-primary);
+        }
+
+        .nav-wrapper {
+            padding: 0 10rem;
+            height: 72px;
+        }
+
+        .brand-logo {
+            display: flex !important;
+            align-items: center;
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--text-primary) !important;
+            text-decoration: none;
+        }
+
+        .brand-logo img {
+            height: 40px;
+            margin-right: 12px;
+            border-radius: var(--radius-md);
+        }
+
+        .nav-wrapper ul li a {
+            color: var(--text-secondary) !important;
+            font-weight: 500;
+            padding: 0.75rem 1rem !important;
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-wrapper ul li a:hover {
+            color: var(--accent-primary) !important;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .nav-wrapper ul li.active a {
+            color: var(--accent-primary) !important;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Hero Section */
+        .hero-container {
+            padding: 8rem 0 4rem;
+            background: var(--hero-gradient);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            border-radius: 9999px;
+            color: var(--accent-primary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            color: var(--text-inverse);
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.125rem, 2vw, 1.25rem);
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 2rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        /* Documentation Content */
+        .docs-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        .docs-nav {
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-2xl);
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-md);
+        }
+
+        .docs-nav h3 {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+
+        .nav-item {
+            padding: 1rem 1.5rem;
+            background: var(--surface-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-primary);
+            background: var(--surface-primary);
+        }
+
+        .nav-item.active {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        .nav-item i {
+            font-size: 1.25rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        .nav-item span {
+            font-weight: 500;
+        }
+
+        /* Document Sections */
+        .doc-section {
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-2xl);
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            display: none;
+        }
+
+        .doc-section.active {
+            display: block;
+        }
+
+        .doc-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-primary);
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+        }
+
+        .doc-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .doc-description {
+            font-size: 1.125rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .doc-content {
+            padding: 2rem;
+        }
+
+        .doc-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--surface-secondary);
+            border-radius: var(--radius-lg);
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .doc-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .doc-btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius-lg);
+            font-weight: 500;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: var(--surface-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--surface-primary);
+            border-color: var(--accent-primary);
+            color: var(--accent-primary);
+        }
+
+        /* Document Viewer */
+        .doc-viewer {
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            background: var(--surface-tertiary);
+            min-height: 600px;
+        }
+
+        .doc-viewer iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        .viewer-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 600px;
+            color: var(--text-muted);
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .viewer-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        .viewer-placeholder h4 {
+            font-size: 1.25rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .viewer-placeholder p {
+            max-width: 400px;
+            line-height: 1.6;
+        }
+
+        /* API Documentation */
+        .api-section {
+            margin-top: 2rem;
+        }
+
+        .api-endpoint {
+            background: var(--surface-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+
+        .endpoint-header {
+            padding: 1rem 1.5rem;
+            background: var(--surface-primary);
+            border-bottom: 1px solid var(--border-primary);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .http-method {
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-sm);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .method-post {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent-success);
+        }
+
+        .method-get {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--accent-primary);
+        }
+
+        .endpoint-url {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .endpoint-content {
+            padding: 1.5rem;
+        }
+
+        .code-block {
+            background: var(--surface-tertiary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 56px;
+            height: 56px;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            color: var(--text-primary);
+            border-radius: 50%;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-xl);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-wrapper {
+                padding: 0 1rem;
+            }
+
+            .nav-wrapper ul {
+                display: none;
+            }
+
+            .docs-container {
+                padding: 2rem 1rem;
+            }
+
+            .nav-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .doc-header {
+                padding: 1.5rem;
+            }
+
+            .doc-content {
+                padding: 1.5rem;
+            }
+
+            .doc-actions {
+                flex-direction: column;
+            }
+
+            .doc-btn {
+                justify-content: center;
+            }
+
+            .theme-toggle {
+                bottom: 1rem;
+                right: 1rem;
+                width: 48px;
+                height: 48px;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .doc-section.active {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-primary);
+            border-radius: 50%;
+            border-top-color: var(--accent-primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+           
+    <div class="navbar-fixed">
+            <nav class="navbar-custom">
+                <div class="nav-wrapper">
+                    <a href="/" class="brand-logo">
+                        <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height:50px;margin-right:10px;">PlantGuard
+                    </a>
+                    <ul class="right hide-on-med-and-down">
+                        <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>Home</a></li>
+                        <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
+                        <li><a href="/about" class="waves-effect waves-light"><i class="material-icons left">info</i>About</a></li>
+                        <li><a href="/contact" class="waves-effect waves-light"><i class="material-icons left">contact_mail</i>Contact</a></li>
+                        <li><a href="/doc" class="waves-effect waves-light"><i class="material-icons left">pages</i>Docs</a></li>
+                        <li><a href="/faq" class="waves-effect waves-light"><i class="material-icons left">help</i>FAQ</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+    <!-- Hero Section -->
+    <section class="hero-container">
+        <div class="hero-content" data-aos="fade-up">
+            <div class="hero-badge" data-aos="fade-up" data-aos-delay="100">
+                <i class="fas fa-book-open"></i>
+                <span>Comprehensive Documentation</span>
+            </div>
+            
+            <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">
+                PlantGuard Documentation
+            </h1>
+            
+            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="300">
+                Everything you need to understand and implement PlantGuard's AI-powered plant disease detection system.
+            </p>
+        </div>
+    </section>
+
+    <!-- Documentation Content -->
+    <div class="docs-container">
+        <!-- Navigation -->
+        <div class="docs-nav" data-aos="fade-up">
+            <h3><i class="fas fa-compass"></i>Quick Navigation</h3>
+            <div class="nav-grid">
+                <div class="nav-item active" onclick="showSection('pitch-deck')" id="nav-pitch">
+                    <i class="fas fa-presentation"></i>
+                    <span>Pitch Deck</span>
+                </div>
+                <div class="nav-item" onclick="showSection('technical-docs')" id="nav-technical">
+                    <i class="fas fa-cog"></i>
+                    <span>Technical Documentation</span>
+                </div>
+                
+                <div class="nav-item" onclick="showSection('user-guide')" id="nav-user">
+                    <i class="fas fa-user-guide"></i>
+                    <span>User Guide</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pitch Deck Section -->
+        <div class="doc-section active" id="pitch-deck" data-aos="fade-up">
+            <div class="doc-header">
+                <div class="doc-title">
+                    <i class="fas fa-presentation"></i>
+                    PlantGuard Pitch Deck
+                </div>
+                <div class="doc-description">
+                    Comprehensive overview of PlantGuard's vision, technology, and business model.
+                </div>
+            </div>
+            <div class="doc-content">
+                <div class="doc-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>Last Updated: March 2024</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-file-pdf"></i>
+                        <span>PDF Format</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span>15 min read</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Business Overview</span>
+                    </div>
+                </div>
+
+                <div class="doc-actions">
+                    <button class="doc-btn btn-primary" onclick="loadDocument('pitch', '/static/docs/PlantGuard_PitchDeck.pdf')">
+                        <i class="fas fa-eye"></i>
+                        View Pitch Deck
+                    </button>
+                    <a href="/static/docs/PlantGuard_PitchDeck.pdf" class="doc-btn btn-secondary" download="PlantGuard_PitchDeck.pdf" target="_blank">
+                        <i class="fas fa-download"></i>
+                        Download PDF
+                    </a>
+                    <button class="doc-btn btn-secondary" onclick="shareDocument('pitch')">
+                        <i class="fas fa-share"></i>
+                        Share
+                    </button>
+                </div>
+
+                <div class="doc-viewer" id="pitch-viewer">
+                    <div class="viewer-placeholder">
+                        <i class="fas fa-presentation"></i>
+                        <h4>PlantGuard Pitch Deck</h4>
+                        <p>Click "View Pitch Deck" above to load and view our comprehensive business presentation. The pitch deck covers our AI technology, market opportunity, business model, and growth strategy.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Documentation Section -->
+        <div class="doc-section" id="technical-docs" data-aos="fade-up">
+            <div class="doc-header">
+                <div class="doc-title">
+                    <i class="fas fa-cog"></i>
+                    Technical Documentation
+                </div>
+                <div class="doc-description">
+                    In-depth technical specifications, architecture details, and implementation guides.
+                </div>
+            </div>
+            <div class="doc-content">
+                <div class="doc-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>Last Updated: March 2024</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-file-word"></i>
+                        <span>DOCX Format</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span>45 min read</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-laptop-code"></i>
+                        <span>Technical Deep Dive</span>
+                    </div>
+                </div>
+
+                <div class="doc-actions">
+                    <button class="doc-btn btn-primary" onclick="loadDocument('technical', '/static/docs/PlantGuard_Technical_Report.docx')">
+                        <i class="fas fa-eye"></i>
+                        View Technical Docs
+                    </button>
+                    <a href="/static/docs/PlantGuard_Technical_Report.docx" class="doc-btn btn-secondary" download="PlantGuard_Technical_Report.docx" target="_blank">
+                        <i class="fas fa-download"></i>
+                        Download DOCX
+                        
+                    </a>
+                    <button class="doc-btn btn-secondary" onclick="shareDocument('technical')">
+                        <i class="fas fa-share"></i>
+                        Share
+                    </button>
+                </div>
+
+                <div class="doc-viewer" id="technical-viewer">
+                    <div class="viewer-placeholder">
+                        <i class="fas fa-cog"></i>
+                        <h4>Technical Documentation</h4>
+                        <p>Click "View Technical Docs" above to access our comprehensive technical documentation including system architecture, AI model specifications, deployment guides, and performance metrics.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Guide Section -->
+        <div class="doc-section" id="user-guide" data-aos="fade-up">
+            <div class="doc-header">
+                <div class="doc-title">
+                    <i class="fas fa-user-guide"></i>
+                    User Guide
+                </div>
+                <div class="doc-description">
+                    Step-by-step instructions for using PlantGuard effectively.
+                </div>
+            </div>
+            <div class="doc-content">
+                <div class="doc-meta">
+                    <div class="meta-item">
+                        <i class="fas fa="calendar"></i>
+                        <span>Last Updated: March 2024</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-users"></i>
+                        <span>For All Users</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-clock"></i>
+                        <span>10 min read</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Beginner Friendly</span>
+                    </div>
+                </div>
+
+                <div style="background: var(--surface-secondary); padding: 2rem; border-radius: var(--radius-lg); margin-top: 2rem;">
+                    <h4 style="color: var(--text-primary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-rocket"></i>
+                        Getting Started
+                    </h4>
+                    
+                    <div style="display: grid; gap: 2rem;">
+                        <div style="display: flex; gap: 1rem;">
+                            <div style="background: var(--accent-primary); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">1</div>
+                            <div>
+                                <h5 style="color: var(--text-primary); margin-bottom: 0.5rem;">Upload Your Plant Image</h5>
+                                <p style="color: var(--text-secondary); line-height: 1.6;">Take a clear photo of the affected plant area or upload an existing image. Ensure good lighting and focus on the diseased parts.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <div style="background: var(--accent-primary); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">2</div>
+                            <div>
+                                <h5 style="color: var(--text-primary); margin-bottom: 0.5rem;">AI Analysis</h5>
+                                <p style="color: var(--text-secondary); line-height: 1.6;">Our advanced AI model will analyze your image within seconds, identifying potential diseases and assessing severity levels.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; gap: 1rem;">
+                            <div style="background: var(--accent-primary); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">3</div>
+                            <div>
+                                <h5 style="color: var(--text-primary); margin-bottom: 0.5rem;">Get Recommendations</h5>
+                                <p style="color: var(--text-secondary); line-height: 1.6;">Receive detailed treatment recommendations, prevention tips, and actionable steps to address the identified plant health issues.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: var(--surface-secondary); padding: 2rem; border-radius: var(--radius-lg); margin-top: 2rem;">
+                    <h4 style="color: var(--text-primary); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.75rem;">
+                        <i class="fas fa-lightbulb"></i>
+                        Best Practices for Accurate Results
+                    </h4>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                        <div style="display: flex; align-items: start; gap: 0.75rem;">
+                            <i class="fas fa-camera" style="color: var(--accent-success); margin-top: 0.25rem;"></i>
+                            <div>
+                                <h6 style="color: var(--text-primary); margin-bottom: 0.5rem;">High-Quality Images</h6>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Use good lighting and focus on the affected areas for better accuracy.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: start; gap: 0.75rem;">
+                            <i class="fas fa-crop" style="color: var(--accent-success); margin-top: 0.25rem;"></i>
+                            <div>
+                                <h6 style="color: var(--text-primary); margin-bottom: 0.5rem;">Close-Up Shots</h6>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Capture close-up images of symptoms for detailed analysis.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: start; gap: 0.75rem;">
+                            <i class="fas fa-eye" style="color: var(--accent-success); margin-top: 0.25rem;"></i>
+                            <div>
+                                <h6 style="color: var(--text-primary); margin-bottom: 0.5rem;">Multiple Angles</h6>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Take photos from different angles to show the full extent of the problem.</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: start; gap: 0.75rem;">
+                            <i class="fas fa-clock" style="color: var(--accent-success); margin-top: 0.25rem;"></i>
+                            <div>
+                                <h6 style="color: var(--text-primary); margin-bottom: 0.5rem;">Early Detection</h6>
+                                <p style="color: var(--text-secondary); font-size: 0.9rem;">Analyze plants regularly for early disease detection and prevention.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    
+    <script>
+        // Initialize AOS animations
+        document.addEventListener('DOMContentLoaded', function() {
+            AOS.init({
+                duration: 800,
+                easing: 'ease-in-out',
+                once: true,
+                offset: 100
+            });
+        });
+
+        // Section navigation
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.doc-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from all nav items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Activate corresponding nav item
+            const navMap = {
+                'pitch-deck': 'nav-pitch',
+                'technical-docs': 'nav-technical',
+                'api-docs': 'nav-api',
+                'user-guide': 'nav-user'
+            };
+            
+            document.getElementById(navMap[sectionId]).classList.add('active');
+            
+            // Scroll to top of content
+            document.querySelector('.docs-container').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        // Document loading function optimized for FastAPI
+        function loadDocument(type, url) {
+            const viewerId = type === 'pitch' ? 'pitch-viewer' : 'technical-viewer';
+            const viewer = document.getElementById(viewerId);
+            
+            // Show loading state
+            viewer.innerHTML = `
+                <div class="viewer-placeholder">
+                    <div class="loading-spinner"></div>
+                    <h4>Loading Document...</h4>
+                    <p>Please wait while we load the document.</p>
+                </div>
+            `;
+            
+            // Handle different file types
+            setTimeout(() => {
+                if (url.toLowerCase().endsWith('.pdf')) {
+                    // For PDF files - direct browser viewing
+                    viewer.innerHTML = `
+                        <iframe src="${url}#toolbar=1&navpanes=1&scrollbar=1" 
+                                width="100%" 
+                                height="600" 
+                                frameborder="0"
+                                style="border: 1px solid var(--border-primary); border-radius: var(--radius-lg);">
+                            <div class="viewer-placeholder">
+                                <i class="fas fa-file-pdf"></i>
+                                <h4>Unable to load PDF viewer</h4>
+                                <p>Your browser may not support PDF viewing. 
+                                   <a href="${url}" target="_blank" style="color: var(--accent-primary);">
+                                       Click here to open the PDF in a new tab
+                                   </a>
+                                </p>
+                            </div>
+                        </iframe>
+                    `;
+                } else if (url.toLowerCase().endsWith('.docx')) {
+                    // For DOCX files - multiple fallback options
+                    viewer.innerHTML = `
+                        <div style="text-align: center; padding: 2rem; background: var(--surface-secondary); border-radius: var(--radius-lg); border: 1px solid var(--border-primary);">
+                            <i class="fas fa-file-word" style="font-size: 3rem; color: var(--accent-primary); margin-bottom: 1rem;"></i>
+                            <h4 style="color: var(--text-primary); margin-bottom: 1rem;">Technical Documentation</h4>
+                            <p style="color: var(--text-secondary); margin-bottom: 2rem; line-height: 1.6;">
+                                Word documents are best viewed by downloading. Click the button below to download and open the technical documentation.
+                            </p>
+                            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                                <a href="${url}" 
+                                   download="PlantGuard_Technical_Report.docx" 
+                                   class="doc-btn btn-primary"
+                                   style="text-decoration: none;">
+                                    <i class="fas fa-download"></i>
+                                    Download & Open
+                                </a>
+                                <button onclick="tryOfficeViewer('${url}')" class="doc-btn btn-secondary">
+                                    <i class="fas fa-eye"></i>
+                                    Try Online Viewer
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+            }, 1000);
+        }
+
+        // Try to load DOCX in Office Online viewer
+        function tryOfficeViewer(url) {
+            const viewer = document.getElementById('technical-viewer');
+            const fullUrl = window.location.origin + url;
+            const officeViewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(fullUrl)}`;
+            
+            viewer.innerHTML = `
+                <iframe src="${officeViewerUrl}" 
+                        width="100%" 
+                        height="600" 
+                        frameborder="0"
+                        style="border: 1px solid var(--border-primary); border-radius: var(--radius-lg);"
+                        onload="handleOfficeViewerLoad(this)"
+                        onerror="handleOfficeViewerError('${url}')">
+                </iframe>
+            `;
+        }
+
+        // Handle Office viewer load success
+        function handleOfficeViewerLoad(iframe) {
+            console.log('Office viewer loaded successfully');
+        }
+
+        // Handle Office viewer load error
+        function handleOfficeViewerError(url) {
+            const viewer = document.getElementById('technical-viewer');
+            viewer.innerHTML = `
+                <div class="viewer-placeholder">
+                    <i class="fas fa-exclamation-triangle" style="color: var(--accent-warning);"></i>
+                    <h4>Unable to load online viewer</h4>
+                    <p>The online document viewer is not available. Please download the document to view it.</p>
+                    <a href="${url}" download="PlantGuard_Technical_Report.docx" class="doc-btn btn-primary" style="margin-top: 1rem; text-decoration: none;">
+                        <i class="fas fa-download"></i>
+                        Download Document
+                    </a>
+                </div>
+            `;
+        }
+
+        // Share document function with updated FastAPI paths
+        function shareDocument(type) {
+            const urls = {
+                'pitch': '/static/docs/PlantGuard_PitchDeck.pdf',
+                'technical': '/static/docs/PlantGuard_Technical_Report.docx'
+            };
+            
+            const titles = {
+                'pitch': 'PlantGuard Pitch Deck',
+                'technical': 'PlantGuard Technical Documentation'
+            };
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: titles[type],
+                    text: `Check out ${titles[type]} - Advanced AI Plant Disease Detection Platform`,
+                    url: window.location.origin + urls[type]
+                });
+            } else {
+                // Fallback: copy to clipboard
+                const fullUrl = window.location.origin + urls[type];
+                navigator.clipboard.writeText(fullUrl)
+                    .then(() => {
+                        M.toast({html: 'Document link copied to clipboard!', classes: 'rounded green'});
+                    })
+                    .catch(() => {
+                        // Fallback if clipboard API isn't available
+                        const textArea = document.createElement('textarea');
+                        textArea.value = fullUrl;
+                        document.body.appendChild(textArea);
+                        textArea.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(textArea);
+                        M.toast({html: 'Document link copied!', classes: 'rounded green'});
+                    });
+            }
+        }
+
+        // Theme toggle functionality
+        function toggleDarkMode() {
+            const body = document.body;
+            const themeIcon = document.getElementById('themeIcon');
+            
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                themeIcon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                themeIcon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // Initialize theme from localStorage
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            document.getElementById('themeIcon').className = 'fas fa-sun';
+        }
+
+        // Enhanced navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar-custom');
+            if (window.scrollY > 50) {
+                navbar.style.background = window.getComputedStyle(document.documentElement)
+                    .getPropertyValue('--surface-primary');
+                navbar.style.backdropFilter = 'blur(20px)';
+                navbar.style.boxShadow = 'var(--shadow-lg)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.backdropFilter = 'blur(20px)';
+                navbar.style.boxShadow = 'var(--shadow-sm)';
+            }
+        });
+
+        // Initialize Materialize components
+        if (typeof M !== 'undefined') {
+            M.AutoInit();
+        }
+
+        // Add smooth scrolling for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
