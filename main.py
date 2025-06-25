@@ -3,6 +3,8 @@ import uuid
 import traceback
 from typing import List
 from pydantic import BaseModel
+from pathlib import Path
+
 
 import uvicorn
 from fastapi import FastAPI, File, UploadFile, HTTPException
@@ -90,6 +92,41 @@ async def record_video():
 @app.get("/about", response_class=HTMLResponse)
 async def about_page():
     return FileResponse("views/about.html")
+
+@app.get("/doc", response_class=HTMLResponse)
+async def docs_page():
+    return FileResponse("views/docs.html")
+
+@app.get("/static/docs/{filename}")
+async def get_document(filename: str):
+    """Serve individual document files with proper headers"""
+    file_path = Path(f"static/docs/{filename}")
+    
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail=f"Document '{filename}' not found")
+    
+    try:
+        file_path.resolve().relative_to(Path("static/docs").resolve())
+    except ValueError:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
+    media_type = "application/octet-stream"
+    if filename.lower().endswith('.pdf'):
+        media_type = "application/pdf"
+    elif filename.lower().endswith('.docx'):
+        media_type = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    elif filename.lower().endswith('.doc'):
+        media_type = "application/msword"
+    
+    return FileResponse(
+        path=file_path,
+        filename=filename,
+        media_type=media_type,
+        headers={
+            "Content-Disposition": f"inline; filename={filename}",
+            "Cache-Control": "public, max-age=3600"
+        }
+    )
 
 @app.get("/contact", response_class=HTMLResponse)
 async def contact_page():
