@@ -5,8 +5,11 @@ __pycache__/
 src/models
 # C extensions
 *.so
+
+# Extras
 /uploads
 /heatmaps
+
 # Venv
 /plant_guard 
 
