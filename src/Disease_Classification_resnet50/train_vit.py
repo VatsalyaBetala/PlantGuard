@@ -1,148 +1,147 @@
-import os, json, argparse, torch
+import os, json, torch
 from torch import nn
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, random_split
 from torchvision import datasets, transforms
 import timm
 from collections import Counter
 
-IMAGENET_MEAN=(0.485,0.456,0.406)
-IMAGENET_STD=(0.229,0.224,0.225)
+# We have to normalize using ImageNet stats since we are using a model pretrained on ImageNet
+IMAGENET_MEAN = (0.485, 0.456, 0.406)
+IMAGENET_STD  = (0.229, 0.224, 0.225)
 
-def make_loaders(data_dir, batch_size=16, workers=2):
-    
-    train_tf = transforms.Compose([
-        transforms.RandomResizedCrop(224, scale=(0.7,1.0)),  # random crop/scale
-        transforms.RandomHorizontalFlip(),                   # leaves mirrored
-        transforms.ColorJitter(0.2,0.2,0.2,0.05),            # lighting changes
-        transforms.RandomRotation(15),                       # tilt
-        transforms.ToTensor(),
-        transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
-    ])
+DATA_DIR = "PlantVillage"   
+MODEL_NAME = "deit_small_patch16_224"
+BATCH_SIZE = 8
+EPOCHS = 1
+LR = 5e-4
+WEIGHT_DECAY = 5e-2
+LABEL_SMOOTHING = 0.1
+OUT_DIR = "debug_output"
 
-    val_tf = transforms.Compose([
-        transforms.Resize(256), transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
-    ])
-    
-    # Collects all image paths in a list along with their class IDs.
-    train_ds = datasets.ImageFolder(os.path.join(data_dir, "train"), transform=train_tf) # apply the trasformation
-    val_ds   = datasets.ImageFolder(os.path.join(data_dir, "val"),   transform=val_tf)
+device = "cuda" if torch.cuda.is_available() else "cpu"
+print(f"Using device: {device}")
 
-    # Laad the dataset using DataLoader class
-    train_ld = DataLoader(train_ds, batch_size=batch_size, shuffle=True,  num_workers=workers, pin_memory=True)
-    val_ld   = DataLoader(val_ds,   batch_size=batch_size, shuffle=False, num_workers=workers, pin_memory=True)
-    return train_ds, val_ds, train_ld, val_ld
+os.makedirs(OUT_DIR, exist_ok=True)
 
-# ---- evaluation + class weights ----
+# ------------------- TRANSFORMS -------------------
+# We use simple transforms since ViTs are quite robust to image variations
+# Resize → CenterCrop → ToTensor → Normalize.
+simple_tf = transforms.Compose([
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
+    transforms.ToTensor(),
+    transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD)
+])
+
+# ------------------- DATASET & SPLIT -------------------
+# Load all data from PlantVillage/train
+# ImageFolder expects subfolders for each class: train/<class_name>/*.jpg
+full_ds = datasets.ImageFolder(os.path.join(DATA_DIR, "train"), transform=simple_tf)
+num_classes = len(full_ds.classes)
+print(f"Found {num_classes} classes:", full_ds.classes)
+
+# Split dataset into 80-20 train-val
+val_size = int(0.2 * len(full_ds))
+train_size = len(full_ds) - val_size
+# We split into train and validation sets
+train_ds, val_ds = random_split(full_ds, [train_size, val_size], generator=torch.Generator().manual_seed(42))
+
+# Dataloaders
+train_ld = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True, num_workers=0, pin_memory=True)
+val_ld   = DataLoader(val_ds,   batch_size=BATCH_SIZE, shuffle=False, num_workers=0, pin_memory=True)
+
+# Save class-to-index mapping
+with open(os.path.join(OUT_DIR, "class_to_idx.json"), "w") as f:
+    json.dump(full_ds.class_to_idx, f, indent=2)
+
+# ------------------- MODEL -------------------
+# deit_small_patch16_224 is a small Vision Transformer model with 16x16 patches
+model = timm.create_model(MODEL_NAME, pretrained=True, num_classes=num_classes).to(device)
+
+# We freeze everything except the classification head
+for p in model.parameters():
+    p.requires_grad = False
+for p in model.head.parameters():
+    p.requires_grad = True
+
+# We have 384 * num_classes + num_classes trainable parameters in the head
+# In this case, num_classes = 38
+# So, trainable parameters = 384 * 3 + 3 = 1155
+n_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+print(f"Trainable parameters (head only): {n_trainable}")
+
+# ------------------- CLASS WEIGHTS -------------------
+def compute_class_weights(dataset):
+    counts = Counter(dataset.dataset.targets)  # get counts from full_ds
+    total = sum(counts.values())
+    weights = torch.zeros(len(dataset.dataset.classes), dtype=torch.float32)
+    for cls_idx in range(len(dataset.dataset.classes)):
+        n = counts.get(cls_idx, 1)
+        weights[cls_idx] = total / (len(dataset.dataset.classes) * n)
+    return weights
+
+class_weights = compute_class_weights(train_ds).to(device)
+print("Class weights:", class_weights.tolist())
+
+criterion = nn.CrossEntropyLoss(weight=class_weights, label_smoothing=LABEL_SMOOTHING)
+
+# ------------------- OPTIMIZER -------------------
+decay, no_decay = [], []
+for n, p in model.named_parameters():
+    if not p.requires_grad:
+        continue
+    if p.ndim == 1 or n.endswith("bias") or "norm" in n.lower():
+        no_decay.append(p)
+    else:
+        decay.append(p)
+
+optimizer = torch.optim.AdamW([
+    {"params": decay, "weight_decay": WEIGHT_DECAY},
+    {"params": no_decay, "weight_decay": 0.0}
+], lr=LR)
+
+scaler = torch.cuda.amp.GradScaler()
+
+# ------------------- EVALUATION FUNCTION -------------------
 @torch.no_grad()
-def evaluate(model, loader, device):
+def evaluate(model, loader):
     model.eval()
     correct = total = 0
     for x, y in loader:
         x, y = x.to(device), y.to(device)
         logits = model(x)
-        pred = logits.argmax(1)
-        correct += (pred == y).sum().item()
+        preds = logits.argmax(1)
+        correct += (preds == y).sum().item()
         total += y.numel()
     return correct / max(1, total)
 
-def compute_class_weights(train_ds):
-    # imbalance fix: inverse frequency per class index
-    counts = Counter(train_ds.targets)       
-    num_classes = len(train_ds.classes)
-    total = sum(counts.values())
-    weights = torch.zeros(num_classes, dtype=torch.float32)
-    for cls_idx in range(num_classes):
-        n = counts.get(cls_idx, 1)
-        weights[cls_idx] = total / (num_classes * n)
-    return weights
+# ------------------- TRAINING LOOP -------------------
+best_acc = 0.0
+for epoch in range(EPOCHS):
+    model.train()
+    running_loss = 0.0
 
-# ---- main() with head-only transfer learning ----
-def main():
-    # Build command-line interfaces (CLI)
-    ap = argparse.ArgumentParser() # parser object to which we can add arguments
-    ap.add_argument("--data_dir", type=str, default="data")
-    ap.add_argument("--model", type=str, default="deit_small_patch16_224")
-    ap.add_argument("--batch_size", type=int, default=16)
-    ap.add_argument("--epochs", type=int, default=5)
-    ap.add_argument("--lr", type=float, default=5e-4)
-    ap.add_argument("--weight_decay", type=float, default=5e-2)
-    ap.add_argument("--label_smoothing", type=float, default=0.1)
-    ap.add_argument("--out", type=str, default="checkpoints")
-    args = ap.parse_args()
+    for x, y in train_ld:
+        x, y = x.to(device), y.to(device)
+        optimizer.zero_grad(set_to_none=True)
 
-    os.makedirs(args.out, exist_ok=True)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print("Device:", device)
+        with torch.cuda.amp.autocast():
+            logits = model(x)
+            loss = criterion(logits, y)
 
-    # data
-    train_ds, val_ds, train_ld, val_ld = make_loaders(args.data_dir, args.batch_size)
-    num_classes = len(train_ds.classes)
-    print("Classes:", train_ds.classes)
+        scaler.scale(loss).backward()
+        scaler.step(optimizer)
+        scaler.update()
 
-    with open(os.path.join(args.out, "class_to_idx.json"), "w") as f:
-        json.dump(train_ds.class_to_idx, f, indent=2)
+        running_loss += loss.item() * y.size(0)
 
-    # model (pretrained) + swap head
-    model = timm.create_model(args.model, pretrained=True, num_classes=num_classes).to(device)
+    train_loss = running_loss / len(train_ds)
+    val_acc = evaluate(model, val_ld)
+    print(f"[Epoch {epoch+1}/{EPOCHS}] Train Loss: {train_loss:.4f} | Val Acc: {val_acc:.4f}")
 
-    # 3) freeze backbone, train head only
-    for p in model.parameters():
-        p.requires_grad = False
-    for p in model.head.parameters():
-        p.requires_grad = True
+    # Save best model
+    if val_acc > best_acc:
+        best_acc = val_acc
+        torch.save(model.state_dict(), os.path.join(OUT_DIR, "best_head.pt"))
 
-    # count trainable params (should be just the head)
-    n_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
-    print("Trainable parameters (head only):", n_trainable)
-
-    # loss with class weights
-    class_w = compute_class_weights(train_ds).to(device)
-    print("Class weights:", class_w.tolist())
-    criterion = nn.CrossEntropyLoss(weight=class_w, label_smoothing=args.label_smoothing)
-
-    # 5) optimizer: AdamW with no weight decay on norm/bias
-    decay, no_decay = [], []
-    for n, p in model.named_parameters():
-        if not p.requires_grad:
-            continue
-        if p.ndim == 1 or n.endswith("bias") or 'norm' in n.lower():
-            no_decay.append(p)
-        else:
-            decay.append(p)
-    optimizer = torch.optim.AdamW(
-        [{"params": decay, "weight_decay": args.weight_decay},
-         {"params": no_decay, "weight_decay": 0.0}],
-        lr=args.lr
-    )
-    scaler = torch.cuda.amp.GradScaler()
-
-    # 6) training loop
-    best = 0.0
-    for epoch in range(args.epochs):
-        model.train()
-        running = 0.0
-        for x, y in train_ld:
-            x, y = x.to(device), y.to(device)
-            optimizer.zero_grad(set_to_none=True)
-            with torch.cuda.amp.autocast():
-                logits = model(x)
-                loss = criterion(logits, y)
-            scaler.scale(loss).backward()
-            scaler.step(optimizer)
-            scaler.update()
-            running += loss.item() * y.size(0)
-
-        train_loss = running / len(train_ds)
-        val_acc = evaluate(model, val_ld, device)
-        print(f"[Head] Epoch {epoch+1}/{args.epochs} | train_loss={train_loss:.4f} | val_acc={val_acc:.4f}")
-
-        if val_acc > best:
-            best = val_acc
-            torch.save(model.state_dict(), os.path.join(args.out, "best_head.pt"))
-
-    print("Best val acc:", round(best, 4))
-
-if __name__ == "__main__":
-    main()
+print(f"Best Validation Accuracy: {best_acc:.4f}")
