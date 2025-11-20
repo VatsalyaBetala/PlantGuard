@@ -79,6 +79,7 @@ instance/
 docs/_build/
 
 /PlantVillage
+/PlantVillage_Test
 /test_images
 kaggle.json
 
