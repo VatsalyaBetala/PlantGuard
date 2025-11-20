@@ -126,10 +126,10 @@ def classify_plant(cropped_leaf_path: str, model_path: str = "src/models/Plant_C
 
     plant_name = PLANT_CLASSES[predicted_idx]
     if predicted_prob < 0.50:
-        print(f"Low confidence prediction: {predicted_prob:.2f}")
+        # print(f"Low confidence prediction: {predicted_prob:.2f}")
         plant_name = "Unknown"
 
-    print(f"Predicted Plant: {plant_name} (Confidence: {predicted_prob:.2f})")
+    # print(f"Predicted Plant: {plant_name} (Confidence: {predicted_prob:.2f})")
     return plant_name
 
 
