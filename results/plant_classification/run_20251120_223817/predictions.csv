@@ -1,0 +1,6 @@
+filepath,true_label,predicted_label
+Plant_Villiage_Test/valid/Apple\00075aa8-d81a-4184-8541-b692b78d398a___FREC_Scab 3335_270deg.JPG,Apple,Apple
+Plant_Villiage_Test/valid/Apple\00075aa8-d81a-4184-8541-b692b78d398a___FREC_Scab 3335_90deg.JPG,Apple,Apple
+Plant_Villiage_Test/valid/Apple\00075aa8-d81a-4184-8541-b692b78d398a___FREC_Scab 3335_new30degFlipLR.JPG,Apple,Apple
+Plant_Villiage_Test/valid/Apple\0139bc6d-391c-4fd1-bcae-cc74dabfddd7___JR_FrgE.S 2734_270deg.JPG,Apple,Apple
+Plant_Villiage_Test/valid/Apple\01b32971-5125-4982-98e2-22daa9ae864a___RS_HL 7977.JPG,Apple,Apple
