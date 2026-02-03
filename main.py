@@ -26,9 +26,9 @@ from src.utils import check_and_download_models
 from src.inference import (
     detect_leaf,
     classify_plant,
-    classify_disease
+    classify_disease,
+    explain_disease,
 )
-from src.grad_cam import generate_grad_cam
 
 class DiagnosisRequest(BaseModel):
     plant: str
@@ -178,7 +178,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
                 print(f"Disease prediction: {disease_prediction}")
 
                 # 4) Generate Grad-CAM heatmap
-                heatmap_path = generate_grad_cam(cropped_leaf_path, plant_prediction)
+                heatmap_path = explain_disease(cropped_leaf_path, plant_prediction)
             # Store prediction
             pred = {
                 "filename": unique_name,

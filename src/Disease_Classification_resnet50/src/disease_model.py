@@ -2,13 +2,15 @@ import torch.nn as nn
 import torchvision.models as models
 import torch
 
+from src.model_artifacts import resolve_shared_file
+
 class DiseaseClassifier(nn.Module):
     def __init__(self, num_classes):
         super(DiseaseClassifier, self).__init__()
 
         # Load ResNet50 and freeze weights
         self.model = models.resnet50(weights=None)
-        weight_path = "src/models/resnet50_weights.pth"
+        weight_path = resolve_shared_file("resnet50_weights.pth")
         self.model.load_state_dict(torch.load(weight_path, map_location=torch.device("cuda" if torch.cuda.is_available() else "cpu")))
 
         for param in self.model.parameters():
