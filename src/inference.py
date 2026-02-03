@@ -2,19 +2,18 @@ import os
 
 import cv2
 import torch
-import numpy as np
 from PIL import Image
 from ultralytics import YOLO
 
-from src.utils import check_and_download_models
-from src.data_preprocessing import preprocess_image
-from src.Plant_Classification_resnet50.plant_classification_TL import PlantClassifierCNN
-from src.Disease_Classification_resnet50.src.disease_model import DiseaseClassifier
+from src.model_artifacts import resolve_shared_file
+from src.model_catalog import DISEASE_LABELS, disease_model_name, get_backend_name, plant_model_name
+from src.model_registry import get_model
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # 1) Leaf detection function
 # ─────────────────────────────────────────────────────────────────────────────
+
 def detect_leaf(image_path: str):
     """
     Detects a leaf in the image using YOLOv8n and extracts it if confidence is above 50%.
@@ -23,8 +22,8 @@ def detect_leaf(image_path: str):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Load YOLOv8 model with weights_only=False to allow model to unpickle.
-    YOLO_MODEL_PATH = "src/models/yolov8n_leaf.pt"
-    leaf_detector = YOLO(YOLO_MODEL_PATH).to(device)
+    yolo_model_path = resolve_shared_file("yolov8n_leaf.pt")
+    leaf_detector = YOLO(str(yolo_model_path)).to(device)
 
     # Load image
     image = cv2.imread(image_path)
@@ -66,127 +65,79 @@ def detect_leaf(image_path: str):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 2) Helper to load a PyTorch model
+# 2) Plant classification (expects a cropped leaf image!)
 # ─────────────────────────────────────────────────────────────────────────────
-def load_model(model_class, model_path, num_classes, device):
-    print(f"Loading model: {model_class.__name__}")
-    print(f"Model path: {model_path}")
-    print(f"Using device: {device}")
 
-    model = model_class(num_classes)
-    try:
-        # In PyTorch 2.6+, to forcibly allow pickling custom classes, pass weights_only=False if needed
-        # But if your classification .pth is purely weights, no need for that. We'll keep it as is:
-        checkpoint = torch.load(model_path, map_location=device, weights_only=True)
-        print("Checkpoint loaded successfully!")
-
-        if isinstance(checkpoint, dict) and "state_dict" in checkpoint:
-            model.load_state_dict(checkpoint["state_dict"])
-        else:
-            model.load_state_dict(checkpoint)
-
-        model.to(device)
-        model.eval()
-        print("Model loaded and ready!")
-        return model
-    except Exception as e:
-        print(f"Error loading model: {e}")
-        raise
-
-
-# ─────────────────────────────────────────────────────────────────────────────
-# 3) Plant classification (expects a cropped leaf image!)
-# ─────────────────────────────────────────────────────────────────────────────
-PLANT_CLASSES = ["Apple", "Corn_(maize)", "Grape", "Pepper_bell", "Potato", "Tomato"]
-
-def classify_plant(cropped_leaf_path: str, model_path: str = "src/models/Plant_Classification.pth") -> str:
+def classify_plant(cropped_leaf_path: str) -> str:
     """
-    Classify a cropped leaf image using the PlantClassifierCNN model.
+    Classify a cropped leaf image using the configured model adapter.
     """
-    # Choose device
-    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
+    backend = get_backend_name()
+    model_name = plant_model_name(backend)
 
-    # Load the plant classifier
-    model = load_model(
-        model_class=PlantClassifierCNN,
-        model_path=model_path,
-        num_classes=len(PLANT_CLASSES),
-        device=device
-    )
+    model = get_model(model_name)
+    image_tensor = model.preprocess(cropped_leaf_path)
+    output = model.predict(image_tensor)
+    result = model.postprocess(output)
 
-    # Preprocess the cropped leaf image
-    image_tensor = preprocess_image(cropped_leaf_path).to(device)
-
-    # Inference
-    with torch.no_grad():
-        output = model(image_tensor)
-        probabilities = torch.softmax(output, dim=1)
-        predicted_idx = torch.argmax(probabilities, dim=1).item()
-        predicted_prob = probabilities[0, predicted_idx].item()
-
-    plant_name = PLANT_CLASSES[predicted_idx]
-    if predicted_prob < 0.50:
-        # print(f"Low confidence prediction: {predicted_prob:.2f}")
+    plant_name = result["label"]
+    if result["confidence"] < 0.50:
         plant_name = "Unknown"
 
-    # print(f"Predicted Plant: {plant_name} (Confidence: {predicted_prob:.2f})")
     return plant_name
 
 
 # ─────────────────────────────────────────────────────────────────────────────
-# 4) Disease classification (expects a cropped leaf image!)
+# 3) Disease classification (expects a cropped leaf image!)
 # ─────────────────────────────────────────────────────────────────────────────
+
 def classify_disease(cropped_leaf_path: str, plant_type: str) -> str:
     """
-    Classify the disease on a cropped leaf image using the DiseaseClassifier model.
+    Classify the disease on a cropped leaf image using the configured model adapter.
     """
     if plant_type == "Unknown":
         return "Unknown"
 
-    disease_labels = {
-        "Apple": ["Apple Scab", "Apple Black Rot", "Cedar Apple Rust", "Apple Healthy"],
-        "Corn_(maize)": ["Cercospora_leaf_spot Gray_leaf_spot", "Common Rush", "Northern_Leaf_Blight", "Healthy"],
-        "Grape": ["Black Rot", "Esca_(Black_Measles)", "Leaf_blight_(Isariopsis_Leaf_Spot)", "Healthy"],
-        "Pepper_bell": ["Bacterial_Spot", "Healthy"],
-        "Potato": ["Early_Blight", "Late_Blight", "Healthy"],
-        "Tomato": [
-            "Bacterial_Spot", "Early_Blight", "Late_Blight", "Leaf_Mold",
-            "Septoria_leaf_spot", "Spider_Mites", "Target_Spot",
-            "Yellow_Leaf_Curl_Virus", "Mosaic_Virus", "Healthy"
-        ],
-    }
-    class_labels = disease_labels.get(plant_type, ["Unknown"])  # default to ["Unknown"] if not found
+    if plant_type not in DISEASE_LABELS:
+        return "Unknown"
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
+    backend = get_backend_name()
+    model_name = disease_model_name(plant_type, backend)
 
-    # Dynamically determine model file based on plant name
-    model_path = f"src/models/{plant_type}_Disease_Classification.pth"
-    if not os.path.exists(model_path):
+    try:
+        model = get_model(model_name)
+    except FileNotFoundError:
         print(f"No disease model found for {plant_type}, returning 'Unknown'")
         return "Unknown"
 
-    # Load disease classifier
-    model = load_model(
-        model_class=DiseaseClassifier,
-        model_path=model_path,
-        num_classes=len(class_labels),
-        device=device
-    )
+    image_tensor = model.preprocess(cropped_leaf_path)
+    output = model.predict(image_tensor)
+    result = model.postprocess(output)
 
-    # Preprocess the cropped leaf image
-    image_tensor = preprocess_image(cropped_leaf_path).to(device)
-
-    # Inference
-    with torch.no_grad():
-        output = model(image_tensor)
-        probabilities = torch.softmax(output, dim=1)
-        predicted_idx = torch.argmax(probabilities, dim=1).item()
-        predicted_prob = probabilities[0, predicted_idx].item()
-
-    disease_prediction = class_labels[predicted_idx]
-    if predicted_prob < 0.50:
-        print(f"Low confidence disease prediction: {predicted_prob:.2f}")
+    disease_prediction = result["label"]
+    if result["confidence"] < 0.50:
+        print(f"Low confidence disease prediction: {result['confidence']:.2f}")
         disease_prediction = "Unknown"
 
-    print(f"Predicted Disease: {disease_prediction} (Confidence: {predicted_prob:.2f})")
+    print(
+        f"Predicted Disease: {disease_prediction} (Confidence: {result['confidence']:.2f})"
+    )
     return disease_prediction
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# 4) Disease explanation (Grad-CAM)
+# ─────────────────────────────────────────────────────────────────────────────
+
+def explain_disease(cropped_leaf_path: str, plant_type: str):
+    if plant_type == "Unknown":
+        return None
+
+    backend = get_backend_name()
+    model_name = disease_model_name(plant_type, backend)
+    try:
+        model = get_model(model_name)
+    except FileNotFoundError:
+        return None
+
+    return model.explain(cropped_leaf_path, {"label": plant_type})

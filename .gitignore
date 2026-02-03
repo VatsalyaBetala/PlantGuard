@@ -9,6 +9,10 @@ src/models
 # Extras
 /uploads
 /heatmaps
+scripts/_smoke_test.jpg
+/artifacts/**/model.pt
+/artifacts/shared/*.pth
+/artifacts/shared/*.pt
 
 # Venv
 /plant_guard 

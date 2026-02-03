@@ -5,32 +5,22 @@ import numpy as np
 import torch
 from PIL import Image
 from torchvision import transforms
+
 from src.Disease_Classification_resnet50.src.disease_model import DiseaseClassifier
+from src.model_artifacts import resolve_model_path
+from src.model_catalog import DISEASE_LABELS, LEGACY_DISEASE_MODEL_FILENAMES, disease_model_name
 
-DISEASE_LABELS = {
-    "Apple": ["Apple Scab", "Apple Black Rot", "Cedar Apple Rust", "Apple Healthy"],
-    "Corn_(maize)": ["Cercospora_leaf_spot Gray_leaf_spot", "Common Rush", "Northern_Leaf_Blight", "Healthy"],
-    "Grape": ["Black Rot", "Esca_(Black_Measles)", "Leaf_blight_(Isariopsis_Leaf_Spot)", "Healthy"],
-    "Pepper_bell": ["Bacterial_Spot", "Healthy"],
-    "Potato": ["Early_Blight", "Late_Blight", "Healthy"],
-    "Tomato": [
-        "Bacterial_Spot", "Early_Blight", "Late_Blight", "Leaf_Mold",
-        "Septoria_leaf_spot", "Spider_Mites", "Target_Spot",
-        "Yellow_Leaf_Curl_Virus", "Mosaic_Virus", "Healthy"
-    ],
-}
+# The underlying understanding of how GradCams works lies the understanding of the gradients:
 
-# The underlying understanding of how GradCams works lies the understanding of the gradients: 
-
-# NOTE:GradCams looks at the last convolution layer, just before the fully-connected layer(s) (the last Conv-layer is unfreezed to capture gradients). 
+# NOTE:GradCams looks at the last convolution layer, just before the fully-connected layer(s) (the last Conv-layer is unfreezed to capture gradients).
 
 # STEP1: Firstly, the feature maps are calculated by convolving each filter (in this case 2048) over the output of the previous layer.
 
 # STEP2: This leaves you with this activations of dimension : [1,2048,7,7]. (2048 filters, each outputting 7x7 feature map)
 
-# STEP3: Then, for each filter map is AveragePooled, which leaves you with one value for each feature map: [1,2048]. 
+# STEP3: Then, for each filter map is AveragePooled, which leaves you with one value for each feature map: [1,2048].
 
-# STEP4: We calculte the weighted sum of feature maps. Following is the dimensional understanding: 
+# STEP4: We calculte the weighted sum of feature maps. Following is the dimensional understanding:
 # activation[i]      |  [7, 7]  | The i-th feature map A^i from layer4      |
 # w                  |  scalar  | a(i), the importance of that feature map  |
 # w * activation[i]  |  [7, 7]  | Scaled feature map                        |
@@ -40,14 +30,15 @@ DISEASE_LABELS = {
 
 # POSTPROCESSING: Finally, we apply ReLU, resize it, and normalize it.
 
-# We apply a visual overlay on the original image.    
+# We apply a visual overlay on the original image.
+
 
 def generate_grad_cam(image_path: str, plant_type: str) -> Optional[str]:
     if plant_type not in DISEASE_LABELS:
         return None
 
-    # We retrive the respective model.
-    model_path = os.path.join("src", "models", f"{plant_type}_Disease_Classification.pth")
+    legacy_filename = LEGACY_DISEASE_MODEL_FILENAMES.get(plant_type)
+    model_path = resolve_model_path(disease_model_name(plant_type), legacy_filename)
     if not os.path.exists(model_path):
         return None
 
@@ -56,14 +47,14 @@ def generate_grad_cam(image_path: str, plant_type: str) -> Optional[str]:
 
     model = DiseaseClassifier(num_classes)
     checkpoint = torch.load(model_path, map_location=device)
-    
+
     if isinstance(checkpoint, dict) and "state_dict" in checkpoint:
         model.load_state_dict(checkpoint["state_dict"])
     else:
         model.load_state_dict(checkpoint)
-    
+
     model.to(device)
-    model.eval() # Eval mode - for inference
+    model.eval()  # Eval mode - for inference
 
     gradients = []
     activations = []
@@ -72,7 +63,7 @@ def generate_grad_cam(image_path: str, plant_type: str) -> Optional[str]:
         activations.append(out)
         out.register_hook(lambda grad: gradients.append(grad))
 
-    handle = model.model.layer4[-1].register_forward_hook(save_activation) # Layer-4 of the CNN (ResNet50)
+    handle = model.model.layer4[-1].register_forward_hook(save_activation)  # Layer-4 of the CNN (ResNet50)
 
     transform = transforms.Compose([
         transforms.Resize((224, 224)),

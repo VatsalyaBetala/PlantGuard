@@ -9,8 +9,10 @@ An AI-powered **deep learning model** for detecting and classifying **plant dise
 - [Installation](#installation)
 - [Dataset](#dataset)
 - [Usage](#usage)
+  - [Run the Web UI](#run-the-web-ui)
+  - [Switch Models](#switch-models)
+  - [Artifacts Layout](#artifacts-layout)
   - [Training the Model](#training-the-model)
-  - [Evaluating the Model](#evaluating-the-model)
 - [Model Architecture](#model-architecture)
 - [Results](#results)
 - [Deployment](#deployment)
@@ -67,25 +69,40 @@ This project uses the **PlantVillage dataset**, which contains **thousands of la
 ---
 
 ## **Usage**
+### **Run the Web UI**
+```bash
+python main.py
+```
+The FastAPI UI will be available at `http://127.0.0.1:8000`.
+
+### **Switch Models**
+Select a backend using an environment variable (default is the CNN backend):
+```bash
+MODEL_NAME=cnn_resnet50 python main.py
+```
+
+### **Artifacts Layout**
+Place model artifacts here so the UI can load them uniformly:
+```
+artifacts/
+  <model_name>/
+    model.pt
+    labels.json
+    config.yaml (optional)
+  shared/
+    resnet50_weights.pth
+    yolov8n_leaf.pt
+```
+
 ### **Training the Model**
 To train the model, run:
 ```bash
-python train.py
+python train/train.py
 ```
 This will:
 - Load the dataset.
-- Train a **ResNet-50-based deep learning model**.
-- Save the trained model in the `models/` directory.
-
-### **Evaluating the Model**
-To test the model’s accuracy on the validation set:
-```bash
-python evaluate.py
-```
-This will output:
-- Model accuracy
-- Validation loss
-- Confusion matrix (optional)
+- Train a CNN model.
+- Save the trained model in the current directory.
 
 ---
 
@@ -116,19 +133,13 @@ PlantGuard comes with a lightweight web UI built with **FastAPI** and **Material
 
 ## **Deployment**
 ### **1️⃣ Running Inference Locally**
-Use `predict.py` to classify a single image:
+Run the UI and upload an image via the web interface:
 ```bash
-python predict.py --image test.jpg --model models/plant_disease_model.pth
+python main.py
 ```
 
 ### **2️⃣ Deploying on Raspberry Pi**
-To run inference on **Raspberry Pi or Jetson Nano**:
-```bash
-python deploy.py --device edge
-```
-**Optimizations:**
-- Model **quantization** reduces size by **50%**.
-- TensorFlow Lite conversion for **low-power devices**.
+Follow the same UI workflow and point to artifacts on the device filesystem.
 
 ---
 
