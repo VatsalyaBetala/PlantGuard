@@ -1311,15 +1311,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        // Initialize AOS animations
-        document.addEventListener('DOMContentLoaded', function() {
-            AOS.init({
-                duration: 800,
-                easing: 'ease-in-out',
-                once: true,
-                offset: 100
-            });
-        });
 
         // State management
         let selectedFiles = [];
@@ -1329,28 +1320,6 @@
         let fileInput, uploadZone, previewSection, previewContainer, previewCount;
         let submitBtn, clearBtn, responseMessage, responseText, progressContainer;
         let progressText, progressPercent, progressFill;
-
-        // Theme Management
-        function toggleDarkMode() {
-            const body = document.body;
-            const themeIcon = document.getElementById('themeIcon');
-            
-            if (body.getAttribute('data-theme') === 'dark') {
-                body.removeAttribute('data-theme');
-                themeIcon.className = 'fas fa-moon';
-                localStorage.setItem('theme', 'light');
-            } else {
-                body.setAttribute('data-theme', 'dark');
-                themeIcon.className = 'fas fa-sun';
-                localStorage.setItem('theme', 'dark');
-            }
-        }
-
-        // Initialize theme
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.setAttribute('data-theme', 'dark');
-            document.getElementById('themeIcon').className = 'fas fa-sun';
-        }
 
         // File validation
         function isValidImageFile(file) {
@@ -1552,6 +1521,9 @@
                 updateProgress(100, 'Analysis complete!', 4);
                 
                 if (response.ok) {
+                    if (window.AppUI && Array.isArray(result.predictions)) {
+                        AppUI.saveHistoryEntries(result.predictions);
+                    }
                     showMessage(result.message || 'Images analyzed successfully! Redirecting to results...', 'success');
                     
                     // Redirect after success
@@ -1575,6 +1547,9 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
+            if (window.AppUI) {
+                AppUI.initPage();
+            }
             // Initialize DOM elements
             fileInput = document.getElementById('fileInput');
             uploadZone = document.getElementById('uploadZone');

@@ -1092,6 +1092,12 @@
       </div>
     </div>
 
+    <div class="history-panel">
+      <h5><i class="fas fa-history"></i> Recent Analyses</h5>
+      <div id="historyList" class="history-list"></div>
+      <div id="comparisonSummary" style="margin-top:0.8rem; color: var(--text-secondary); font-weight: 600;"></div>
+    </div>
+
     <!-- Image Gallery -->
     <div id="loadingState" class="loading" style="display: none;">
       <div class="loading-spinner"></div>
@@ -1195,28 +1201,6 @@
     let imagesData = [];
     let currentView = 'grid';
     let currentFilter = '';
-
-    // Theme Management
-    function toggleDarkMode() {
-      const body = document.body;
-      const themeIcon = document.getElementById('themeIcon');
-      
-      if (body.getAttribute('data-theme') === 'dark') {
-        body.removeAttribute('data-theme');
-        themeIcon.className = 'fas fa-moon';
-        localStorage.setItem('theme', 'light');
-      } else {
-        body.setAttribute('data-theme', 'dark');
-        themeIcon.className = 'fas fa-sun';
-        localStorage.setItem('theme', 'dark');
-      }
-    }
-
-    // Initialize theme
-    if (localStorage.getItem('theme') === 'dark') {
-      document.body.setAttribute('data-theme', 'dark');
-      document.getElementById('themeIcon').className = 'fas fa-sun';
-    }
 
     // View Toggle Management
     function setView(viewType) {
@@ -1360,6 +1344,48 @@
     function showEmptyState() {
       document.getElementById('emptyState').style.display = 'block';
       document.getElementById('imageGallery').style.display = 'none';
+    }
+
+    function renderHistory(historyItems) {
+      const historyList = document.getElementById('historyList');
+      const comparisonSummary = document.getElementById('comparisonSummary');
+      if (!historyList || !comparisonSummary) return;
+
+      if (!historyItems.length) {
+        historyList.innerHTML = '<div class="history-item">No recent analyses yet.</div>';
+        comparisonSummary.textContent = '';
+        return;
+      }
+
+      historyList.innerHTML = historyItems.slice(0, 6).map(item => `
+        <div class="history-item interactive-card">
+          <div><strong>${item.plant || 'Unknown plant'}</strong></div>
+          <div>${item.disease || 'Unknown disease'}</div>
+          <div style="font-size:0.8rem; color:#64748b;">${new Date(item.uploadDate || item.timestamp || Date.now()).toLocaleString()}</div>
+        </div>
+      `).join('');
+
+      if (historyItems.length >= 2) {
+        const [latest, previous] = historyItems;
+        comparisonSummary.textContent = `Comparison: ${latest.plant || 'Plant'} changed from “${previous.disease || 'Unknown'}” to “${latest.disease || 'Unknown'}”.`;
+      } else {
+        comparisonSummary.textContent = 'Add one more analysis to unlock comparison insights.';
+      }
+    }
+
+    async function fetchHistory() {
+      try {
+        const res = await fetch('/history?limit=10');
+        if (res.ok) {
+          const serverHistory = await res.json();
+          renderHistory(serverHistory);
+          return;
+        }
+      } catch (error) {
+        console.warn('Using local history fallback', error);
+      }
+      const localHistory = JSON.parse(localStorage.getItem('analysisHistory') || '[]');
+      renderHistory(localHistory);
     }
 
     // Enhanced Card Creation
@@ -1640,6 +1666,9 @@
 
     // Event Listeners
     document.addEventListener('DOMContentLoaded', () => {
+      if (window.AppUI) {
+        AppUI.initPage();
+      }
       // Initialize Materialize components
       M.Modal.init(document.querySelectorAll('.modal'));
       M.Tooltip.init(document.querySelectorAll('[title]'));
@@ -1663,6 +1692,7 @@
       
       // Fetch initial data
       fetchImages();
+      fetchHistory();
     });
 
     // Initialize components

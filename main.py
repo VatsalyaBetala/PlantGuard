@@ -1,6 +1,7 @@
 import os
 import uuid
 import traceback
+from datetime import datetime, timezone
 from typing import List
 from pydantic import BaseModel
 from pathlib import Path
@@ -185,6 +186,7 @@ async def upload_files(files: List[UploadFile] = File(...)):
                 "plant": plant_prediction,
                 "disease": disease_prediction,
                 "heatmap": os.path.basename(heatmap_path) if heatmap_path else None,
+                "uploadDate": datetime.now(timezone.utc).isoformat(),
             }
             predictions.append(pred)
             PREDICTIONS[unique_name] = pred
@@ -206,9 +208,21 @@ async def get_images():
             "filename": file,
             "plant": pred.get("plant", ""),
             "disease": pred.get("disease", ""),
-            "heatmap": pred.get("heatmap")
+            "heatmap": pred.get("heatmap"),
+            "uploadDate": pred.get("uploadDate"),
         })
     return results
+
+
+@app.get("/history")
+async def get_history(limit: int = 10):
+    entries = sorted(
+        PREDICTIONS.values(),
+        key=lambda item: item.get("uploadDate", ""),
+        reverse=True
+    )
+    safe_limit = max(1, min(limit, 100))
+    return entries[:safe_limit]
 
 
 @app.post("/explain-diagnosis")
