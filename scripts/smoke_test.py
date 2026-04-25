@@ -3,8 +3,8 @@ from pathlib import Path
 
 from PIL import Image
 
-from src.model_catalog import get_backend_name, plant_model_name
-from src.model_registry import get_model
+from plant_disease.model_catalog import get_backend_name, plant_model_name
+from plant_disease.model_registry import get_model
 
 
 def main():

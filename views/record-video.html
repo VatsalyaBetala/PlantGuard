@@ -3,9 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlantGuard - Live Plant Analysis</title>
+    <title>PlantGuard — Live Analysis</title>
+    <meta name="description" content="Stream your webcam and let PlantGuard analyse plant health in real time.">
 
-    <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -14,886 +16,627 @@
     <link rel="stylesheet" href="/static/style.css">
 
     <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-            --surface-primary: #ffffff;
-            --surface-secondary: #f8fafc;
-            --surface-tertiary: #f1f5f9;
-            --surface-glass: rgba(255, 255, 255, 0.8);
-            --border-primary: #e2e8f0;
-            --border-secondary: #cbd5e1;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --text-muted: #94a3b8;
-            --accent-primary: #3b82f6;
-            --accent-secondary: #8b5cf6;
-            --accent-tertiary: #06b6d4;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --error: #ef4444;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-            --radius-sm: 0.375rem;
-            --radius-md: 0.5rem;
-            --radius-lg: 0.75rem;
-            --radius-xl: 1rem;
-            --radius-2xl: 1.5rem;
-            --radius-3xl: 2rem;
-        }
-
-        [data-theme="dark"] {
-            --surface-primary: #0f172a;
-            --surface-secondary: #1e293b;
-            --surface-tertiary: #334155;
-            --surface-glass: rgba(15, 23, 42, 0.8);
-            --border-primary: #475569;
-            --border-secondary: #64748b;
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
-            --hero-gradient: linear-gradient(135deg, #000000 0%, #1e293b 50%, #334155 100%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: var(--surface-secondary);
-            color: var(--text-primary);
-            line-height: 1.6;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-x: hidden;
-        }
-
-        /* Professional Navigation */
-        .navbar-fixed {
-            z-index: 1000;
-        }
-
-        .navbar-custom {
-            background: var(--surface-glass);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-primary);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-        }
-
-        .nav-wrapper {
-            padding: 0 10rem;
-            height: 80px;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1400px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .brand-logo {
-            display: flex !important;
-            align-items: center;
-            font-weight: 700;
-            font-size: 1.75rem;
-            color: var(--text-primary) !important;
-            text-decoration: none;
-            transition: all 0.2s ease;
-        }
-
-        .brand-logo:hover {
-            transform: scale(1.02);
-        }
-
-        .brand-logo img {
-            height: 45px;
-            margin-right: 15px;
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow-md);
-        }
-
-        .nav-wrapper ul {
-            display: flex;
-            align-items: center;
-            margin: 0;
-            list-style: none;
-            gap: 0.5rem;
-        }
-
-        .nav-wrapper ul li a {
-            color: var(--text-secondary) !important;
-            font-weight: 500;
-            padding: 0.75rem 1.25rem !important;
-            border-radius: var(--radius-lg);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            text-decoration: none;
-        }
-
-        .nav-wrapper ul li a:hover {
-            color: var(--accent-primary) !important;
-            background: rgba(59, 130, 246, 0.1);
-            transform: translateY(-1px);
-        }
-
-        /* Hero Section */
-        .hero-section {
-            background: var(--hero-gradient);
-            color: white;
-            padding: 4rem 0;
-            margin-top: 80px;
+        .page-hero {
             position: relative;
+            padding: 5rem 1.5rem 3rem;
+            background: var(--hero-gradient);
+            color: #ffffff;
             overflow: hidden;
+            isolation: isolate;
         }
-
-        .hero-section::before {
+        .page-hero::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
-            opacity: 0.3;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+            z-index: -1;
+        }
+        .page-hero-inner { max-width: var(--container-max); margin: 0 auto; text-align: center; }
+        .page-hero .eyebrow-dark {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.4rem 0.9rem; border-radius: var(--radius-full);
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+            color: var(--brand-100); font-size: 0.75rem; font-weight: 600;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            backdrop-filter: blur(12px);
+        }
+        .page-hero h1 {
+            margin: 1rem 0 0.5rem;
+            font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+            font-weight: 800; letter-spacing: -0.025em; line-height: 1.1;
+        }
+        .page-hero p {
+            margin: 0 auto; max-width: 640px;
+            color: rgba(255,255,255,0.8);
+            font-size: 1rem; line-height: 1.6;
         }
 
-        .hero-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            text-align: center;
+        .main-container {
+            max-width: 1080px;
+            margin: -3rem auto 4rem;
+            padding: 0 1.5rem;
             position: relative;
             z-index: 1;
         }
 
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 9999px;
-            color: var(--accent-primary);
-            font-weight: 500;
-            font-size: 0.875rem;
-            margin-bottom: 1.5rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .hero-title {
-            font-size: clamp(2rem, 4vw, 3rem);
-            font-weight: 800;
-            line-height: 1.1;
-            margin-bottom: 1rem;
-            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .hero-subtitle {
-            font-size: 1.125rem;
-            opacity: 0.9;
-            margin-bottom: 2rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
-        }
-
-        /* Main Container */
-        .main-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 3rem 2rem;
-        }
-
-        /* Video Card */
+        /* ---- Video card ---- */
         .video-card {
             background: var(--surface-primary);
             border: 1px solid var(--border-primary);
-            border-radius: var(--radius-3xl);
-            box-shadow: var(--shadow-2xl);
+            border-radius: var(--radius-2xl);
+            box-shadow: var(--shadow-lg);
             overflow: hidden;
-            margin-bottom: 3rem;
-            position: relative;
-        }
-
-        .video-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 6px;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary), var(--accent-tertiary));
         }
 
         .card-header {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            padding: 2.5rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { left: -100%; }
-            100% { left: 100%; }
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1.5rem 1.75rem;
+            border-bottom: 1px solid var(--border-subtle);
+            background: var(--surface-secondary);
         }
 
         .card-header h3 {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            gap: 1rem;
+            gap: 0.65rem;
+            margin: 0;
+            font-size: 1.125rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            color: var(--text-primary);
         }
+        .card-header h3 i { color: var(--brand-600); }
+        [data-theme="dark"] .card-header h3 i { color: var(--brand-400); }
 
         .card-header p {
-            opacity: 0.95;
-            font-size: 1.125rem;
+            margin: 0.2rem 0 0;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
         }
 
         .video-container {
-            padding: 3rem;
-            background: var(--surface-secondary);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 500px;
+            position: relative;
+            margin: 1.75rem;
+            aspect-ratio: 16 / 9;
+            background: #0b1220;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            border: 1px solid var(--border-primary);
         }
 
-        #video {
+        .video-container video,
+        .video-container .video-placeholder {
+            position: absolute;
+            inset: 0;
             width: 100%;
-            max-width: 800px;
-            height: auto;
-            border-radius: var(--radius-2xl);
-            box-shadow: var(--shadow-xl);
-            background: #000;
-            border: 3px solid var(--border-primary);
-            transition: all 0.3s ease;
+            height: 100%;
         }
 
-        #video.recording {
-            border-color: var(--error);
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.3);
+        .video-container video {
+            object-fit: cover;
+            transition: box-shadow var(--dur-base) var(--ease-out);
         }
 
         .video-placeholder {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 400px;
-            background: var(--surface-tertiary);
-            border: 2px dashed var(--border-secondary);
-            border-radius: var(--radius-2xl);
-            color: var(--text-muted);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 0.65rem;
+            background: radial-gradient(circle at 50% 40%, rgba(16,185,129,0.15), transparent 70%), #0b1220;
+            color: rgba(255,255,255,0.75);
         }
 
         .placeholder-icon {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            color: var(--accent-primary);
+            font-size: 2.25rem;
+            color: rgba(255,255,255,0.35);
         }
 
         .placeholder-text {
-            font-size: 1.125rem;
+            font-size: 0.9375rem;
             font-weight: 500;
         }
 
-        /* Controls Section */
+        /* Recording indicator — sits on top of the video */
+        .rec-chip {
+            position: absolute;
+            top: 0.75rem; left: 0.75rem;
+            display: none;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.3rem 0.7rem;
+            background: rgba(239, 68, 68, 0.92);
+            color: #ffffff;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            border-radius: var(--radius-full);
+            backdrop-filter: blur(6px);
+            z-index: 2;
+        }
+
+        .rec-chip.active { display: inline-flex; }
+
+        .rec-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            background: #ffffff;
+            animation: pulse 1.2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.45; transform: scale(0.8); }
+        }
+
+        /* ---- Controls ---- */
         .controls-section {
-            padding: 2.5rem 3rem;
-            background: var(--surface-secondary);
-            border-top: 1px solid var(--border-primary);
             display: flex;
-            justify-content: center;
-            gap: 1.5rem;
+            gap: 0.6rem;
+            padding: 0 1.75rem 1.25rem;
             flex-wrap: wrap;
         }
 
         .control-btn {
-            padding: 1.25rem 3rem !important;
-            border-radius: var(--radius-xl) !important;
-            font-size: 1.125rem !important;
-            font-weight: 600 !important;
-            text-transform: none !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 0.75rem !important;
-            min-width: 200px;
-            justify-content: center !important;
-            position: relative;
-            overflow: hidden;
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            font-family: inherit;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            background: var(--surface-primary);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: transform var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
         }
 
-        .control-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.6s;
+        .control-btn:hover:not(:disabled) {
+            border-color: var(--brand-300);
+            color: var(--brand-700);
+            transform: translateY(-1px);
         }
+        [data-theme="dark"] .control-btn:hover:not(:disabled) { color: var(--brand-300); }
 
-        .control-btn:hover::before {
-            left: 100%;
+        .control-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
         }
 
         .btn-connect {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
-            color: white !important;
-            border: none !important;
-            box-shadow: var(--shadow-lg);
+            background: var(--brand-gradient);
+            color: #ffffff;
+            border-color: transparent;
+            box-shadow: var(--shadow-brand);
         }
-
-        .btn-connect:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-2xl);
-        }
+        .btn-connect:hover:not(:disabled) { color: #ffffff; }
 
         .btn-start {
-            background: linear-gradient(135deg, var(--success), #059669) !important;
-            color: white !important;
-            border: none !important;
-            box-shadow: var(--shadow-lg);
+            background: #eff6ff;
+            color: #1e40af;
+            border-color: #bfdbfe;
         }
-
-        .btn-start:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-2xl);
-        }
+        .btn-start:hover:not(:disabled) { background: #dbeafe; }
+        [data-theme="dark"] .btn-start { background: rgba(59,130,246,0.14); color: #93c5fd; border-color: rgba(59,130,246,0.3); }
 
         .btn-stop {
-            background: linear-gradient(135deg, var(--error), #dc2626) !important;
-            color: white !important;
-            border: none !important;
-            box-shadow: var(--shadow-lg);
+            background: #fef2f2;
+            color: #991b1b;
+            border-color: #fecaca;
         }
+        .btn-stop:hover:not(:disabled) { background: #fee2e2; }
+        [data-theme="dark"] .btn-stop { background: rgba(239,68,68,0.14); color: #fca5a5; border-color: rgba(239,68,68,0.3); }
 
-        .btn-stop:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-2xl);
-        }
-
-        .control-btn:disabled {
-            opacity: 0.5 !important;
-            cursor: not-allowed !important;
-            transform: none !important;
-        }
-
-        /* Status Indicator */
+        /* ---- Status & progress ---- */
         .status-section {
-            padding: 2rem 3rem;
-            background: var(--surface-tertiary);
-            border-top: 1px solid var(--border-primary);
             display: none;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin: 0 1.75rem 1.25rem;
+            padding: 0.9rem 1.1rem;
+            background: var(--surface-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
         }
-
-        .status-section.active {
-            display: block;
-        }
+        .status-section.active { display: flex; }
 
         .status-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .recording-dot {
-            width: 12px;
-            height: 12px;
-            background: var(--error);
-            border-radius: 50%;
-            animation: pulse 1.5s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .status-text {
-            font-size: 1.125rem;
+            display: inline-flex; align-items: center; gap: 0.55rem;
+            font-size: 0.875rem;
             font-weight: 600;
             color: var(--text-primary);
         }
 
+        .recording-dot {
+            width: 10px; height: 10px;
+            border-radius: 50%;
+            background: var(--color-error);
+            animation: pulse 1.2s ease-in-out infinite;
+        }
+
         .frame-counter {
-            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.8125rem;
             color: var(--text-secondary);
-            font-size: 0.95rem;
         }
 
-        /* Progress Bar */
         .progress-section {
-            padding: 1.5rem 3rem;
-            background: var(--surface-tertiary);
-            border-top: 1px solid var(--border-primary);
             display: none;
+            padding: 0 1.75rem 1.75rem;
         }
 
-        .progress-section.active {
-            display: block;
-        }
+        .progress-section.active { display: block; }
 
         .progress-bar {
-            height: 8px;
-            background: var(--border-primary);
-            border-radius: 9999px;
+            height: 6px;
+            background: var(--surface-tertiary);
+            border-radius: var(--radius-full);
             overflow: hidden;
-            position: relative;
         }
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 9999px;
-            animation: progress-shimmer 2s infinite;
+            width: 100%;
+            background: var(--brand-gradient);
+            background-size: 200% 100%;
+            animation: progressSlide 1.5s linear infinite;
         }
 
-        @keyframes progress-shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
+        @keyframes progressSlide {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
         }
 
-        /* Footer */
-        .footer {
-            background: var(--surface-primary);
-            border-top: 1px solid var(--border-primary);
-            padding: 3rem 0;
-            text-align: center;
-            color: var(--text-secondary);
-            margin-top: 4rem;
-        }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 60px;
-            height: 60px;
+        /* ---- Tips panel ---- */
+        .tips {
+            margin-top: 1.5rem;
+            padding: 1.25rem;
             background: var(--surface-primary);
             border: 1px solid var(--border-primary);
-            color: var(--text-primary);
-            border-radius: 50%;
-            box-shadow: var(--shadow-xl);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tips-title {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-secondary);
+            margin: 0 0 0.85rem;
+        }
+
+        .tips-title i { color: var(--color-warning); }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.6rem;
+        }
+
+        .tip {
             display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1000;
+            gap: 0.55rem;
+            padding: 0.75rem 0.85rem;
+            background: var(--surface-secondary);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            font-size: 0.8125rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
         }
 
-        .theme-toggle:hover {
-            transform: scale(1.1) rotate(180deg);
-            box-shadow: var(--shadow-2xl);
+        .tip i {
+            color: var(--brand-600);
+            margin-top: 2px;
+            flex-shrink: 0;
         }
-
-        /* Responsive Design */
-        @media (max-width: 992px) {
-            .nav-wrapper ul {
-                display: none;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .nav-wrapper {
-                padding: 0 1rem;
-                justify-content: center;
-            }
-
-            .hero-section {
-                padding: 3rem 0;
-            }
-
-            .main-container {
-                padding: 2rem 1rem;
-            }
-
-            .video-container {
-                padding: 2rem;
-            }
-
-            .controls-section {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 1rem;
-            }
-
-            .theme-toggle {
-                bottom: 1rem;
-                right: 1rem;
-                width: 50px;
-                height: 50px;
-            }
-        }
-
-        /* Loading Animation */
-        .loading-spinner {
-            width: 24px;
-            height: 24px;
-            border: 3px solid var(--border-primary);
-            border-top: 3px solid var(--accent-primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        [data-theme="dark"] .tip i { color: var(--brand-300); }
     </style>
 </head>
 <body>
-    <!-- Professional Navigation -->
+
+    <!-- Navbar -->
     <div class="navbar-fixed">
         <nav class="navbar-custom">
             <div class="nav-wrapper">
-                <a href="#!" class="brand-logo">
-                    <img src="../static/logo.jpeg" alt="PlantGuard Logo">
-                    PlantGuard
+                <a href="/" class="brand-logo">
+                    <img src="/static/logo.jpeg" alt="PlantGuard logo">
+                    <span>PlantGuard</span>
+                    <span class="brand-version">v1.0</span>
                 </a>
                 <ul class="right hide-on-med-and-down">
-                    <li><a href="/" class="waves-effect waves-light">
-                        <i class="material-icons">home</i>Home
-                    </a></li>
-                    <li><a href="/view-images" class="waves-effect waves-light">
-                        <i class="material-icons">photo_library</i>Image Library
-                    </a></li>
-                    <li><a href="/about" class="waves-effect waves-light">
-                        <i class="material-icons">info</i>About
-                    </a></li>
-                    <li><a href="/contact" class="waves-effect waves-light">
-                        <i class="material-icons">contact_mail</i>Contact
-                    </a></li>
-                    <li><a href="/faq" class="waves-effect waves-light">
-                        <i class="material-icons">help</i>FAQ
-                    </a></li>
+                    <li><a href="/"><i class="material-icons">home</i>Home</a></li>
+                    <li><a href="/upload-images"><i class="material-icons">cloud_upload</i>Upload</a></li>
+                    <li><a href="/record-video" class="active"><i class="material-icons">videocam</i>Live</a></li>
+                    <li><a href="/view-images"><i class="material-icons">photo_library</i>Library</a></li>
+                    <li><a href="/about"><i class="material-icons">info</i>About</a></li>
+                    <li><a href="/doc"><i class="material-icons">description</i>Docs</a></li>
+                    <li><a href="/faq"><i class="material-icons">help_outline</i>FAQ</a></li>
+                    <li><a href="/contact"><i class="material-icons">mail_outline</i>Contact</a></li>
                 </ul>
             </div>
         </nav>
     </div>
 
-    <!-- Hero Section -->
-    <section class="hero-section">
-        <div class="hero-content" data-aos="fade-up">
-            <div class="hero-badge" data-aos="fade-up" data-aos-delay="100">
-                <i class="fas fa-video"></i>
-                <span>Real-time Plant Analysis</span>
-            </div>
-            
-            <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">
-                Live Plant Disease Detection
-            </h1>
-            
-            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="300">
-                Use your camera to record and analyze plant health in real-time. 
-                Our AI continuously monitors your plants for disease detection.
+    <!-- Hero strip -->
+    <section class="page-hero">
+        <div class="page-hero-inner">
+            <span class="eyebrow-dark" data-aos="fade-up"><i class="fas fa-video"></i> Live Analysis</span>
+            <h1 data-aos="fade-up" data-aos-delay="100">Real-time plant disease detection</h1>
+            <p data-aos="fade-up" data-aos-delay="200">
+                Connect your webcam and PlantGuard will sample a frame per second for
+                on-the-fly classification. Results stream to your Library.
             </p>
         </div>
     </section>
 
-    <!-- Main Container -->
+    <!-- Main -->
     <div class="main-container">
-        <!-- Video Recording Card -->
-        <div class="video-card" data-aos="fade-up" data-aos-delay="200">
+        <div class="video-card" data-aos="fade-up">
             <div class="card-header">
-                <h3>
-                    <i class="fas fa-video"></i>
-                    Live Camera Feed
-                </h3>
-                <p>Connect your camera and start recording for real-time plant analysis</p>
+                <div>
+                    <h3><i class="fas fa-video"></i> Live Camera Feed</h3>
+                    <p>Connect your camera and start recording for real-time plant analysis</p>
+                </div>
             </div>
 
             <div class="video-container">
+                <div class="rec-chip" id="recChip"><span class="rec-dot"></span> REC</div>
                 <div class="video-placeholder" id="videoPlaceholder">
                     <i class="fas fa-video-slash placeholder-icon"></i>
                     <div class="placeholder-text">Camera not connected</div>
                 </div>
-                <video id="video" autoplay muted style="display: none;"></video>
+                <video id="video" autoplay muted playsinline style="display: none;"></video>
             </div>
 
-            <!-- Controls Section -->
             <div class="controls-section">
                 <button id="connectCamera" class="control-btn btn-connect">
-                    <i class="fas fa-camera"></i>
-                    Connect Camera
+                    <i class="fas fa-camera"></i> Connect Camera
                 </button>
                 <button id="startRecording" class="control-btn btn-start" disabled>
-                    <i class="fas fa-play"></i>
-                    Start Recording
+                    <i class="fas fa-play"></i> Start Recording
                 </button>
                 <button id="stopRecording" class="control-btn btn-stop" disabled>
-                    <i class="fas fa-stop"></i>
-                    Stop Recording
+                    <i class="fas fa-stop"></i> Stop Recording
                 </button>
             </div>
 
-            <!-- Status Section -->
             <div class="status-section" id="statusSection">
                 <div class="status-indicator">
-                    <div class="recording-dot"></div>
-                    <div class="status-text">Recording in progress...</div>
+                    <span class="recording-dot"></span>
+                    <span class="status-text">Recording in progress…</span>
                 </div>
                 <div class="frame-counter" id="frameCounter">Frames captured: 0</div>
             </div>
 
-            <!-- Progress Section -->
             <div class="progress-section" id="progressSection">
-                <div class="progress-bar">
-                    <div class="progress-fill"></div>
-                </div>
+                <div class="progress-bar"><div class="progress-fill"></div></div>
+            </div>
+        </div>
+
+        <!-- Tips -->
+        <div class="tips" data-aos="fade-up" data-aos-delay="100">
+            <div class="tips-title"><i class="fas fa-lightbulb"></i> Live capture tips</div>
+            <div class="tips-grid">
+                <div class="tip"><i class="fas fa-sun"></i><span>Film under natural daylight &mdash; avoid harsh overhead shadows.</span></div>
+                <div class="tip"><i class="fas fa-leaf"></i><span>Hold the camera 15&ndash;30&nbsp;cm from the leaf for best detail.</span></div>
+                <div class="tip"><i class="fas fa-hand-paper"></i><span>Keep the camera steady; blurry frames degrade predictions.</span></div>
+                <div class="tip"><i class="fas fa-stopwatch"></i><span>30&ndash;60 seconds is usually enough to collect strong samples.</span></div>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
-        <p>&copy; 2024 PlantGuard - Advanced Plant Disease Detection Platform</p>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo"><img src="/static/logo.jpeg" alt="PlantGuard logo"><span>PlantGuard</span></div>
+                <p>Open-source plant disease detection and explainability, built for the field and for the lab.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="/upload-images">Upload</a></li>
+                    <li><a href="/record-video">Live analysis</a></li>
+                    <li><a href="/view-images">Library</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="/doc">Documentation</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank" rel="noopener">GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2024 PlantGuard. Released under the MIT License.</span>
+            <div class="footer-socials">
+                <a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="/contact" aria-label="Contact"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
     </footer>
 
-    <!-- Theme Toggle -->
-    <div class="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+    <!-- Theme toggle -->
+    <button class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
         <i class="fas fa-moon" id="themeIcon"></i>
-    </div>
+    </button>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script>
-        // Initialize AOS animations
-        document.addEventListener('DOMContentLoaded', function() {
-            AOS.init({
-                duration: 800,
-                easing: 'ease-in-out',
-                once: true,
-                offset: 100
-            });
-        });
-
-        // Theme Management
+        // Theme
         function toggleDarkMode() {
             const body = document.body;
-            const themeIcon = document.getElementById('themeIcon');
-            
-            if (body.getAttribute('data-theme') === 'dark') {
+            const icon = document.getElementById('themeIcon');
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            if (isDark) {
                 body.removeAttribute('data-theme');
-                themeIcon.className = 'fas fa-moon';
+                if (icon) icon.className = 'fas fa-moon';
                 localStorage.setItem('theme', 'light');
             } else {
                 body.setAttribute('data-theme', 'dark');
-                themeIcon.className = 'fas fa-sun';
+                if (icon) icon.className = 'fas fa-sun';
                 localStorage.setItem('theme', 'dark');
             }
         }
-
-        // Initialize theme
         if (localStorage.getItem('theme') === 'dark') {
             document.body.setAttribute('data-theme', 'dark');
-            document.getElementById('themeIcon').className = 'fas fa-sun';
+            const _i = document.getElementById('themeIcon');
+            if (_i) _i.className = 'fas fa-sun';
         }
 
-        // Video Recording Logic
-        const video = document.getElementById('video');
-        const videoPlaceholder = document.getElementById('videoPlaceholder');
-        const connectCameraBtn = document.getElementById('connectCamera');
-        const startRecordingBtn = document.getElementById('startRecording');
-        const stopRecordingBtn = document.getElementById('stopRecording');
-        const statusSection = document.getElementById('statusSection');
-        const progressSection = document.getElementById('progressSection');
-        const frameCounter = document.getElementById('frameCounter');
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.AOS) AOS.init({ duration: 650, easing: 'ease-out-cubic', once: true, offset: 60 });
 
-        let mediaStream = null;
-        let recording = false;
-        let frameCaptureInterval = null;
-        let frameCount = 0;
+            const video = document.getElementById('video');
+            const videoPlaceholder = document.getElementById('videoPlaceholder');
+            const connectCameraBtn = document.getElementById('connectCamera');
+            const startRecordingBtn = document.getElementById('startRecording');
+            const stopRecordingBtn = document.getElementById('stopRecording');
+            const statusSection = document.getElementById('statusSection');
+            const progressSection = document.getElementById('progressSection');
+            const frameCounter = document.getElementById('frameCounter');
+            const recChip = document.getElementById('recChip');
 
-        // Connect to the webcam
-        connectCameraBtn.addEventListener('click', async () => {
-            try {
-                connectCameraBtn.innerHTML = '<div class="loading-spinner"></div> Connecting...';
-                connectCameraBtn.disabled = true;
+            let mediaStream = null;
+            let recording = false;
+            let frameCaptureInterval = null;
+            let frameCount = 0;
 
-                mediaStream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { width: 1280, height: 720 } 
-                });
-                
-                video.srcObject = mediaStream;
-                await video.play();
-                
-                // Hide placeholder and show video
-                videoPlaceholder.style.display = 'none';
-                video.style.display = 'block';
-                
-                startRecordingBtn.disabled = false;
-                connectCameraBtn.innerHTML = '<i class="fas fa-camera"></i> Camera Connected';
-                connectCameraBtn.style.background = 'linear-gradient(135deg, var(--success), #059669)';
-                
-                M.toast({ html: '📹 Camera connected successfully!', classes: 'green' });
-                console.log('Camera connected');
-            } catch (err) {
-                console.error('Error accessing the camera:', err);
-                connectCameraBtn.innerHTML = '<i class="fas fa-camera"></i> Connect Camera';
-                connectCameraBtn.disabled = false;
-                M.toast({ html: '❌ Failed to access camera. Please check permissions.', classes: 'red' });
-            }
-        });
+            connectCameraBtn.addEventListener('click', async () => {
+                try {
+                    connectCameraBtn.innerHTML = '<div class="loading-spinner"></div> Connecting…';
+                    connectCameraBtn.disabled = true;
 
-        // Start recording
-        startRecordingBtn.addEventListener('click', () => {
-            if (!mediaStream) {
-                M.toast({ html: '⚠️ Please connect the camera first', classes: 'orange' });
-                return;
-            }
+                    mediaStream = await navigator.mediaDevices.getUserMedia({ video: { width: 1280, height: 720 } });
+                    video.srcObject = mediaStream;
+                    await video.play();
 
-            recording = true;
-            frameCount = 0;
-            
-            // Update UI
-            video.classList.add('recording');
-            statusSection.classList.add('active');
-            progressSection.classList.add('active');
-            startRecordingBtn.disabled = true;
-            stopRecordingBtn.disabled = false;
-            startRecordingBtn.innerHTML = '<i class="fas fa-play"></i> Recording...';
-            
-            M.toast({ html: '🎬 Recording started!', classes: 'green' });
-            startFrameCapture();
-        });
+                    videoPlaceholder.style.display = 'none';
+                    video.style.display = 'block';
 
-        // Stop recording
-        stopRecordingBtn.addEventListener('click', async () => {
-            if (recording) {
+                    startRecordingBtn.disabled = false;
+                    connectCameraBtn.innerHTML = '<i class="fas fa-check"></i> Camera Connected';
+                    connectCameraBtn.disabled = true;
+
+                    M.toast({ html: 'Camera connected', classes: 'green' });
+                } catch (err) {
+                    console.error('camera:', err);
+                    connectCameraBtn.innerHTML = '<i class="fas fa-camera"></i> Connect Camera';
+                    connectCameraBtn.disabled = false;
+                    M.toast({ html: 'Failed to access camera — check permissions', classes: 'red' });
+                }
+            });
+
+            startRecordingBtn.addEventListener('click', () => {
+                if (!mediaStream) {
+                    M.toast({ html: 'Connect the camera first', classes: 'orange' });
+                    return;
+                }
+                recording = true;
+                frameCount = 0;
+
+                statusSection.classList.add('active');
+                progressSection.classList.add('active');
+                recChip.classList.add('active');
+                startRecordingBtn.disabled = true;
+                stopRecordingBtn.disabled = false;
+                startRecordingBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Recording…';
+
+                M.toast({ html: 'Recording started', classes: 'green' });
+                startFrameCapture();
+            });
+
+            stopRecordingBtn.addEventListener('click', async () => {
+                if (!recording) return;
                 recording = false;
-                
-                // Update UI
-                video.classList.remove('recording');
+
                 statusSection.classList.remove('active');
                 progressSection.classList.remove('active');
+                recChip.classList.remove('active');
                 startRecordingBtn.disabled = false;
                 stopRecordingBtn.disabled = true;
                 startRecordingBtn.innerHTML = '<i class="fas fa-play"></i> Start Recording';
-                stopRecordingBtn.innerHTML = '<div class="loading-spinner"></div> Processing...';
-                
-                M.toast({ html: '🛑 Recording stopped, processing frames...', classes: 'blue' });
+                stopRecordingBtn.innerHTML = '<div class="loading-spinner"></div> Processing…';
+
+                M.toast({ html: 'Recording stopped — processing frames…', classes: 'blue' });
                 stopFrameCapture();
 
-                // Wait for uploads to complete, then redirect
-                await new Promise((resolve) => setTimeout(resolve, 2000));
-                M.toast({ html: '✅ Analysis complete! Redirecting to results...', classes: 'green' });
-                
-                setTimeout(() => {
-                    window.location.href = '/view-images';
-                }, 1500);
+                await new Promise(r => setTimeout(r, 2000));
+                M.toast({ html: 'Analysis complete — opening library…', classes: 'green' });
+                setTimeout(() => { window.location.href = '/view-images'; }, 1200);
+                stopRecordingBtn.innerHTML = '<i class="fas fa-stop"></i> Stop Recording';
+            });
+
+            function startFrameCapture() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                canvas.width = video.videoWidth || 640;
+                canvas.height = video.videoHeight || 480;
+                if (!canvas.width || !canvas.height) return;
+
+                frameCount = 0;
+                frameCaptureInterval = setInterval(() => {
+                    if (!recording) return;
+                    frameCount++;
+                    frameCounter.textContent = `Frames captured: ${Math.floor(frameCount / 10)}`;
+                    if (frameCount % 10 === 0) {
+                        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                        canvas.toBlob(async (blob) => {
+                            if (blob) {
+                                const filename = `frame_${Date.now()}_${Math.floor(frameCount / 10)}.jpg`;
+                                await uploadFrame(blob, filename);
+                            }
+                        }, 'image/jpeg', 0.85);
+                    }
+                }, 100);
             }
+
+            function stopFrameCapture() {
+                if (frameCaptureInterval) { clearInterval(frameCaptureInterval); frameCaptureInterval = null; }
+            }
+
+            async function uploadFrame(blob, filename) {
+                const formData = new FormData();
+                formData.append('files', blob, filename);
+                try {
+                    const response = await fetch('/upload', { method: 'POST', body: formData });
+                    if (!response.ok) console.error('Frame upload failed:', filename);
+                } catch (e) { console.error('uploadFrame:', e); }
+            }
+
+            window.addEventListener('beforeunload', () => {
+                if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+                stopFrameCapture();
+            });
+
+            // Scroll-aware navbar
+            const navbar = document.querySelector('.navbar-custom');
+            const onScroll = () => navbar && navbar.classList.toggle('is-scrolled', window.scrollY > 8);
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+
+            if (typeof M !== 'undefined') M.AutoInit();
         });
-
-        function startFrameCapture() {
-            const canvas = document.createElement('canvas');
-            const ctx = canvas.getContext('2d');
-
-            canvas.width = video.videoWidth || 640;
-            canvas.height = video.videoHeight || 480;
-            
-            if (!canvas.width || !canvas.height) {
-                console.error('Invalid canvas dimensions');
-                return;
-            }
-
-            frameCount = 0;
-
-            frameCaptureInterval = setInterval(() => {
-                if (!recording) return;
-
-                frameCount++;
-                frameCounter.textContent = `Frames captured: ${Math.floor(frameCount / 10)}`;
-
-                // Capture every 10th frame (1 frame per second at 10fps interval)
-                if (frameCount % 10 === 0) {
-                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-                    canvas.toBlob(async (blob) => {
-                        if (blob) {
-                            const filename = `frame_${Date.now()}_${Math.floor(frameCount / 10)}.jpg`;
-                            await uploadFrame(blob, filename);
-                        }
-                    }, 'image/jpeg', 0.8);
-                }
-            }, 100); // 100ms interval for smooth frame counting
-        }
-
-        function stopFrameCapture() {
-            if (frameCaptureInterval) {
-                clearInterval(frameCaptureInterval);
-                frameCaptureInterval = null;
-            }
-        }
-
-        async function uploadFrame(blob, filename) {
-            const formData = new FormData();
-            formData.append('files', blob, filename);
-
-            try {
-                const response = await fetch('/upload', { 
-                    method: 'POST', 
-                    body: formData 
-                });
-                
-                if (!response.ok) {
-                    console.error('Failed to upload frame:', filename);
-                } else {
-                    console.log('Successfully uploaded frame:', filename);
-                }
-            } catch (error) {
-                console.error('Error uploading frame:', error);
-            }
-        }
-
-        // Cleanup on page unload
-        window.addEventListener('beforeunload', () => {
-            if (mediaStream) {
-                mediaStream.getTracks().forEach(track => track.stop());
-            }
-            stopFrameCapture();
-        });
-
-        // Initialize Materialize components
-        if (typeof M !== 'undefined') {
-            M.AutoInit();
-        }
     </script>
-
-    <script src="/static/scripts.js"></script>
 </body>
 </html>

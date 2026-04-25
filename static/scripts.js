@@ -1,115 +1,49 @@
-(function () {
-  const THEME_KEY = 'theme';
-
-  function applyTheme(theme) {
-    const body = document.body;
-    const icon = document.getElementById('themeIcon');
-    const isDark = theme === 'dark';
-
-    if (isDark) {
-      body.setAttribute('data-theme', 'dark');
-      body.classList.add('dark-mode');
-    } else {
-      body.removeAttribute('data-theme');
-      body.classList.remove('dark-mode');
+// Shared bootstrap helpers for PlantGuard pages.
+// Each page also carries its own inline theme logic, so this file mainly
+// serves as a compatibility shim + AOS bootstrap for any page that loads it.
+document.addEventListener('DOMContentLoaded', () => {
+    // AOS init — safe no-op if AOS isn't loaded.
+    if (window.AOS && typeof window.AOS.init === 'function') {
+        try {
+            window.AOS.init({
+                duration: 650,
+                easing: 'ease-out-cubic',
+                once: true,
+                offset: 60
+            });
+        } catch (_) { /* noop */ }
     }
 
-    if (icon) {
-      icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+    // Restore saved theme for any page that hasn't already.
+    if (!document.body.hasAttribute('data-theme') && localStorage.getItem('theme') === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
     }
-  }
 
-  function getSavedTheme() {
-    const saved = localStorage.getItem(THEME_KEY);
-    if (saved === 'dark' || saved === 'light') return saved;
-
-    const legacy = localStorage.getItem('darkMode');
-    if (legacy === 'true') return 'dark';
-    return 'light';
-  }
-
-  function toggleTheme() {
-    const nextTheme = document.body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-    applyTheme(nextTheme);
-    localStorage.setItem(THEME_KEY, nextTheme);
-    localStorage.setItem('darkMode', String(nextTheme === 'dark'));
-  }
-
-  function initTheme() {
-    applyTheme(getSavedTheme());
-  }
-
-  function initAOS() {
-    if (!window.AOS) return;
-    AOS.init({
-      duration: 700,
-      easing: 'ease-out-cubic',
-      once: true,
-      offset: 80
-    });
-  }
-
-  function initNavbarScroll() {
+    // Scroll-aware navbar fallback — every page now has an inline handler,
+    // but keep this as a belt-and-braces for older pages.
     const navbar = document.querySelector('.navbar-custom');
-    if (!navbar) return;
+    if (navbar) {
+        const onScroll = () => navbar.classList.toggle('is-scrolled', window.scrollY > 8);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        onScroll();
+    }
+});
 
-    const update = () => {
-      navbar.classList.toggle('nav-scrolled', window.scrollY > 30);
+// Legacy dark-mode toggle kept so any stray onclick="toggleDarkMode()" still
+// works on pages I didn't touch in the future.
+if (typeof window.toggleDarkMode !== 'function') {
+    window.toggleDarkMode = function () {
+        const body = document.body;
+        const icon = document.getElementById('themeIcon');
+        const isDark = body.getAttribute('data-theme') === 'dark';
+        if (isDark) {
+            body.removeAttribute('data-theme');
+            if (icon) icon.className = 'fas fa-moon';
+            localStorage.setItem('theme', 'light');
+        } else {
+            body.setAttribute('data-theme', 'dark');
+            if (icon) icon.className = 'fas fa-sun';
+            localStorage.setItem('theme', 'dark');
+        }
     };
-
-    update();
-    window.addEventListener('scroll', update);
-  }
-
-  function initButtonLoading(selector) {
-    document.querySelectorAll(selector).forEach((btn) => {
-      btn.addEventListener('click', function () {
-        const originalContent = this.innerHTML;
-        this.style.pointerEvents = 'none';
-        this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Loading...';
-        setTimeout(() => {
-          this.innerHTML = originalContent;
-          this.style.pointerEvents = 'auto';
-        }, 900);
-      });
-    });
-  }
-
-  function saveHistoryEntries(predictions) {
-    if (!Array.isArray(predictions)) return;
-
-    const existing = JSON.parse(localStorage.getItem('analysisHistory') || '[]');
-    const stamped = predictions.map((item) => ({
-      ...item,
-      timestamp: item.timestamp || new Date().toISOString()
-    }));
-    const merged = [...stamped, ...existing].slice(0, 50);
-    localStorage.setItem('analysisHistory', JSON.stringify(merged));
-  }
-
-  function initPage(options = {}) {
-    initTheme();
-    initAOS();
-    initNavbarScroll();
-
-    if (options.enableButtonLoading) {
-      initButtonLoading(options.enableButtonLoading);
-    }
-
-    if (window.M) {
-      M.AutoInit();
-    }
-  }
-
-  window.toggleDarkMode = toggleTheme;
-  window.AppUI = {
-    initTheme,
-    initAOS,
-    initNavbarScroll,
-    initButtonLoading,
-    initPage,
-    saveHistoryEntries
-  };
-
-  document.addEventListener('DOMContentLoaded', initTheme);
-})();
+}

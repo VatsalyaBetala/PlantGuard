@@ -9,8 +9,8 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from torchvision import datasets
 
-from src.inference import classify_plant
-from src.inference import PLANT_CLASSES
+from plant_disease.inference import classify_plant
+from plant_disease.inference import PLANT_CLASSES
 
 TEST_DIR = "PlantVillage_Test/valid/"   
 

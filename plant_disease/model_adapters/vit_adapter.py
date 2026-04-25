@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from src.model_adapters.base import ModelAdapter
+from plant_disease.model_adapters.base import ModelAdapter
 
 
 class ViTAdapter(ModelAdapter):

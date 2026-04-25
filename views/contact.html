@@ -3,384 +3,370 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact PlantGuard - Get in Touch</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Contact — PlantGuard</title>
+    <meta name="description" content="Get in touch with the PlantGuard team.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="stylesheet" href="/static/style.css">
-    
+
     <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --surface-primary: #ffffff;
-            --surface-secondary: #f8fafc;
-            --border-primary: #e2e8f0;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --accent-primary: #3b82f6;
-            --accent-secondary: #8b5cf6;
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            --radius-xl: 1rem;
-            --radius-2xl: 1.5rem;
+        .page-hero {
+            position: relative;
+            padding: 5rem 1.5rem 3rem;
+            background: var(--hero-gradient);
+            color: #ffffff;
+            overflow: hidden;
+            isolation: isolate;
+        }
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+            z-index: -1;
+        }
+        .page-hero-inner { max-width: 720px; margin: 0 auto; text-align: center; }
+        .page-hero h1 {
+            margin: 1rem 0 0.5rem;
+            font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+            font-weight: 800; letter-spacing: -0.025em;
+        }
+        .page-hero p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1.0625rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .page-hero .eyebrow-dark {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.4rem 0.9rem; border-radius: var(--radius-full);
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+            color: var(--brand-100); font-size: 0.75rem; font-weight: 600;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            backdrop-filter: blur(12px);
         }
 
-        [data-theme="dark"] {
-            --surface-primary: #0f172a;
-            --surface-secondary: #1e293b;
-            --border-primary: #475569;
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
+        .main-container {
+            max-width: 1080px;
+            margin: -3rem auto 4rem;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--surface-secondary);
-            color: var(--text-primary);
-            transition: all 0.3s ease;
-        }
-
-        .navbar-custom {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-primary);
-        }
-
-        [data-theme="dark"] .navbar-custom { background: rgba(15, 23, 42, 0.95); }
-
-        .nav-wrapper {
-            padding: 0 10rem;
-            height: 72px;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .brand-logo {
-            display: flex !important;
-            align-items: center;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--text-primary) !important;
-            text-decoration: none;
-        }
-
-        .brand-logo img {
-            height: 40px;
-            margin-right: 12px;
-            border-radius: var(--radius-xl);
-        }
-
-        .nav-wrapper ul li a {
-            color: var(--text-secondary) !important;
-            font-weight: 500;
-            padding: 0.75rem 1rem !important;
-            border-radius: var(--radius-xl);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-wrapper ul li a:hover {
-            color: var(--accent-primary) !important;
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 100px auto 0;
-            padding: 2rem;
-        }
-
-        .hero-section {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .hero-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-        }
-
-        .hero-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
+        /* ---- Channels ---- */
         .contact-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.25rem;
             margin-bottom: 3rem;
         }
 
         .contact-card {
+            padding: 1.75rem;
             background: var(--surface-primary);
             border: 1px solid var(--border-primary);
-            border-radius: var(--radius-2xl);
-            padding: 2rem;
-            box-shadow: var(--shadow-lg);
-            transition: all 0.3s ease;
-            text-align: center;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
+            position: relative;
+            overflow: hidden;
         }
 
         .contact-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--brand-200);
         }
 
         .contact-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1rem;
-            color: white;
-            font-size: 1.5rem;
+            width: 48px; height: 48px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: var(--radius-md);
+            background: var(--brand-gradient);
+            color: #ffffff;
+            font-size: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-brand);
         }
 
         .contact-title {
-            font-size: 1.25rem;
-            font-weight: 600;
+            margin: 0 0 0.35rem;
+            font-size: 1.0625rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
             color: var(--text-primary);
-            margin-bottom: 0.5rem;
         }
 
         .contact-info {
+            margin: 0 0 1rem;
             color: var(--text-secondary);
-            margin-bottom: 1rem;
+            font-size: 0.9375rem;
+            line-height: 1.55;
         }
 
         .contact-link {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
+            gap: 0.45rem;
+            padding: 0.55rem 1rem;
+            background: var(--surface-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            font-weight: 600;
             text-decoration: none;
-            border-radius: var(--radius-xl);
-            font-weight: 500;
-            transition: all 0.2s ease;
+            transition: transform var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), background var(--dur-fast) var(--ease-out);
         }
 
         .contact-link:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
+            transform: translateY(-1px);
+            border-color: var(--brand-300);
+            color: var(--brand-700);
         }
 
-        .team-section {
-            background: var(--surface-primary);
-            border: 1px solid var(--border-primary);
-            border-radius: var(--radius-2xl);
-            padding: 2rem;
-            box-shadow: var(--shadow-lg);
-            margin-bottom: 2rem;
-        }
+        [data-theme="dark"] .contact-link:hover { color: var(--brand-300); }
+
+        /* ---- Team ---- */
+        .team-section { margin-top: 3rem; }
 
         .team-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 1.5rem;
             text-align: center;
+            font-size: clamp(1.5rem, 2.5vw, 2rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin: 0 0 2rem;
+            color: var(--text-primary);
         }
 
         .team-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
         }
 
         .team-member {
-            text-align: center;
-            padding: 1rem;
-            background: var(--surface-secondary);
+            padding: 1.5rem 1.25rem;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
             border-radius: var(--radius-xl);
-            transition: all 0.2s ease;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
         }
 
-        .team-member:hover { transform: translateY(-2px); }
+        .team-member:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--brand-200);
+        }
 
         .member-avatar {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            width: 64px; height: 64px;
             margin: 0 auto 0.75rem;
-            color: white;
-            font-weight: 700;
+            border-radius: 50%;
+            background: var(--brand-gradient);
+            color: #ffffff;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: 0.02em;
+            box-shadow: var(--shadow-brand);
         }
 
         .member-name {
-            font-weight: 600;
+            font-weight: 700;
             color: var(--text-primary);
             margin-bottom: 0.25rem;
         }
 
         .member-role {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
+            font-size: 0.8125rem;
+            color: var(--brand-700);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
         }
 
-        .footer {
-            background: var(--surface-primary);
-            border-top: 1px solid var(--border-primary);
-            padding: 2rem 0;
-            text-align: center;
-            color: var(--text-secondary);
-            margin-top: 3rem;
-        }
-
-        .theme-toggle {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 56px;
-            height: 56px;
-            background: var(--surface-primary);
-            border: 1px solid var(--border-primary);
-            color: var(--text-primary);
-            border-radius: 50%;
-            box-shadow: var(--shadow-lg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover { transform: scale(1.1); }
-
-        @media (max-width: 768px) {
-            .nav-wrapper { padding: 0 1rem; justify-content: center; }
-            .nav-wrapper ul { display: none; }
-            .container { padding: 1rem; }
-            .hero-title { font-size: 2rem; }
-            .contact-grid { grid-template-columns: 1fr; }
-        }
+        [data-theme="dark"] .member-role { color: var(--brand-300); }
     </style>
 </head>
 <body>
+
     <div class="navbar-fixed">
         <nav class="navbar-custom">
             <div class="nav-wrapper">
                 <a href="/" class="brand-logo">
-                    <img src="../static/logo.jpeg" alt="PlantGuard Logo">
-                    PlantGuard
+                    <img src="/static/logo.jpeg" alt="PlantGuard logo">
+                    <span>PlantGuard</span>
+                    <span class="brand-version">v1.0</span>
                 </a>
                 <ul class="right hide-on-med-and-down">
                     <li><a href="/"><i class="material-icons">home</i>Home</a></li>
-                    <li><a href="/view-images"><i class="material-icons">photo_library</i>Image Library</a></li>
+                    <li><a href="/upload-images"><i class="material-icons">cloud_upload</i>Upload</a></li>
+                    <li><a href="/record-video"><i class="material-icons">videocam</i>Live</a></li>
+                    <li><a href="/view-images"><i class="material-icons">photo_library</i>Library</a></li>
                     <li><a href="/about"><i class="material-icons">info</i>About</a></li>
-                    <li><a href="/contact"><i class="material-icons">contact_mail</i>Contact</a></li>
-                    <li><a href="/faq"><i class="material-icons">help</i>FAQ</a></li>
+                    <li><a href="/doc"><i class="material-icons">description</i>Docs</a></li>
+                    <li><a href="/faq"><i class="material-icons">help_outline</i>FAQ</a></li>
+                    <li><a href="/contact" class="active"><i class="material-icons">mail_outline</i>Contact</a></li>
                 </ul>
             </div>
         </nav>
     </div>
 
-    <div class="container">
-        <div class="hero-section">
-            <h1 class="hero-title">Get in Touch</h1>
-            <p class="hero-subtitle">Have questions about PlantGuard? We'd love to hear from you. Reach out through any of the channels below.</p>
+    <section class="page-hero">
+        <div class="page-hero-inner">
+            <span class="eyebrow-dark"><i class="fas fa-envelope-open-text"></i> Contact</span>
+            <h1>Get in touch</h1>
+            <p>Questions, feedback, or research collaborations &mdash; we'd love to hear from you. Pick a channel that works for you.</p>
         </div>
+    </section>
 
+    <div class="main-container">
+
+        <!-- Channels -->
         <div class="contact-grid">
             <div class="contact-card">
-                <div class="contact-icon">
-                    <i class="fab fa-github"></i>
-                </div>
-                <h3 class="contact-title">GitHub Repository</h3>
-                <p class="contact-info">View source code, report issues, and contribute to the project</p>
-                <a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank" class="contact-link">
-                    <i class="fas fa-external-link-alt"></i>
-                    Visit Repository
+                <div class="contact-icon"><i class="fab fa-github"></i></div>
+                <h3 class="contact-title">GitHub repository</h3>
+                <p class="contact-info">Source code, releases, and the place to read or contribute.</p>
+                <a class="contact-link" href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank" rel="noopener">
+                    <i class="fas fa-external-link-alt"></i> Visit repository
                 </a>
             </div>
-
             <div class="contact-card">
-                <div class="contact-icon">
-                    <i class="fas fa-bug"></i>
-                </div>
-                <h3 class="contact-title">Report Issues</h3>
-                <p class="contact-info">Found a bug or have a feature request? Let us know on GitHub</p>
-                <a href="https://github.com/VatsalyaBetala/plant-disease-classification/issues" target="_blank" class="contact-link">
-                    <i class="fas fa-exclamation-circle"></i>
-                    Report Issue
+                <div class="contact-icon"><i class="fas fa-bug"></i></div>
+                <h3 class="contact-title">Report an issue</h3>
+                <p class="contact-info">Found a bug, edge case, or have a feature request? Open an issue.</p>
+                <a class="contact-link" href="https://github.com/VatsalyaBetala/plant-disease-classification/issues" target="_blank" rel="noopener">
+                    <i class="fas fa-exclamation-circle"></i> File an issue
+                </a>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon"><i class="fas fa-handshake"></i></div>
+                <h3 class="contact-title">Research &amp; collaborations</h3>
+                <p class="contact-info">Interested in using PlantGuard for fieldwork, datasets, or joint research?</p>
+                <a class="contact-link" href="mailto:contact@plantguard.ai">
+                    <i class="fas fa-envelope"></i> Email the team
+                </a>
+            </div>
+            <div class="contact-card">
+                <div class="contact-icon"><i class="fas fa-comments"></i></div>
+                <h3 class="contact-title">Discussions</h3>
+                <p class="contact-info">Start a conversation, ask a how-to, or share what you're building.</p>
+                <a class="contact-link" href="https://github.com/VatsalyaBetala/plant-disease-classification/discussions" target="_blank" rel="noopener">
+                    <i class="fas fa-comment-dots"></i> Open discussions
                 </a>
             </div>
         </div>
 
-        <div class="team-section">
-            <h3 class="team-title">Meet the Team</h3>
+        <!-- Team -->
+        <section class="team-section">
+            <h2 class="team-title">Meet the team</h2>
             <div class="team-grid">
                 <div class="team-member">
                     <div class="member-avatar">VB</div>
                     <div class="member-name">Vatsalya Betala</div>
-                    <div class="member-role">AI/ML Lead</div>
+                    <div class="member-role">AI / ML Lead</div>
                 </div>
                 <div class="team-member">
                     <div class="member-avatar">AA</div>
                     <div class="member-name">Aarav Akali</div>
-                    <div class="member-role">Hardware & IoT</div>
+                    <div class="member-role">Hardware &amp; IoT</div>
                 </div>
                 <div class="team-member">
                     <div class="member-avatar">SM</div>
                     <div class="member-name">Sparsh Makharia</div>
-                    <div class="member-role">Backend & Business</div>
+                    <div class="member-role">Backend &amp; Business</div>
                 </div>
             </div>
-        </div>
+        </section>
     </div>
 
     <footer class="footer">
-        <p>&copy; 2024 PlantGuard - Advanced Plant Disease Detection Platform</p>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo"><img src="/static/logo.jpeg" alt="PlantGuard logo"><span>PlantGuard</span></div>
+                <p>Open-source plant disease detection and explainability, built for the field and for the lab.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="/upload-images">Upload</a></li>
+                    <li><a href="/record-video">Live analysis</a></li>
+                    <li><a href="/view-images">Library</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="/doc">Documentation</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank" rel="noopener">GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2024 PlantGuard. Released under the MIT License.</span>
+            <div class="footer-socials">
+                <a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="/contact" aria-label="Contact"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
     </footer>
 
-    <div class="theme-toggle" onclick="toggleDarkMode()">
+    <button class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
         <i class="fas fa-moon" id="themeIcon"></i>
-    </div>
+    </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="/static/scripts.js"></script>
     <script>
         function toggleDarkMode() {
             const body = document.body;
-            const themeIcon = document.getElementById('themeIcon');
-            
-            if (body.getAttribute('data-theme') === 'dark') {
+            const icon = document.getElementById('themeIcon');
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            if (isDark) {
                 body.removeAttribute('data-theme');
-                themeIcon.className = 'fas fa-moon';
+                if (icon) icon.className = 'fas fa-moon';
                 localStorage.setItem('theme', 'light');
             } else {
                 body.setAttribute('data-theme', 'dark');
-                themeIcon.className = 'fas fa-sun';
+                if (icon) icon.className = 'fas fa-sun';
                 localStorage.setItem('theme', 'dark');
             }
         }
-
         if (localStorage.getItem('theme') === 'dark') {
             document.body.setAttribute('data-theme', 'dark');
-            document.getElementById('themeIcon').className = 'fas fa-sun';
+            const _i = document.getElementById('themeIcon');
+            if (_i) _i.className = 'fas fa-sun';
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.querySelector('.navbar-custom');
+            const onScroll = () => navbar && navbar.classList.toggle('is-scrolled', window.scrollY > 8);
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+            if (typeof M !== 'undefined') M.AutoInit();
+        });
     </script>
 </body>
 </html>

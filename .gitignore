@@ -2,7 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
-src/models
+plant_disease/models
 # C extensions
 *.so
 
@@ -13,6 +13,13 @@ scripts/_smoke_test.jpg
 /artifacts/**/model.pt
 /artifacts/shared/*.pth
 /artifacts/shared/*.pt
+
+# Local SQLite DB
+/data
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
 
 # Venv
 /plant_guard 
@@ -78,6 +85,7 @@ instance/
 
 # Scrapy stuff:
 .scrapy
+/.vscode
 
 # Sphinx documentation
 docs/_build/
@@ -154,4 +162,4 @@ dmypy.json
 cython_debug/
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Python
-/src/models/resnet50_weights.pth
+/plant_disease/models/resnet50_weights.pth

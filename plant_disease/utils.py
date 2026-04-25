@@ -1,7 +1,7 @@
 import os
 import gdown
 
-from src.model_artifacts import LEGACY_MODEL_DIR, required_legacy_files, sync_legacy_to_artifacts
+from plant_disease.model_artifacts import LEGACY_MODEL_DIR, required_legacy_files, sync_legacy_to_artifacts
 
 
 def check_and_download_models():

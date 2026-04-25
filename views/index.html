@@ -3,9 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlantGuard - Advanced AI Plant Disease Detection Platform</title>
-    
+    <title>PlantGuard — AI-Powered Plant Disease Detection</title>
+    <meta name="description" content="PlantGuard is a research-grade, AI-powered platform for early detection and diagnosis of plant diseases from leaf images.">
+
     <!-- Fonts & Icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -14,716 +17,612 @@
     <link rel="stylesheet" href="/static/style.css">
 
     <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-            --surface-primary: #ffffff;
-            --surface-secondary: #f8fafc;
-            --surface-tertiary: #f1f5f9;
-            --surface-glass: rgba(255, 255, 255, 0.1);
-            --border-primary: #e2e8f0;
-            --border-secondary: #cbd5e1;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --text-muted: #94a3b8;
-            --text-inverse: #ffffff;
-            --accent-primary: #3b82f6;
-            --accent-secondary: #8b5cf6;
-            --accent-success: #10b981;
-            --accent-warning: #f59e0b;
-            --accent-error: #ef4444;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-            --shadow-2xl: 0 25px 50px -12px rgb(0 0 0 / 0.25);
-            --radius-sm: 0.375rem;
-            --radius-md: 0.5rem;
-            --radius-lg: 0.75rem;
-            --radius-xl: 1rem;
-            --radius-2xl: 1.5rem;
-            --radius-3xl: 2rem;
-        }
-
-        [data-theme="dark"] {
-            --surface-primary: #0f172a;
-            --surface-secondary: #1e293b;
-            --surface-tertiary: #334155;
-            --surface-glass: rgba(15, 23, 42, 0.8);
-            --border-primary: #475569;
-            --border-secondary: #64748b;
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-muted: #94a3b8;
-            --hero-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            line-height: 1.6;
-            color: var(--text-primary);
-            background: var(--surface-secondary);
-            overflow-x: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-    
-
-        .navbar-custom {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-primary);
-            box-shadow: var(--shadow-sm);
-            transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] .navbar-custom {
-            background: rgba(15, 23, 42, 0.95);
-            border-bottom: 1px solid var(--border-primary);
-        }
-
-        .nav-wrapper {
-            padding: 0 10rem;
-            height: 72px;
-        }
-
-        .brand-logo {
-            display: flex !important;
-            align-items: center;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--text-primary) !important;
-            text-decoration: none;
-        }
-
-        .brand-logo img {
-            height: 40px;
-            margin-right: 12px;
-            border-radius: var(--radius-md);
-        }
-
-        .nav-wrapper ul li a {
-            color: var(--text-secondary) !important;
-            font-weight: 500;
-            padding: 0.75rem 1rem !important;
-            border-radius: var(--radius-md);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-wrapper ul li a:hover {
-            color: var(--accent-primary) !important;
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        /* Hero Section */
-        .hero-container {
-            min-height: 100vh;
+        /* ---- Hero ---- */
+        .hero {
+            position: relative;
+            min-height: calc(100vh - var(--nav-height));
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 6rem 1.5rem 5rem;
             background: var(--hero-gradient);
-            position: relative;
+            color: var(--text-inverse);
             overflow: hidden;
-            padding: 2rem 0;
+            isolation: isolate;
         }
 
-        .hero-container::before {
+        .hero::before,
+        .hero::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grain)"/></svg>');
-            opacity: 0.3;
+            width: 560px;
+            height: 560px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.55;
+            z-index: -1;
+            pointer-events: none;
         }
 
-        .hero-content {
-            max-width: 1200px;
+        .hero::before { top: -120px; left: -120px; background: rgba(16, 185, 129, 0.45); }
+        .hero::after  { bottom: -160px; right: -120px; background: rgba(52, 211, 153, 0.35); }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.045) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.045) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: radial-gradient(ellipse at center, black 35%, transparent 75%);
+            z-index: -1;
+        }
+
+        .hero-inner {
+            max-width: 900px;
             margin: 0 auto;
-            padding: 0 2rem;
             text-align: center;
             position: relative;
             z-index: 1;
         }
 
-        .hero-badge {
+        .hero-eyebrow {
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            padding: 0.5rem 1.5rem;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 9999px;
-            color: var(--accent-primary);
-            font-weight: 500;
-            font-size: 0.875rem;
-            margin-bottom: 2rem;
-            backdrop-filter: blur(10px);
-        }
-
-        .hero-title {
-            font-size: clamp(2.5rem, 5vw, 4rem);
-            font-weight: 800;
-            line-height: 1.1;
-            color: var(--text-inverse);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            color: var(--brand-100);
+            font-size: 0.8125rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            backdrop-filter: blur(12px);
             margin-bottom: 1.5rem;
-            background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
         }
 
-        .hero-subtitle {
-            font-size: clamp(1.125rem, 2vw, 1.5rem);
-            color: rgba(255, 255, 255, 0.8);
-            margin-bottom: 3rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.6;
+        .hero-eyebrow i { color: var(--brand-300); }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5.5vw, 4.5rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+            margin: 0 0 1.25rem;
+            color: #ffffff;
+        }
+
+        .hero h1 .accent {
+            background: linear-gradient(135deg, var(--brand-300) 0%, var(--brand-400) 60%, #ffffff 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p.lead {
+            font-size: clamp(1.05rem, 1.75vw, 1.25rem);
+            line-height: 1.65;
+            color: rgba(255, 255, 255, 0.82);
+            max-width: 640px;
+            margin: 0 auto 2.5rem;
         }
 
         .hero-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
+            display: inline-flex;
             flex-wrap: wrap;
-            margin-bottom: 4rem;
+            gap: 0.85rem;
+            justify-content: center;
+            margin-bottom: 3rem;
         }
 
         .hero-btn {
-            padding: 1rem 2rem !important;
-            border-radius: var(--radius-xl) !important;
-            font-size: 1.125rem !important;
+            padding: 0.9rem 1.6rem !important;
+            border-radius: var(--radius-lg) !important;
+            font-size: 1rem !important;
             font-weight: 600 !important;
             text-transform: none !important;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            display: flex !important;
-            align-items: center !important;
-            gap: 0.75rem !important;
-            min-width: 200px;
-            justify-content: center !important;
-            text-decoration: none !important;
-            position: relative;
-            overflow: hidden;
+            letter-spacing: -0.01em;
+            display: inline-flex !important;
+            align-items: center;
+            gap: 0.6rem;
+            transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out);
         }
 
-        .hero-btn::before {
+        .hero-btn.primary {
+            background: #ffffff !important;
+            color: var(--brand-800) !important;
+            box-shadow: 0 14px 36px -12px rgba(0, 0, 0, 0.45);
+        }
+        .hero-btn.primary:hover { transform: translateY(-2px); background: var(--brand-50) !important; }
+
+        .hero-btn.ghost {
+            background: rgba(255, 255, 255, 0.08) !important;
+            color: #ffffff !important;
+            border: 1px solid rgba(255, 255, 255, 0.22) !important;
+            backdrop-filter: blur(12px);
+        }
+        .hero-btn.ghost:hover {
+            background: rgba(255, 255, 255, 0.14) !important;
+            transform: translateY(-2px);
+        }
+
+        .hero-meta {
+            display: inline-flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.75rem;
+            font-size: 0.8125rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .hero-meta span { display: inline-flex; align-items: center; gap: 0.45rem; }
+        .hero-meta i { color: var(--brand-300); }
+
+        /* ---- Stats ---- */
+        .stats {
+            padding: 4rem 1.5rem;
+            background: var(--surface-primary);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .stats-grid {
+            max-width: var(--container-max);
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-card {
+            position: relative;
+            padding: 1.75rem 1.5rem;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-xl);
+            text-align: left;
+            overflow: hidden;
+            transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--brand-200);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .hero-btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary)) !important;
-            color: white !important;
-            border: none !important;
-            box-shadow: var(--shadow-lg);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-xl);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.1) !important;
-            color: white !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            backdrop-filter: blur(10px);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.2) !important;
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        /* Stats Section */
-        .stats-section {
-            background: var(--surface-primary);
-            padding: 4rem 0;
-            border-top: 1px solid var(--border-primary);
-        }
-
-        .stats-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 2rem;
-        }
-
-        .stat-item {
-            text-align: center;
-            padding: 2rem 1rem;
+            inset: 0 auto 0 0;
+            width: 3px;
+            background: var(--brand-gradient);
+            opacity: 0.85;
         }
 
         .stat-number {
-            font-size: 3rem;
+            font-size: clamp(2rem, 3.5vw, 2.5rem);
             font-weight: 800;
-            color: var(--accent-primary);
-            display: block;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
             line-height: 1;
+            display: flex;
+            align-items: baseline;
+            gap: 0.2rem;
+        }
+
+        .stat-number .unit {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--brand-600);
         }
 
         .stat-label {
-            font-size: 1rem;
-            color: var(--text-secondary);
+            margin-top: 0.75rem;
+            font-size: 0.875rem;
             font-weight: 500;
-            margin-top: 0.5rem;
+            color: var(--text-secondary);
         }
 
-        /* Features Section */
-        .features-section {
-            padding: 6rem 0;
+        .stat-icon {
+            position: absolute;
+            top: 1.25rem;
+            right: 1.25rem;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-md);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--brand-50);
+            color: var(--brand-700);
+            font-size: 1rem;
+        }
+
+        [data-theme="dark"] .stat-icon { background: rgba(16,185,129,0.14); color: var(--brand-300); }
+
+        /* ---- Features ---- */
+        .features {
+            padding: 6rem 1.5rem;
             background: var(--surface-secondary);
         }
 
-        .features-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .section-header {
+        .section-head {
+            max-width: 720px;
+            margin: 0 auto 3.5rem;
             text-align: center;
-            margin-bottom: 4rem;
         }
 
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 700;
+        .section-head h2 {
+            font-size: clamp(1.75rem, 3vw, 2.5rem);
+            font-weight: 800;
+            letter-spacing: -0.025em;
+            margin: 0.75rem 0 0.75rem;
             color: var(--text-primary);
-            margin-bottom: 1rem;
         }
 
-        .section-subtitle {
-            font-size: 1.25rem;
+        .section-head p {
             color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
+            font-size: 1.0625rem;
+            line-height: 1.6;
         }
 
         .features-grid {
+            max-width: var(--container-max);
+            margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 2rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
         }
 
         .feature-card {
+            position: relative;
+            padding: 2rem;
             background: var(--surface-primary);
             border: 1px solid var(--border-primary);
-            border-radius: var(--radius-2xl);
-            padding: 2.5rem;
-            text-align: center;
-            box-shadow: var(--shadow-md);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            transition: transform var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out);
             overflow: hidden;
         }
 
-        .feature-card::before {
+        .feature-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--brand-200);
+        }
+
+        .feature-card::after {
             content: '';
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            inset: 0 0 auto 0;
+            height: 3px;
+            background: var(--brand-gradient);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform var(--dur-base) var(--ease-out);
         }
 
-        .feature-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-xl);
-            border-color: var(--accent-primary);
-        }
+        .feature-card:hover::after { transform: scaleX(1); }
 
         .feature-icon {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1.5rem;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            border-radius: 50%;
-            display: flex;
+            width: 48px;
+            height: 48px;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-size: 2rem;
-        }
-
-        .feature-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-        }
-
-        .feature-description {
-            color: var(--text-secondary);
-            line-height: 1.7;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            padding: 6rem 0;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            color: white;
-            text-align: center;
-        }
-
-        .cta-container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .cta-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .cta-subtitle {
+            border-radius: var(--radius-md);
+            background: var(--brand-50);
+            color: var(--brand-700);
             font-size: 1.25rem;
-            margin-bottom: 2rem;
-            opacity: 0.9;
+            margin-bottom: 1.25rem;
         }
 
-        .cta-btn {
-            padding: 1.25rem 3rem !important;
-            background: white !important;
-            color: var(--accent-primary) !important;
-            border-radius: var(--radius-xl) !important;
-            font-size: 1.125rem !important;
-            font-weight: 600 !important;
-            text-transform: none !important;
-            box-shadow: var(--shadow-lg);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-            text-decoration: none !important;
-            display: inline-flex !important;
-            align-items: center !important;
-            gap: 0.75rem !important;
-        }
+        [data-theme="dark"] .feature-icon { background: rgba(16,185,129,0.14); color: var(--brand-300); }
 
-        .cta-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-xl);
-            background: #f8fafc !important;
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--surface-primary);
-            border-top: 1px solid var(--border-primary);
-            padding: 3rem 0;
-            text-align: center;
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .footer-text {
-            color: var(--text-secondary);
-            font-size: 0.95rem;
-        }
-
-        /* Theme Toggle */
-        .theme-toggle {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 56px;
-            height: 56px;
-            background: var(--surface-primary);
-            border: 1px solid var(--border-primary);
+        .feature-card h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            margin: 0 0 0.5rem;
             color: var(--text-primary);
-            border-radius: 50%;
-            box-shadow: var(--shadow-lg);
-            display: flex;
+        }
+
+        .feature-card p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.6;
+        }
+
+        /* ---- Workflow strip ---- */
+        .workflow {
+            padding: 5rem 1.5rem;
+            background: var(--surface-primary);
+            border-top: 1px solid var(--border-subtle);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .workflow-grid {
+            max-width: var(--container-max);
+            margin: 2.5rem auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .step {
+            position: relative;
+            padding: 1.5rem 1.25rem;
+            border: 1px dashed var(--border-strong);
+            border-radius: var(--radius-lg);
+            background: var(--surface-secondary);
+        }
+
+        .step-no {
+            display: inline-flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1000;
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-full);
+            background: var(--brand-gradient);
+            color: #ffffff;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
         }
 
-        .theme-toggle:hover {
-            transform: scale(1.1);
+        .step h4 {
+            margin: 0 0 0.35rem;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .step p {
+            margin: 0;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.55;
+        }
+
+        /* ---- CTA ---- */
+        .cta {
+            padding: 5rem 1.5rem;
+            background: var(--surface-secondary);
+        }
+
+        .cta-inner {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: clamp(2rem, 5vw, 3.5rem);
+            border-radius: var(--radius-2xl);
+            background: var(--hero-gradient);
+            color: #ffffff;
+            position: relative;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1.6fr auto;
+            align-items: center;
+            gap: 2rem;
             box-shadow: var(--shadow-xl);
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-wrapper {
-                padding: 0 1rem;
-            }
-
-            .nav-wrapper ul {
-                display: none;
-            }
-
-            .hero-content {
-                padding: 0 1rem;
-            }
-
-            .hero-actions {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .hero-btn {
-                width: 100%;
-                max-width: 300px;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-            }
-
-            .feature-card {
-                padding: 2rem;
-            }
-
-            .stats-container {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 1rem;
-            }
-
-            .theme-toggle {
-                bottom: 1rem;
-                right: 1rem;
-                width: 48px;
-                height: 48px;
-            }
+        .cta-inner::after {
+            content: '';
+            position: absolute;
+            top: -40%;
+            right: -10%;
+            width: 460px;
+            height: 460px;
+            border-radius: 50%;
+            background: radial-gradient(closest-side, rgba(16, 185, 129, 0.55), transparent);
+            z-index: 0;
+            pointer-events: none;
         }
 
-        /* Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
+        .cta-copy { position: relative; z-index: 1; }
+        .cta-copy h2 {
+            font-size: clamp(1.5rem, 2.5vw, 2rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin: 0 0 0.5rem;
+        }
+        .cta-copy p { margin: 0; color: rgba(255,255,255,0.8); max-width: 52ch; }
+
+        .cta-inner .hero-btn { position: relative; z-index: 1; }
+
+        @media (max-width: 760px) {
+            .cta-inner { grid-template-columns: 1fr; text-align: left; }
         }
 
-        .floating {
-            animation: float 3s ease-in-out infinite;
-        }
+        /* ---- Scroll-aware navbar ---- */
+        .navbar-custom.is-scrolled { background: var(--surface-primary) !important; }
 
-        /* Loading Animation */
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        .pulse {
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        /* Accessibility */
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after {
-                animation-duration: 0.01ms !important;
-                animation-iteration-count: 1 !important;
-                transition-duration: 0.01ms !important;
-            }
-        }
-
-        /* Focus styles */
-        button:focus, 
-        a:focus {
-            outline: 2px solid var(--accent-primary);
-            outline-offset: 2px;
+        @media (max-width: 600px) {
+            .hero-actions { flex-direction: column; align-items: stretch; }
+            .hero-btn { justify-content: center !important; }
         }
     </style>
 </head>
 <body>
-        
-    <div class="navbar-fixed">
-            <nav class="navbar-custom">
-                <div class="nav-wrapper">
-                    <a href="/" class="brand-logo">
-                        <img src="../static/logo.jpeg" alt="PlantGuard Logo" style="height:50px;margin-right:10px;">PlantGuard
-                    </a>
-                    <ul class="right hide-on-med-and-down">
-                        <li><a href="/" class="waves-effect waves-light"><i class="material-icons left">home</i>Home</a></li>
-                        <li><a href="/view-images" class="waves-effect waves-light"><i class="material-icons left">photo_library</i>Image Library</a></li>
-                        <li><a href="/about" class="waves-effect waves-light"><i class="material-icons left">info</i>About</a></li>
-                        <li><a href="/contact" class="waves-effect waves-light"><i class="material-icons left">contact_mail</i>Contact</a></li>
-                        <li><a href="/doc" class="waves-effect waves-light"><i class="material-icons left">pages</i>Docs</a></li>
-                        <li><a href="/faq" class="waves-effect waves-light"><i class="material-icons left">help</i>FAQ</a></li>
-                    </ul>
-                </div>
-            </nav>
-        </div>
 
-    <!-- Hero Section -->
-    <section class="hero-container">
-        <div class="hero-content" data-aos="fade-up">
-            <div class="hero-badge" data-aos="fade-up" data-aos-delay="100">
-                <i class="fas fa-sparkles"></i>
-                <span>AI-Powered Plant Disease Detection</span>
+    <!-- Navbar -->
+    <div class="navbar-fixed">
+        <nav class="navbar-custom">
+            <div class="nav-wrapper">
+                <a href="/" class="brand-logo">
+                    <img src="/static/logo.jpeg" alt="PlantGuard logo">
+                    <span>PlantGuard</span>
+                    <span class="brand-version">v1.0</span>
+                </a>
+                <ul class="right hide-on-med-and-down">
+                    <li><a href="/" class="active"><i class="material-icons">home</i>Home</a></li>
+                    <li><a href="/upload-images"><i class="material-icons">cloud_upload</i>Upload</a></li>
+                    <li><a href="/record-video"><i class="material-icons">videocam</i>Live</a></li>
+                    <li><a href="/view-images"><i class="material-icons">photo_library</i>Library</a></li>
+                    <li><a href="/about"><i class="material-icons">info</i>About</a></li>
+                    <li><a href="/doc"><i class="material-icons">description</i>Docs</a></li>
+                    <li><a href="/faq"><i class="material-icons">help_outline</i>FAQ</a></li>
+                    <li><a href="/contact"><i class="material-icons">mail_outline</i>Contact</a></li>
+                </ul>
             </div>
-            
-            <h1 class="hero-title" data-aos="fade-up" data-aos-delay="200">
-                Advanced Plant Health 
-                <br>Monitoring Platform
+        </nav>
+    </div>
+
+    <!-- Hero -->
+    <section class="hero">
+        <div class="hero-grid" aria-hidden="true"></div>
+        <div class="hero-inner">
+            <div class="hero-eyebrow" data-aos="fade-up">
+                <i class="fas fa-seedling"></i>
+                <span>AI-Powered Plant Health Monitoring</span>
+            </div>
+            <h1 data-aos="fade-up" data-aos-delay="100">
+                Diagnose plant diseases<br>
+                <span class="accent">in seconds, with confidence.</span>
             </h1>
-            
-            <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="300">
-                Harness the power of artificial intelligence to quickly identify and diagnose plant diseases. 
-                Protect your crops with cutting-edge technology and expert insights.
+            <p class="lead" data-aos="fade-up" data-aos-delay="200">
+                PlantGuard combines YOLOv8 leaf detection with ResNet-50 disease classifiers and
+                Grad-CAM explainability &mdash; designed for researchers, agronomists, and growers
+                who need accurate, auditable predictions.
             </p>
-            
-            <div class="hero-actions" data-aos="fade-up" data-aos-delay="400">
-                <a href="record-video" class="hero-btn btn-primary waves-effect waves-light">
+            <div class="hero-actions" data-aos="fade-up" data-aos-delay="300">
+                <a href="/upload-images" class="hero-btn primary waves-effect">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    Upload an Image
+                </a>
+                <a href="/record-video" class="hero-btn ghost waves-effect">
                     <i class="fas fa-video"></i>
                     Live Analysis
                 </a>
-                <a href="upload-images" class="hero-btn btn-secondary waves-effect waves-light">
-                    <i class="fas fa-cloud-upload-alt"></i>
-                    Upload Images
-                </a>
+            </div>
+            <div class="hero-meta" data-aos="fade-up" data-aos-delay="400">
+                <span><i class="fas fa-check-circle"></i> 92%+ validation accuracy</span>
+                <span><i class="fas fa-bolt"></i> ~50 ms per image on GPU</span>
+                <span><i class="fas fa-lock"></i> Runs fully offline</span>
             </div>
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="stats-section">
-        <div class="stats-container" data-aos="fade-up">
-            <div class="stat-item" data-aos="zoom-in" data-aos-delay="100">
-                <span class="stat-number">92.2%</span>
-                <span class="stat-label">Accuracy Rate</span>
+    <!-- Stats -->
+    <section class="stats">
+        <div class="stats-grid">
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="0">
+                <div class="stat-icon"><i class="fas fa-bullseye"></i></div>
+                <div class="stat-number">92.2<span class="unit">%</span></div>
+                <div class="stat-label">Validation accuracy on PlantVillage</div>
             </div>
-            <div class="stat-item" data-aos="zoom-in" data-aos-delay="200">
-                <span class="stat-number">10+</span>
-                <span class="stat-label">Disease Types</span>
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="stat-icon"><i class="fas fa-leaf"></i></div>
+                <div class="stat-number">6</div>
+                <div class="stat-label">Plant species supported</div>
             </div>
-            <div class="stat-item" data-aos="zoom-in" data-aos-delay="300">
-                <span class="stat-number">3s</span>
-                <span class="stat-label">Analysis Time</span>
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="stat-icon"><i class="fas fa-virus"></i></div>
+                <div class="stat-number">25<span class="unit">+</span></div>
+                <div class="stat-label">Distinct disease classes</div>
             </div>
-            <div class="stat-item" data-aos="zoom-in" data-aos-delay="400">
-                <span class="stat-number">2k+</span>
-                <span class="stat-label">Plants Analyzed</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features-section">
-        <div class="features-container">
-            <div class="section-header" data-aos="fade-up">
-                <h2 class="section-title">Why Choose PlantGuard?</h2>
-                <p class="section-subtitle">
-                    Our advanced AI technology provides farmers and gardeners with the tools they need 
-                    to maintain healthy plants and maximize yields.
-                </p>
-            </div>
-            
-            <div class="features-grid">
-                <div class="feature-card" data-aos="zoom-in" data-aos-delay="100">
-                    <div class="feature-icon floating">
-                        <i class="fas fa-brain"></i>
-                    </div>
-                    <h3 class="feature-title">AI-Powered Analysis</h3>
-                    <p class="feature-description">
-                        Utilizing state-of-the-art deep learning models trained on millions of plant images 
-                        to provide accurate disease detection and classification.
-                    </p>
-                </div>
-                
-                <div class="feature-card" data-aos="zoom-in" data-aos-delay="200">
-                    <div class="feature-icon floating">
-                        <i class="fas fa-bolt"></i>
-                    </div>
-                    <h3 class="feature-title">Lightning Fast Results</h3>
-                    <p class="feature-description">
-                        Get comprehensive analysis results within seconds. Our optimized algorithms 
-                        ensure quick diagnosis without compromising accuracy.
-                    </p>
-                </div>
-                
-                <div class="feature-card" data-aos="zoom-in" data-aos-delay="300">
-                    <div class="feature-icon floating">
-                        <i class="fas fa-leaf"></i>
-                    </div>
-                    <h3 class="feature-title">Eco-Friendly Solutions</h3>
-                    <p class="feature-description">
-                        Help reduce pesticide usage through early disease detection. Promote sustainable 
-                        farming practices and environmental conservation.
-                    </p>
-                </div>
+            <div class="stat-card" data-aos="fade-up" data-aos-delay="300">
+                <div class="stat-icon"><i class="fas fa-stopwatch"></i></div>
+                <div class="stat-number">&lt;3<span class="unit">s</span></div>
+                <div class="stat-label">End-to-end analysis time</div>
             </div>
         </div>
     </section>
 
+    <!-- Features -->
+    <section class="features">
+        <div class="section-head" data-aos="fade-up">
+            <span class="eyebrow"><i class="fas fa-star"></i> Why PlantGuard</span>
+            <h2>Built for serious plant pathology work</h2>
+            <p>Three things researchers asked for: accurate predictions, transparent explanations,
+               and a workflow that fits into how you already operate.</p>
+        </div>
 
-    <!-- How It Works -->
-    <section class="features-section" style="padding-top:0;">
-        <div class="features-container">
-            <div class="section-header" data-aos="fade-up">
-                <h2 class="section-title">How It Works</h2>
-                <p class="section-subtitle">A streamlined workflow from capture to treatment guidance.</p>
+        <div class="features-grid">
+            <article class="feature-card" data-aos="fade-up" data-aos-delay="0">
+                <div class="feature-icon"><i class="fas fa-brain"></i></div>
+                <h3>Transfer-learned accuracy</h3>
+                <p>ResNet-50 plant + per-plant disease heads, fine-tuned on PlantVillage.
+                   YOLOv8 crops the leaf first so the classifier never sees background noise.</p>
+            </article>
+            <article class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon"><i class="fas fa-fire"></i></div>
+                <h3>Grad-CAM explainability</h3>
+                <p>Every prediction ships with a heatmap overlay showing exactly which leaf
+                   regions drove the diagnosis &mdash; no black-box verdicts.</p>
+            </article>
+            <article class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon"><i class="fas fa-bolt"></i></div>
+                <h3>Fast, offline-capable</h3>
+                <p>~50 ms per image on GPU and runs fully offline on CPU or Raspberry Pi.
+                   Deploy to the field, not the cloud.</p>
+            </article>
+            <article class="feature-card" data-aos="fade-up" data-aos-delay="0">
+                <div class="feature-icon"><i class="fas fa-layer-group"></i></div>
+                <h3>Pluggable backends</h3>
+                <p>CNN and ViT adapters share the same interface via <span class="text-mono">model_registry</span>
+                   &mdash; swap architectures with one environment variable.</p>
+            </article>
+            <article class="feature-card" data-aos="fade-up" data-aos-delay="100">
+                <div class="feature-icon"><i class="fas fa-seedling"></i></div>
+                <h3>Agronomy-aware output</h3>
+                <p>Diagnoses are grounded in a curated plant &rarr; disease taxonomy and paired
+                   with expert-style treatment explanations powered by GPT.</p>
+            </article>
+            <article class="feature-card" data-aos="fade-up" data-aos-delay="200">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3>Private by default</h3>
+                <p>Your images stay on your machine. No telemetry, no outbound data, no account
+                   required &mdash; just a local FastAPI service.</p>
+            </article>
+        </div>
+    </section>
+
+    <!-- Workflow -->
+    <section class="workflow">
+        <div class="section-head" data-aos="fade-up">
+            <span class="eyebrow"><i class="fas fa-route"></i> Workflow</span>
+            <h2>From leaf photo to diagnosis in four steps</h2>
+            <p>Designed to mirror how a pathologist actually looks at a leaf &mdash; isolate, identify, diagnose, explain.</p>
+        </div>
+        <div class="workflow-grid">
+            <div class="step" data-aos="fade-up" data-aos-delay="0">
+                <div class="step-no">1</div>
+                <h4>Detect the leaf</h4>
+                <p>YOLOv8 locates and crops the leaf from the uploaded image.</p>
             </div>
-            <div class="features-grid">
-                <div class="feature-card interactive-card" data-aos="fade-up" data-aos-delay="80">
-                    <div class="feature-icon"><i class="fas fa-camera"></i></div>
-                    <h3 class="feature-title">Capture</h3>
-                    <p class="feature-description">Take clear photos of affected leaves or upload multiple angles for stronger diagnosis confidence.</p>
-                </div>
-                <div class="feature-card interactive-card" data-aos="fade-up" data-aos-delay="160">
-                    <div class="feature-icon"><i class="fas fa-microchip"></i></div>
-                    <h3 class="feature-title">Analyze</h3>
-                    <p class="feature-description">PlantGuard runs plant and disease classification with heatmap explanations in seconds.</p>
-                </div>
-                <div class="feature-card interactive-card" data-aos="fade-up" data-aos-delay="240">
-                    <div class="feature-icon"><i class="fas fa-stethoscope"></i></div>
-                    <h3 class="feature-title">Act</h3>
-                    <p class="feature-description">Review recommendations and take fast preventive action to protect crop yield.</p>
-                </div>
+            <div class="step" data-aos="fade-up" data-aos-delay="100">
+                <div class="step-no">2</div>
+                <h4>Identify the plant</h4>
+                <p>A ResNet-50 plant classifier picks one of six species.</p>
+            </div>
+            <div class="step" data-aos="fade-up" data-aos-delay="200">
+                <div class="step-no">3</div>
+                <h4>Classify the disease</h4>
+                <p>A per-plant disease head returns a labelled prediction with confidence.</p>
+            </div>
+            <div class="step" data-aos="fade-up" data-aos-delay="300">
+                <div class="step-no">4</div>
+                <h4>Explain the verdict</h4>
+                <p>Grad-CAM overlay + LLM-generated treatment guidance accompany the result.</p>
             </div>
         </div>
     </section>
 
-    <div class="onboarding-banner" id="onboardingBanner">
-        <span><strong>New here?</strong> Start with Upload Images, then check your Analysis Dashboard.</span>
-        <a href="/upload-images" class="btn-small waves-effect waves-light" style="background:#3b82f6;">Start onboarding</a>
-    </div>
-
-    <!-- CTA Section -->
-    <section class="cta-section" data-aos="fade-up">
-        <div class="cta-container">
-            <h2 class="cta-title">Ready to Protect Your Plants?</h2>
-            <p class="cta-subtitle">
-                Join thousands of farmers and gardeners using PlantGuard to maintain healthier crops.
-            </p>
-            <a href="/upload-images" class="cta-btn waves-effect waves-light">
+    <!-- CTA -->
+    <section class="cta">
+        <div class="cta-inner" data-aos="fade-up">
+            <div class="cta-copy">
+                <h2>Ready to protect your crops?</h2>
+                <p>Upload a single leaf photo and get an explainable diagnosis in seconds &mdash; no account required.</p>
+            </div>
+            <a href="/upload-images" class="hero-btn primary waves-effect">
                 <i class="fas fa-rocket"></i>
-                Get Started Now
+                Try it now
             </a>
         </div>
     </section>
@@ -731,38 +630,100 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
-            <p class="footer-text">&copy; 2024 PlantGuard - Advanced Plant Disease Detection Platform</p>
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <img src="/static/logo.jpeg" alt="PlantGuard logo">
+                    <span>PlantGuard</span>
+                </div>
+                <p>Open-source plant disease detection and explainability, built for the field and for the lab.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="/upload-images">Upload</a></li>
+                    <li><a href="/record-video">Live analysis</a></li>
+                    <li><a href="/view-images">Library</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="/doc">Documentation</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank" rel="noopener">GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2024 PlantGuard. Released under the MIT License.</span>
+            <div class="footer-socials">
+                <a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="/contact" aria-label="Contact"><i class="fas fa-envelope"></i></a>
+            </div>
         </div>
     </footer>
 
-    <!-- Theme Toggle -->
-    <div class="theme-toggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+    <!-- Theme toggle -->
+    <button class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
         <i class="fas fa-moon" id="themeIcon"></i>
-    </div>
-
-    <a class="sticky-cta" href="/upload-images">
-        <i class="fas fa-cloud-upload-alt"></i> Analyze a Plant
-    </a>
+    </button>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
     <script src="/static/scripts.js"></script>
-    
+
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            AppUI.initPage({ enableButtonLoading: '.hero-btn, .cta-btn' });
-
-            const banner = document.getElementById('onboardingBanner');
-            const hasSeenBanner = localStorage.getItem('seenOnboardingBanner') === 'true';
-            if (banner && !hasSeenBanner) {
-                banner.classList.add('show');
-                setTimeout(() => {
-                    localStorage.setItem('seenOnboardingBanner', 'true');
-                }, 6000);
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.AOS) {
+                AOS.init({
+                    duration: 650,
+                    easing: 'ease-out-cubic',
+                    once: true,
+                    offset: 80
+                });
             }
-        });
-    </script>
 
+            // Apply saved theme
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.setAttribute('data-theme', 'dark');
+                const icon = document.getElementById('themeIcon');
+                if (icon) icon.className = 'fas fa-sun';
+            }
+
+            // Scroll-aware navbar
+            const navbar = document.querySelector('.navbar-custom');
+            const onScroll = () => {
+                if (!navbar) return;
+                navbar.classList.toggle('is-scrolled', window.scrollY > 8);
+            };
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+
+            if (typeof M !== 'undefined') { M.AutoInit(); }
+        });
+
+        function toggleDarkMode() {
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            if (isDark) {
+                body.removeAttribute('data-theme');
+                if (icon) icon.className = 'fas fa-moon';
+                localStorage.setItem('theme', 'light');
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                if (icon) icon.className = 'fas fa-sun';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+    </script>
 </body>
 </html>

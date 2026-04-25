@@ -5,19 +5,19 @@ from typing import Dict, List, Optional
 
 import torch
 
-from src.grad_cam import generate_grad_cam
-from src.model_adapters.cnn_adapter import CNNAdapter
-from src.model_adapters.vit_adapter import ViTAdapter
-from src.model_artifacts import artifact_dir, ensure_labels
-from src.model_catalog import (
+from plant_disease.grad_cam import generate_grad_cam
+from plant_disease.model_adapters.cnn_adapter import CNNAdapter
+from plant_disease.model_adapters.vit_adapter import ViTAdapter
+from plant_disease.model_artifacts import artifact_dir, ensure_labels
+from plant_disease.model_catalog import (
     DISEASE_LABELS,
     PLANT_CLASSES,
     disease_model_name,
     get_backend_name,
     plant_model_name,
 )
-from src.Disease_Classification_resnet50.src.disease_model import DiseaseClassifier
-from src.Plant_Classification_resnet50.plant_classification_TL import PlantClassifierCNN
+from plant_disease.Disease_Classification_resnet50.src.disease_model import DiseaseClassifier
+from plant_disease.Plant_Classification_resnet50.plant_classification_TL import PlantClassifierCNN
 
 
 @dataclass(frozen=True)
@@ -53,7 +53,7 @@ def _register_default_models() -> None:
             artifact_dir=str(artifact_dir(model_name)),
             labels=labels,
             model_class=DiseaseClassifier,
-            grad_cam_context={\"plant_type\": plant},
+            grad_cam_context={"plant_type": plant},
         )
 
     vit_name = f"{backend.replace('cnn', 'vit')}_plant"

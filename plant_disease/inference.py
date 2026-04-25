@@ -5,9 +5,9 @@ import torch
 from PIL import Image
 from ultralytics import YOLO
 
-from src.model_artifacts import resolve_shared_file
-from src.model_catalog import DISEASE_LABELS, disease_model_name, get_backend_name, plant_model_name
-from src.model_registry import get_model
+from plant_disease.model_artifacts import resolve_shared_file
+from plant_disease.model_catalog import DISEASE_LABELS, disease_model_name, get_backend_name, plant_model_name
+from plant_disease.model_registry import get_model
 
 
 # ─────────────────────────────────────────────────────────────────────────────

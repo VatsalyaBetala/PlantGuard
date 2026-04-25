@@ -1,0 +1,80 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "plant-disease"
+version = "0.2.0"
+description = "Plant disease detection: leaf detection + plant/disease classification (ResNet-50, ViT) with FastAPI UI"
+requires-python = ">=3.10"
+readme = "README.md"
+license = { file = "LICENCE.txt" }
+authors = [
+  { name = "Vatsalya Betala" },
+  { name = "Aarav Akali" },
+  { name = "Sparsh Makharia" },
+]
+dependencies = [
+  "torch>=2.2",
+  "torchvision",
+  "timm",
+  "ultralytics",
+  "numpy",
+  "pillow",
+  "opencv-python",
+  "scikit-learn",
+  "pandas",
+  "pyyaml",
+  "tensorboard",
+  "matplotlib",
+  "fastapi",
+  "uvicorn[standard]",
+  "python-multipart",
+  "jinja2",
+  "python-dotenv",
+  "openai>=1.0",
+  "gdown",
+  "tqdm",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest",
+  "pytest-mock",
+  "ruff",
+  "black",
+  "mypy",
+  "pre-commit",
+  "httpx",
+]
+
+[project.scripts]
+plant-disease-train    = "plant_disease.cli.train:main"
+plant-disease-evaluate = "plant_disease.cli.evaluate:main"
+plant-disease-serve    = "plant_disease.server:main"
+
+[tool.setuptools.packages.find]
+include = ["plant_disease*"]
+exclude = ["tests*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+check_untyped_defs = false
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"

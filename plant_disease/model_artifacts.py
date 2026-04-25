@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 from typing import Iterable, List
 
-from src.model_catalog import (
+from plant_disease.model_catalog import (
     DISEASE_LABELS,
     LEGACY_DISEASE_MODEL_FILENAMES,
     LEGACY_PLANT_MODEL_FILENAME,
@@ -16,7 +16,7 @@ from src.model_catalog import (
 )
 
 ARTIFACTS_DIR = Path(os.getenv("MODEL_ARTIFACTS_DIR", "artifacts"))
-LEGACY_MODEL_DIR = Path(os.getenv("LEGACY_MODEL_DIR", "src/models"))
+LEGACY_MODEL_DIR = Path(os.getenv("LEGACY_MODEL_DIR", "plant_disease/models"))
 
 
 def artifact_dir(model_name: str) -> Path:
