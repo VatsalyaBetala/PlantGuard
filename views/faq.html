@@ -3,404 +3,486 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlantGuard FAQ - Frequently Asked Questions</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>FAQ — PlantGuard</title>
+    <meta name="description" content="Frequently asked questions about PlantGuard's AI-powered plant disease detection.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="stylesheet" href="/static/style.css">
-    
+
     <style>
-        :root {
-            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --surface-primary: #ffffff;
-            --surface-secondary: #f8fafc;
-            --border-primary: #e2e8f0;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --accent-primary: #3b82f6;
-            --accent-secondary: #8b5cf6;
-            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
-            --radius-xl: 1rem;
-            --radius-2xl: 1.5rem;
+        .page-hero {
+            position: relative;
+            padding: 5rem 1.5rem 3rem;
+            background: var(--hero-gradient);
+            color: #ffffff;
+            overflow: hidden;
+            isolation: isolate;
+        }
+        .page-hero::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+            z-index: -1;
+        }
+        .page-hero-inner { max-width: 720px; margin: 0 auto; text-align: center; }
+        .page-hero h1 {
+            margin: 1rem 0 0.5rem;
+            font-size: clamp(1.75rem, 3.5vw, 2.75rem);
+            font-weight: 800; letter-spacing: -0.025em;
+        }
+        .page-hero p {
+            color: rgba(255,255,255,0.8);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+        .page-hero .eyebrow-dark {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.4rem 0.9rem; border-radius: var(--radius-full);
+            background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15);
+            color: var(--brand-100); font-size: 0.75rem; font-weight: 600;
+            letter-spacing: 0.06em; text-transform: uppercase;
+            backdrop-filter: blur(12px);
         }
 
-        [data-theme="dark"] {
-            --surface-primary: #0f172a;
-            --surface-secondary: #1e293b;
-            --border-primary: #475569;
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
+        .main-container {
+            max-width: 820px;
+            margin: -3rem auto 4rem;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        .faq-search {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--surface-secondary);
+        .faq-search input {
+            width: 100%;
+            height: 48px;
+            padding: 0 1rem 0 2.75rem;
+            font-family: inherit;
+            font-size: 0.9375rem;
             color: var(--text-primary);
-            transition: all 0.3s ease;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            outline: none;
+            box-sizing: border-box;
+            transition: border-color var(--dur-fast) var(--ease-out), box-shadow var(--dur-fast) var(--ease-out);
         }
 
-        .navbar-custom {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-primary);
+        .faq-search input:focus {
+            border-color: var(--brand-400);
+            box-shadow: var(--shadow-focus);
         }
 
-        [data-theme="dark"] .navbar-custom { background: rgba(15, 23, 42, 0.95); }
-
-        .nav-wrapper {
-            padding: 0 10rem;
-            height: 72px;
-            align-items: center;
-            justify-content: space-between;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .brand-logo {
-            display: flex !important;
-            align-items: center;
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--text-primary) !important;
-            text-decoration: none;
-        }
-
-        .brand-logo img {
-            height: 40px;
-            margin-right: 12px;
-            border-radius: var(--radius-xl);
-        }
-
-        .nav-wrapper ul li a {
-            color: var(--text-secondary) !important;
-            font-weight: 500;
-            padding: 0.75rem 1rem !important;
-            border-radius: var(--radius-xl);
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-wrapper ul li a:hover {
-            color: var(--accent-primary) !important;
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 100px auto 0;
-            padding: 2rem;
-        }
-
-        .page-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .page-title {
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-        }
-
-        .page-subtitle {
-            font-size: 1.125rem;
-            color: var(--text-secondary);
-            max-width: 600px;
-            margin: 0 auto;
+        .faq-search i {
+            position: absolute;
+            left: 1rem; top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
         }
 
         .faq-container {
-            background: var(--surface-primary);
-            border: 1px solid var(--border-primary);
-            border-radius: var(--radius-2xl);
-            box-shadow: var(--shadow-lg);
-            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
         }
 
         .faq-item {
-            border-bottom: 1px solid var(--border-primary);
-            transition: all 0.2s ease;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-xs);
+            transition: border-color var(--dur-base) var(--ease-out), box-shadow var(--dur-base) var(--ease-out);
+            overflow: hidden;
         }
 
-        .faq-item:last-child { border-bottom: none; }
+        .faq-item:hover { border-color: var(--brand-200); }
+        .faq-item.active { border-color: var(--brand-300); box-shadow: var(--shadow-md); }
 
         .faq-question {
-            padding: 1.5rem 2rem;
-            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 1rem;
-            transition: all 0.2s ease;
-            background: var(--surface-primary);
+            gap: 0.85rem;
+            padding: 1.1rem 1.35rem;
+            cursor: pointer;
+            user-select: none;
+            transition: background var(--dur-fast) var(--ease-out);
         }
 
-        .faq-question:hover {
-            background: var(--surface-secondary);
-        }
+        .faq-question:hover { background: var(--surface-secondary); }
+
+        .faq-item.active .faq-question { background: var(--brand-50); }
+        [data-theme="dark"] .faq-item.active .faq-question { background: rgba(16,185,129,0.1); }
 
         .faq-icon {
-            color: var(--accent-primary);
-            font-size: 1.25rem;
+            width: 36px; height: 36px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: var(--radius-md);
+            background: var(--brand-50);
+            color: var(--brand-700);
+            font-size: 0.875rem;
             flex-shrink: 0;
         }
 
+        [data-theme="dark"] .faq-icon { background: rgba(16,185,129,0.14); color: var(--brand-300); }
+
         .faq-text {
             flex: 1;
-            font-weight: 500;
+            font-size: 0.9375rem;
+            font-weight: 600;
             color: var(--text-primary);
+            letter-spacing: -0.005em;
         }
 
         .faq-toggle {
-            color: var(--text-secondary);
-            transition: transform 0.3s ease;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            transition: transform var(--dur-base) var(--ease-out), color var(--dur-fast) var(--ease-out);
         }
 
         .faq-item.active .faq-toggle {
             transform: rotate(180deg);
+            color: var(--brand-700);
         }
+
+        [data-theme="dark"] .faq-item.active .faq-toggle { color: var(--brand-300); }
 
         .faq-answer {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s ease;
-            background: var(--surface-secondary);
+            transition: max-height var(--dur-slow) var(--ease-in-out);
         }
 
-        .faq-item.active .faq-answer {
-            max-height: 200px;
-        }
+        .faq-item.active .faq-answer { max-height: 480px; }
 
         .faq-answer-content {
-            padding: 1.5rem 2rem 2rem 4rem;
+            padding: 0 1.35rem 1.2rem 4rem;
             color: var(--text-secondary);
-            line-height: 1.6;
+            font-size: 0.9375rem;
+            line-height: 1.65;
         }
 
-        .footer {
-            background: var(--surface-primary);
-            border-top: 1px solid var(--border-primary);
-            padding: 2rem 0;
-            text-align: center;
-            color: var(--text-secondary);
-            margin-top: 3rem;
+        .faq-answer-content code {
+            font-family: var(--font-mono);
+            font-size: 0.85em;
+            padding: 0.1rem 0.4rem;
+            background: var(--surface-secondary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-xs);
+            color: var(--brand-700);
         }
 
-        .theme-toggle {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 56px;
-            height: 56px;
+        [data-theme="dark"] .faq-answer-content code { color: var(--brand-300); background: var(--surface-tertiary); }
+
+        @media (max-width: 560px) {
+            .faq-answer-content { padding-left: 1.35rem; }
+        }
+
+        .help-card {
+            margin-top: 2rem;
+            padding: 1.5rem;
             background: var(--surface-primary);
             border: 1px solid var(--border-primary);
-            color: var(--text-primary);
-            border-radius: 50%;
-            box-shadow: var(--shadow-lg);
+            border-radius: var(--radius-xl);
             display: flex;
+            gap: 1rem;
             align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            justify-content: space-between;
+            flex-wrap: wrap;
         }
 
-        .theme-toggle:hover { transform: scale(1.1); }
+        .help-card-text h3 {
+            margin: 0 0 0.25rem;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
 
-        @media (max-width: 768px) {
-            .nav-wrapper { padding: 0 1rem; justify-content: center; }
-            .nav-wrapper ul { display: none; }
-            .container { padding: 1rem; }
-            .page-title { font-size: 2rem; }
-            .faq-question { padding: 1rem 1.5rem; }
-            .faq-answer-content { padding: 1rem 1.5rem 1.5rem 3rem; }
+        .help-card-text p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
         }
     </style>
 </head>
 <body>
+
     <div class="navbar-fixed">
         <nav class="navbar-custom">
             <div class="nav-wrapper">
                 <a href="/" class="brand-logo">
-                    <img src="../static/logo.jpeg" alt="PlantGuard Logo">
-                    PlantGuard
+                    <img src="/static/logo.jpeg" alt="PlantGuard logo">
+                    <span>PlantGuard</span>
+                    <span class="brand-version">v1.0</span>
                 </a>
                 <ul class="right hide-on-med-and-down">
                     <li><a href="/"><i class="material-icons">home</i>Home</a></li>
-                    <li><a href="/view-images"><i class="material-icons">photo_library</i>Image Library</a></li>
+                    <li><a href="/upload-images"><i class="material-icons">cloud_upload</i>Upload</a></li>
+                    <li><a href="/record-video"><i class="material-icons">videocam</i>Live</a></li>
+                    <li><a href="/view-images"><i class="material-icons">photo_library</i>Library</a></li>
                     <li><a href="/about"><i class="material-icons">info</i>About</a></li>
-                    <li><a href="/contact"><i class="material-icons">contact_mail</i>Contact</a></li>
-                    <li><a href="/faq"><i class="material-icons">help</i>FAQ</a></li>
+                    <li><a href="/doc"><i class="material-icons">description</i>Docs</a></li>
+                    <li><a href="/faq" class="active"><i class="material-icons">help_outline</i>FAQ</a></li>
+                    <li><a href="/contact"><i class="material-icons">mail_outline</i>Contact</a></li>
                 </ul>
             </div>
         </nav>
     </div>
 
-    <div class="container">
-        <div class="page-header">
-            <h1 class="page-title">Frequently Asked Questions</h1>
-            <p class="page-subtitle">Find answers to common questions about PlantGuard's AI-powered plant disease detection platform.</p>
+    <section class="page-hero">
+        <div class="page-hero-inner">
+            <span class="eyebrow-dark"><i class="fas fa-question-circle"></i> FAQ</span>
+            <h1>Frequently Asked Questions</h1>
+            <p>Answers to the things people ask most about PlantGuard's AI-powered plant disease detection.</p>
+        </div>
+    </section>
+
+    <div class="main-container">
+
+        <div class="faq-search">
+            <i class="fas fa-search"></i>
+            <input type="search" id="faqSearch" placeholder="Search questions…">
         </div>
 
-        <div class="faq-container">
+        <div class="faq-container" id="faqList">
+
             <div class="faq-item">
                 <div class="faq-question" onclick="toggleFAQ(this)">
-                    <i class="fas fa-cloud-upload-alt faq-icon"></i>
+                    <span class="faq-icon"><i class="fas fa-cloud-upload-alt"></i></span>
                     <span class="faq-text">How do I upload images for analysis?</span>
                     <i class="fas fa-chevron-down faq-toggle"></i>
                 </div>
-                <div class="faq-answer">
-                    <div class="faq-answer-content">
-                        Navigate to the <strong>Upload Images</strong> page and either drag & drop your plant images or click "Choose Files" to browse. You can upload multiple images at once. Our AI will analyze each image for disease detection within seconds.
-                    </div>
-                </div>
+                <div class="faq-answer"><div class="faq-answer-content">
+                    Go to the <strong>Upload</strong> page, drag a leaf photo (or click "Choose Files") into the dropzone, and hit <strong>Start AI Analysis</strong>. You can queue multiple images at once &mdash; results appear in the Library tab.
+                </div></div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question" onclick="toggleFAQ(this)">
-                    <i class="fas fa-file-image faq-icon"></i>
+                    <span class="faq-icon"><i class="fas fa-file-image"></i></span>
                     <span class="faq-text">What image formats are supported?</span>
                     <i class="fas fa-chevron-down faq-toggle"></i>
                 </div>
-                <div class="faq-answer">
-                    <div class="faq-answer-content">
-                        PlantGuard supports <strong>JPEG, JPG, PNG, and WEBP</strong> image formats. Each image can be up to 10MB in size. For best results, use clear, well-lit photos showing plant symptoms clearly.
-                    </div>
-                </div>
+                <div class="faq-answer"><div class="faq-answer-content">
+                    <strong>JPEG</strong>, <strong>PNG</strong>, and <strong>WEBP</strong> up to 10 MB per file. For best accuracy, aim for well-lit close-ups of a single leaf filling most of the frame.
+                </div></div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question" onclick="toggleFAQ(this)">
-                    <i class="fas fa-shield-alt faq-icon"></i>
-                    <span class="faq-text">Is my data stored securely?</span>
+                    <span class="faq-icon"><i class="fas fa-shield-alt"></i></span>
+                    <span class="faq-text">Where does my data go?</span>
                     <i class="fas fa-chevron-down faq-toggle"></i>
                 </div>
-                <div class="faq-answer">
-                    <div class="faq-answer-content">
-                        Your uploaded images are stored temporarily for analysis and results display. You can delete all images anytime using the <strong>"Delete All Images"</strong> button in the Image Library. We prioritize your privacy and data security.
-                    </div>
-                </div>
+                <div class="faq-answer"><div class="faq-answer-content">
+                    Nowhere, by default. Uploaded images live in the local <code>uploads/</code> folder on the machine running PlantGuard. The only outbound call is the optional GPT-4o diagnosis explanation &mdash; and that only fires when you click "AI Analysis" on a specific image.
+                </div></div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question" onclick="toggleFAQ(this)">
-                    <i class="fas fa-video faq-icon"></i>
+                    <span class="faq-icon"><i class="fas fa-video"></i></span>
                     <span class="faq-text">How does live recording work?</span>
                     <i class="fas fa-chevron-down faq-toggle"></i>
                 </div>
-                <div class="faq-answer">
-                    <div class="faq-answer-content">
-                        The live recording feature captures frames from your camera in real-time and analyzes them for plant diseases. Simply connect your camera, start recording, and our AI will process frames automatically for continuous monitoring.
-                    </div>
-                </div>
+                <div class="faq-answer"><div class="faq-answer-content">
+                    The <strong>Live</strong> page opens your webcam, samples a frame per second, and runs each frame through the same pipeline as a file upload. Diagnoses stream into your Library as frames finish processing.
+                </div></div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question" onclick="toggleFAQ(this)">
-                    <i class="fas fa-brain faq-icon"></i>
-                    <span class="faq-text">How accurate is the AI detection?</span>
+                    <span class="faq-icon"><i class="fas fa-brain"></i></span>
+                    <span class="faq-text">How accurate is the model?</span>
                     <i class="fas fa-chevron-down faq-toggle"></i>
                 </div>
-                <div class="faq-answer">
-                    <div class="faq-answer-content">
-                        Our AI models achieve <strong>99.2% accuracy</strong> in plant disease detection, trained on millions of plant images. The system can identify over 50 different disease types across various plant species with high precision.
-                    </div>
-                </div>
+                <div class="faq-answer"><div class="faq-answer-content">
+                    On the held-out PlantVillage test split we measure <strong>~92% validation accuracy</strong> for the plant head and comparable or better for the per-plant disease heads. Out-of-distribution field photos will typically do worse &mdash; always verify high-stakes diagnoses with a human pathologist.
+                </div></div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question" onclick="toggleFAQ(this)">
-                    <i class="fas fa-code faq-icon"></i>
+                    <span class="faq-icon"><i class="fas fa-fire"></i></span>
+                    <span class="faq-text">What is the Grad-CAM heatmap?</span>
+                    <i class="fas fa-chevron-down faq-toggle"></i>
+                </div>
+                <div class="faq-answer"><div class="faq-answer-content">
+                    Grad-CAM is a gradient-based explainability technique that highlights which regions of the leaf most influenced the model's prediction. We target the last convolutional block of ResNet-50 (<code>layer4[-1]</code>) and overlay the resulting heatmap on the original leaf.
+                </div></div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span class="faq-icon"><i class="fas fa-code"></i></span>
                     <span class="faq-text">Is PlantGuard open source?</span>
                     <i class="fas fa-chevron-down faq-toggle"></i>
                 </div>
-                <div class="faq-answer">
-                    <div class="faq-answer-content">
-                        Yes! PlantGuard is completely open source. You can view the source code, contribute to development, or report issues on our <strong>GitHub repository</strong>. We believe in transparent, community-driven development.
-                    </div>
-                </div>
+                <div class="faq-answer"><div class="faq-answer-content">
+                    Yes &mdash; MIT licensed. The training pipeline, inference code, and this entire UI live in the <a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank" rel="noopener">GitHub repository</a>.
+                </div></div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question" onclick="toggleFAQ(this)">
-                    <i class="fas fa-mobile-alt faq-icon"></i>
-                    <span class="faq-text">Can I use PlantGuard on mobile devices?</span>
+                    <span class="faq-icon"><i class="fas fa-mobile-alt"></i></span>
+                    <span class="faq-text">Does it work on mobile?</span>
                     <i class="fas fa-chevron-down faq-toggle"></i>
                 </div>
-                <div class="faq-answer">
-                    <div class="faq-answer-content">
-                        Absolutely! PlantGuard works seamlessly on smartphones, tablets, and computers. No special app download required - just use your mobile browser to access all features including camera upload and live recording.
-                    </div>
-                </div>
+                <div class="faq-answer"><div class="faq-answer-content">
+                    The UI is fully responsive and the live-camera feature uses the browser's <code>getUserMedia</code> API, so a phone pointed at a leaf works as well as a laptop webcam. Run the backend on any machine the phone can reach over the network.
+                </div></div>
             </div>
 
             <div class="faq-item">
                 <div class="faq-question" onclick="toggleFAQ(this)">
-                    <i class="fas fa-chart-line faq-icon"></i>
-                    <span class="faq-text">What information do I get from the analysis?</span>
+                    <span class="faq-icon"><i class="fas fa-chart-line"></i></span>
+                    <span class="faq-text">What do I get back from an analysis?</span>
                     <i class="fas fa-chevron-down faq-toggle"></i>
                 </div>
-                <div class="faq-answer">
-                    <div class="faq-answer-content">
-                        You receive detailed results including <strong>disease identification, severity assessment, AI explanation, and treatment recommendations</strong>. Visual heatmaps show exactly where diseases are detected on your plants.
-                    </div>
+                <div class="faq-answer"><div class="faq-answer-content">
+                    For each image: predicted plant species, predicted disease, a severity tag, a Grad-CAM heatmap, and an optional GPT-generated treatment write-up (symptoms, causes, prevention, remedies).
+                </div></div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span class="faq-icon"><i class="fas fa-microchip"></i></span>
+                    <span class="faq-text">Can I run it offline on a Raspberry Pi?</span>
+                    <i class="fas fa-chevron-down faq-toggle"></i>
                 </div>
+                <div class="faq-answer"><div class="faq-answer-content">
+                    Yes. Set <code>MODEL_NAME=cnn_resnet50</code> and the pipeline runs on CPU. On a Pi 4/5 you'll get multi-second inference per image rather than sub-second GPU latency, but it works. Skip the LLM-explain feature if you want <em>zero</em> outbound calls.
+                </div></div>
+            </div>
+
+        </div>
+
+        <!-- Still need help -->
+        <div class="help-card">
+            <div class="help-card-text">
+                <h3>Still have questions?</h3>
+                <p>Reach out via the contact form or open an issue on GitHub.</p>
+            </div>
+            <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+                <a href="/contact" class="doc-btn" style="display:inline-flex;align-items:center;gap:0.45rem;padding:0.6rem 1rem;font-weight:600;border:1px solid var(--border-primary);border-radius:var(--radius-md);color:var(--text-primary);text-decoration:none;">
+                    <i class="fas fa-envelope"></i> Contact
+                </a>
+                <a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:0.45rem;padding:0.6rem 1rem;font-weight:600;border-radius:var(--radius-md);background:var(--brand-gradient);color:#ffffff;text-decoration:none;box-shadow:var(--shadow-brand);">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
             </div>
         </div>
     </div>
 
     <footer class="footer">
-        <p>&copy; 2024 PlantGuard - Advanced Plant Disease Detection Platform</p>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo"><img src="/static/logo.jpeg" alt="PlantGuard logo"><span>PlantGuard</span></div>
+                <p>Open-source plant disease detection and explainability, built for the field and for the lab.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Product</h4>
+                <ul>
+                    <li><a href="/upload-images">Upload</a></li>
+                    <li><a href="/record-video">Live analysis</a></li>
+                    <li><a href="/view-images">Library</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="/doc">Documentation</a></li>
+                    <li><a href="/faq">FAQ</a></li>
+                    <li><a href="/about">About</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Support</h4>
+                <ul>
+                    <li><a href="/contact">Contact</a></li>
+                    <li><a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank" rel="noopener">GitHub</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2024 PlantGuard. Released under the MIT License.</span>
+            <div class="footer-socials">
+                <a href="https://github.com/VatsalyaBetala/plant-disease-classification" target="_blank" rel="noopener" aria-label="GitHub"><i class="fab fa-github"></i></a>
+                <a href="/contact" aria-label="Contact"><i class="fas fa-envelope"></i></a>
+            </div>
+        </div>
     </footer>
 
-    <div class="theme-toggle" onclick="toggleDarkMode()">
+    <button class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
         <i class="fas fa-moon" id="themeIcon"></i>
-    </div>
+    </button>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="/static/scripts.js"></script>
     <script>
         function toggleFAQ(element) {
-            const faqItem = element.parentElement;
-            const isActive = faqItem.classList.contains('active');
-            
-            // Close all other FAQ items
-            document.querySelectorAll('.faq-item').forEach(item => {
-                item.classList.remove('active');
-            });
-            
-            // Toggle current item
-            if (!isActive) {
-                faqItem.classList.add('active');
-            }
+            const item = element.parentElement;
+            const isActive = item.classList.contains('active');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+            if (!isActive) item.classList.add('active');
         }
 
         function toggleDarkMode() {
             const body = document.body;
-            const themeIcon = document.getElementById('themeIcon');
-            
-            if (body.getAttribute('data-theme') === 'dark') {
+            const icon = document.getElementById('themeIcon');
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            if (isDark) {
                 body.removeAttribute('data-theme');
-                themeIcon.className = 'fas fa-moon';
+                if (icon) icon.className = 'fas fa-moon';
                 localStorage.setItem('theme', 'light');
             } else {
                 body.setAttribute('data-theme', 'dark');
-                themeIcon.className = 'fas fa-sun';
+                if (icon) icon.className = 'fas fa-sun';
                 localStorage.setItem('theme', 'dark');
             }
         }
-
         if (localStorage.getItem('theme') === 'dark') {
             document.body.setAttribute('data-theme', 'dark');
-            document.getElementById('themeIcon').className = 'fas fa-sun';
+            const _i = document.getElementById('themeIcon');
+            if (_i) _i.className = 'fas fa-sun';
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const navbar = document.querySelector('.navbar-custom');
+            const onScroll = () => navbar && navbar.classList.toggle('is-scrolled', window.scrollY > 8);
+            window.addEventListener('scroll', onScroll, { passive: true });
+            onScroll();
+
+            // Local search filter
+            const search = document.getElementById('faqSearch');
+            if (search) {
+                search.addEventListener('input', (e) => {
+                    const q = e.target.value.trim().toLowerCase();
+                    document.querySelectorAll('.faq-item').forEach(item => {
+                        const text = item.textContent.toLowerCase();
+                        item.style.display = (!q || text.includes(q)) ? '' : 'none';
+                    });
+                });
+            }
+
+            if (typeof M !== 'undefined') M.AutoInit();
+        });
     </script>
 </body>
 </html>
