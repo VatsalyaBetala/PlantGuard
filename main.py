@@ -22,12 +22,19 @@ load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # Local imports
-from src.utils import check_and_download_models
-from src.inference import (
+from plant_disease.utils import check_and_download_models
+from plant_disease.inference import (
     detect_leaf,
     classify_plant,
     classify_disease,
     explain_disease,
+)
+from plant_disease.db import init_db
+from plant_disease.db.repo import (
+    record_prediction,
+    list_predictions,
+    delete_prediction,
+    delete_all_predictions,
 )
 
 class DiagnosisRequest(BaseModel):
@@ -39,9 +46,6 @@ logger = logging.getLogger("uvicorn.error")
 # Initialize FastAPI
 app = FastAPI()
 
-# Simple in-memory store (use a real database in production)
-PREDICTIONS = {}
-
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
@@ -51,13 +55,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Ensure uploads directory
-if not os.path.exists("uploads"):
-    os.makedirs("uploads")
+def _wipe_dir(path: str) -> None:
+    """Remove every file directly inside `path`, leaving the directory itself."""
+    if not os.path.isdir(path):
+        return
+    for entry in os.listdir(path):
+        full = os.path.join(path, entry)
+        try:
+            if os.path.isfile(full) or os.path.islink(full):
+                os.remove(full)
+        except OSError as exc:
+            logger.warning("Could not remove %s during startup wipe: %s", full, exc)
 
-# Ensure heatmaps directory
-if not os.path.exists("heatmaps"):
-    os.makedirs("heatmaps")
+
+# Ensure uploads / heatmaps directories exist, then wipe them so we start fresh.
+# Stale files on disk would not have matching DB rows after the schema change.
+os.makedirs("uploads", exist_ok=True)
+os.makedirs("heatmaps", exist_ok=True)
+_wipe_dir("uploads")
+_wipe_dir("heatmaps")
 
 # Serve static files
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
@@ -66,6 +82,8 @@ app.mount("/heatmaps", StaticFiles(directory="heatmaps"), name="heatmaps")
 
 @app.on_event("startup")
 async def startup_event():
+    # Initialize the SQLite predictions DB (idempotent; creates the table on first run).
+    init_db()
     # Check & download missing models
     check_and_download_models()
 
@@ -179,15 +197,17 @@ async def upload_files(files: List[UploadFile] = File(...)):
 
                 # 4) Generate Grad-CAM heatmap
                 heatmap_path = explain_disease(cropped_leaf_path, plant_prediction)
-            # Store prediction
-            pred = {
-                "filename": unique_name,
-                "plant": plant_prediction,
-                "disease": disease_prediction,
-                "heatmap": os.path.basename(heatmap_path) if heatmap_path else None,
-            }
+            # Persist to SQLite. Confidence/top3 fields stay NULL until the
+            # inference pipeline starts surfacing them (next feature).
+            pred = record_prediction(
+                filename=unique_name,
+                original_name=file.filename or "",
+                plant=plant_prediction,
+                disease=disease_prediction,
+                heatmap=os.path.basename(heatmap_path) if heatmap_path else None,
+                source="upload",
+            )
             predictions.append(pred)
-            PREDICTIONS[unique_name] = pred
 
         except Exception as e:
             print(f"Error during upload processing: {traceback.format_exc()}")
@@ -198,17 +218,12 @@ async def upload_files(files: List[UploadFile] = File(...)):
 
 @app.get("/images")
 async def get_images():
-    files = os.listdir("uploads")
-    results = []
-    for file in files:
-        pred = PREDICTIONS.get(file, {"plant": "", "disease": "", "heatmap": None})
-        results.append({
-            "filename": file,
-            "plant": pred.get("plant", ""),
-            "disease": pred.get("disease", ""),
-            "heatmap": pred.get("heatmap")
-        })
-    return results
+    """Return every persisted prediction. Newest first.
+
+    The DB is the source of truth — files orphaned on disk (e.g. left over
+    from a crash) are intentionally not surfaced.
+    """
+    return list_predictions()
 
 
 @app.post("/explain-diagnosis")
@@ -255,33 +270,44 @@ Write in simple, farmer-friendly language with bullet points where appropriate.
 @app.delete("/delete-images")
 async def delete_images():
     try:
-        files = os.listdir("uploads")
-        for file in files:
-            os.remove(f"uploads/{file}")
-            heatmap_path = os.path.join("heatmaps", file)
-            if os.path.exists(heatmap_path):
-                os.remove(heatmap_path)
-            if file in PREDICTIONS:
-                del PREDICTIONS[file]
-        return {"message": "All images deleted"}
+        rows = list_predictions()
+        for row in rows:
+            fn = row["filename"]
+            file_path = os.path.join("uploads", fn)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+            heatmap_name = row.get("heatmap")
+            if heatmap_name:
+                heatmap_path = os.path.join("heatmaps", heatmap_name)
+                if os.path.exists(heatmap_path):
+                    os.remove(heatmap_path)
+        deleted = delete_all_predictions()
+        return {"message": "All images deleted", "deleted": deleted}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to delete images: {str(e)}")
 
 
 @app.delete("/images/{filename}")
 async def delete_image(filename: str):
-    """Delete a single uploaded image and its cached prediction."""
+    """Delete a single uploaded image and its prediction row."""
     try:
         file_path = os.path.join("uploads", filename)
-        if not os.path.exists(file_path):
-            raise HTTPException(status_code=404, detail="Image not found")
+        existed_on_disk = os.path.exists(file_path)
+        if existed_on_disk:
+            os.remove(file_path)
 
-        os.remove(file_path)
-        heatmap_path = os.path.join("heatmaps", filename)
-        if os.path.exists(heatmap_path):
-            os.remove(heatmap_path)
-        if filename in PREDICTIONS:
-            del PREDICTIONS[filename]
+        # Heatmap is named the same as the cropped leaf, not the upload filename,
+        # so look it up via the DB row before deleting it.
+        from plant_disease.db.repo import get_prediction
+        row = get_prediction(filename)
+        if row and row.get("heatmap"):
+            heatmap_path = os.path.join("heatmaps", row["heatmap"])
+            if os.path.exists(heatmap_path):
+                os.remove(heatmap_path)
+
+        deleted = delete_prediction(filename)
+        if not existed_on_disk and not deleted:
+            raise HTTPException(status_code=404, detail="Image not found")
         return {"message": f"{filename} deleted"}
     except HTTPException:
         raise
