@@ -6,9 +6,9 @@ import torch
 from PIL import Image
 from torchvision import transforms
 
-from src.Disease_Classification_resnet50.src.disease_model import DiseaseClassifier
-from src.model_artifacts import resolve_model_path
-from src.model_catalog import DISEASE_LABELS, LEGACY_DISEASE_MODEL_FILENAMES, disease_model_name
+from plant_disease.Disease_Classification_resnet50.src.disease_model import DiseaseClassifier
+from plant_disease.model_artifacts import resolve_model_path
+from plant_disease.model_catalog import DISEASE_LABELS, LEGACY_DISEASE_MODEL_FILENAMES, disease_model_name
 
 # The underlying understanding of how GradCams works lies the understanding of the gradients:
 

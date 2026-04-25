@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 import torchvision.models as models
 
-from src.model_artifacts import resolve_shared_file
+from plant_disease.model_artifacts import resolve_shared_file
 
 class PlantClassifierCNN(nn.Module):
     def __init__(self, num_classes = 2):

@@ -6,8 +6,8 @@ from typing import Any, Callable, List, Optional
 
 import torch
 
-from src.data_preprocessing import preprocess_image_input
-from src.model_adapters.base import ModelAdapter
+from plant_disease.data_preprocessing import preprocess_image_input
+from plant_disease.model_adapters.base import ModelAdapter
 
 
 class CNNAdapter(ModelAdapter):
