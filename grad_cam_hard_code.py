@@ -5,7 +5,7 @@ from PIL import Image
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from src.Disease_Classification_resnet50.src.disease_model import DiseaseClassifier
+from plant_disease.Disease_Classification_resnet50.src.disease_model import DiseaseClassifier
 
 
 # The underlying understanding of how GradCams works lies the understanding of the gradients: 

@@ -7,7 +7,7 @@ import torch.nn as nn
 import torch.optim as optim
 
 from train.model import CNN
-from src.data_preprocessing import get_datasets, get_transforms, split_indices, setup_kaggle
+from plant_disease.data_preprocessing import get_datasets, get_transforms, split_indices, setup_kaggle
 
 
 def train_model(dataset, train_sampler, validation_sampler, device, epochs, model, criterion, optimizer):
