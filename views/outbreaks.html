@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PlantGuard — Outbreak Map</title>
+    <meta name="description" content="Live spatiotemporal map of plant disease predictions, outbreaks and weather-driven pressure forecasts.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css">
+    <link rel="stylesheet" href="/static/style.css">
+
+    <style>
+        .page-hero {
+            position: relative;
+            padding: 4rem 1.5rem 2.25rem;
+            background: var(--hero-gradient);
+            color: #ffffff;
+            overflow: hidden;
+            isolation: isolate;
+        }
+        .page-hero::before {
+            content: '';
+            position: absolute; inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+            background-size: 56px 56px;
+            mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+            z-index: -1;
+        }
+        .page-hero-inner { max-width: var(--container-max); margin: 0 auto; text-align: center; }
+        .page-hero h1 {
+            margin: 0.5rem 0 0.5rem;
+            font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+            font-weight: 800; letter-spacing: -0.025em; line-height: 1.1;
+        }
+        .page-hero p { color: rgba(255,255,255,0.8); margin: 0 auto; max-width: 640px; }
+
+        .main-container {
+            max-width: var(--container-max);
+            margin: -2rem auto 3rem;
+            padding: 0 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .control-bar {
+            padding: 1rem 1.25rem;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr auto auto;
+            gap: 0.75rem;
+            align-items: end;
+        }
+        @media (max-width: 900px) { .control-bar { grid-template-columns: 1fr 1fr; } }
+
+        .ctrl label {
+            display: block;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 0.3rem;
+        }
+        .ctrl select, .ctrl input {
+            width: 100%;
+            height: 40px;
+            padding: 0 0.75rem;
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            background: var(--surface-secondary);
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            box-sizing: border-box;
+        }
+
+        .layer-toggles { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .layer-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.8rem;
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border-primary);
+            background: var(--surface-secondary);
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+        }
+        .layer-chip.active {
+            background: var(--brand-gradient);
+            color: #fff;
+            border-color: transparent;
+            box-shadow: var(--shadow-brand);
+        }
+
+        .map-shell {
+            position: relative;
+            height: 60vh;
+            min-height: 480px;
+            border-radius: var(--radius-xl);
+            overflow: hidden;
+            border: 1px solid var(--border-primary);
+            box-shadow: var(--shadow-md);
+        }
+        #map { width: 100%; height: 100%; }
+
+        .legend {
+            position: absolute;
+            bottom: 1rem; left: 1rem;
+            background: rgba(255,255,255,0.92);
+            color: var(--text-primary);
+            padding: 0.65rem 0.85rem;
+            border-radius: var(--radius-md);
+            font-size: 0.78rem;
+            line-height: 1.5;
+            border: 1px solid var(--border-primary);
+            backdrop-filter: blur(8px);
+            z-index: 500;
+            max-width: 240px;
+        }
+        [data-theme="dark"] .legend { background: rgba(15,23,42,0.92); color: #e2e8f0; }
+        .legend-row { display: flex; align-items: center; gap: 0.5rem; }
+        .legend-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+
+        .timeline {
+            margin-top: 1rem;
+            padding: 1rem 1.25rem;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-sm);
+        }
+        .timeline-header {
+            display: flex; justify-content: space-between; align-items: baseline;
+            margin-bottom: 0.65rem;
+        }
+        .timeline-header h3 {
+            margin: 0; font-size: 0.95rem; font-weight: 700;
+            color: var(--text-primary);
+            display: inline-flex; align-items: center; gap: 0.5rem;
+        }
+        .timeline-value { color: var(--text-secondary); font-size: 0.85rem; }
+        #timelineSlider { width: 100%; }
+        #spark { width: 100%; height: 56px; display: block; margin-top: 0.5rem; }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        .stat-card {
+            padding: 1rem;
+            background: var(--surface-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+        }
+        .stat-card .num { font-size: 1.4rem; font-weight: 800; color: var(--text-primary); }
+        .stat-card .lbl { font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; font-weight: 700; }
+
+        .side-panel {
+            position: fixed;
+            top: 0; right: 0;
+            width: min(420px, 92vw);
+            height: 100vh;
+            background: var(--surface-primary);
+            border-left: 1px solid var(--border-primary);
+            box-shadow: var(--shadow-2xl);
+            transform: translateX(100%);
+            transition: transform 0.25s ease-out;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 1.25rem;
+        }
+        .side-panel.open { transform: translateX(0); }
+        .side-panel h4 {
+            margin: 0 0 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: var(--text-primary);
+            display: inline-flex; gap: 0.5rem; align-items: center;
+        }
+        .side-panel .close-x {
+            position: absolute; top: 0.6rem; right: 0.6rem;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            border: 0;
+            background: var(--surface-tertiary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .panel-section { margin-top: 1rem; }
+        .panel-section h6 {
+            font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+            color: var(--text-muted); text-transform: uppercase; margin: 0 0 0.4rem;
+        }
+        .panel-stat-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;
+        }
+        .panel-stat {
+            padding: 0.6rem 0.75rem;
+            border: 1px solid var(--border-primary);
+            background: var(--surface-secondary);
+            border-radius: var(--radius-md);
+        }
+        .panel-stat span { display: block; font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700;  }
+        .panel-stat strong { font-size: 0.95rem; color: var(--text-primary); }
+        .pressure-row {
+            display: flex; align-items: center; gap: 0.5rem;
+            padding: 0.4rem 0;
+            border-bottom: 1px dashed var(--border-subtle);
+            font-size: 0.85rem;
+        }
+        .pressure-row:last-child { border-bottom: 0; }
+        .pressure-day { width: 88px; color: var(--text-secondary); font-family: var(--font-mono); }
+        .pressure-bar {
+            flex: 1; height: 8px; background: var(--surface-tertiary); border-radius: 4px; overflow: hidden;
+        }
+        .pressure-bar-fill { height: 100%; }
+        .pressure-num { width: 48px; text-align: right; color: var(--text-primary); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+        .recompute-btn {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0 1rem;
+            height: 40px;
+            background: var(--brand-gradient);
+            color: #fff;
+            border: 0;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar-fixed">
+        <nav class="navbar-custom">
+            <div class="nav-wrapper">
+                <a href="/" class="brand-logo">
+                    <img src="/static/logo.jpeg" alt="PlantGuard logo">
+                    <span>PlantGuard</span>
+                    <span class="brand-version">v1.0</span>
+                </a>
+                <ul class="right hide-on-med-and-down">
+                    <li><a href="/"><i class="material-icons">home</i>Home</a></li>
+                    <li><a href="/upload-images"><i class="material-icons">cloud_upload</i>Upload</a></li>
+                    <li><a href="/record-video"><i class="material-icons">videocam</i>Live</a></li>
+                    <li><a href="/view-images"><i class="material-icons">photo_library</i>Library</a></li>
+                    <li><a href="/outbreaks" class="active"><i class="material-icons">public</i>Outbreaks</a></li>
+                    <li><a href="/about"><i class="material-icons">info</i>About</a></li>
+                    <li><a href="/doc"><i class="material-icons">description</i>Docs</a></li>
+                    <li><a href="/faq"><i class="material-icons">help_outline</i>FAQ</a></li>
+                    <li><a href="/contact"><i class="material-icons">mail_outline</i>Contact</a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <section class="page-hero">
+        <div class="page-hero-inner">
+            <span class="eyebrow-dark"><i class="fas fa-globe-asia"></i> Outbreak Engine</span>
+            <h1>Live disease pressure map</h1>
+            <p>Spatiotemporal clustering of every diagnosed leaf, weather-driven pressure forecasts, and reproductive-number estimates per outbreak.</p>
+        </div>
+    </section>
+
+    <div class="main-container">
+
+        <div class="control-bar">
+            <div class="ctrl">
+                <label for="diseaseSelect">Disease</label>
+                <select id="diseaseSelect"><option value="">All diseases</option></select>
+            </div>
+            <div class="ctrl">
+                <label for="plantSelect">Plant</label>
+                <select id="plantSelect"><option value="">All plants</option></select>
+            </div>
+            <div class="ctrl">
+                <label for="windowSelect">Window</label>
+                <select id="windowSelect">
+                    <option value="14">Last 14 days</option>
+                    <option value="30" selected>Last 30 days</option>
+                    <option value="90">Last 90 days</option>
+                </select>
+            </div>
+            <div class="ctrl">
+                <label>Layers</label>
+                <div class="layer-toggles">
+                    <span class="layer-chip active" data-layer="points">Points</span>
+                    <span class="layer-chip active" data-layer="heat">Heatmap</span>
+                    <span class="layer-chip active" data-layer="outbreaks">Outbreaks</span>
+                </div>
+            </div>
+            <div class="ctrl">
+                <label>&nbsp;</label>
+                <button id="recomputeBtn" class="recompute-btn"><i class="fas fa-sync"></i> Recompute</button>
+            </div>
+        </div>
+
+        <div class="map-shell">
+            <div id="map"></div>
+            <div class="legend">
+                <div style="font-weight:700; margin-bottom:0.3rem;">Severity</div>
+                <div class="legend-row"><span class="legend-dot" style="background:#dc2626"></span> High risk disease</div>
+                <div class="legend-row"><span class="legend-dot" style="background:#f59e0b"></span> Medium risk</div>
+                <div class="legend-row"><span class="legend-dot" style="background:#10b981"></span> Healthy / low</div>
+                <div style="margin-top:0.4rem; font-weight:700;">Outbreak hull</div>
+                <div class="legend-row"><span class="legend-dot" style="background:rgba(220,38,38,0.4); border:1px solid #dc2626"></span> Active cluster</div>
+            </div>
+        </div>
+
+        <div class="timeline">
+            <div class="timeline-header">
+                <h3><i class="fas fa-clock"></i> Time slider</h3>
+                <span class="timeline-value" id="timelineLabel">Showing all dates</span>
+            </div>
+            <input type="range" id="timelineSlider" min="0" max="100" value="100">
+            <svg id="spark" viewBox="0 0 600 56" preserveAspectRatio="none"></svg>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card"><div class="num" id="stPredictions">0</div><div class="lbl">Geo-tagged uploads</div></div>
+            <div class="stat-card"><div class="num" id="stOutbreaks">0</div><div class="lbl">Active outbreaks</div></div>
+            <div class="stat-card"><div class="num" id="stRMax">—</div><div class="lbl">Highest R<sub>eff</sub></div></div>
+            <div class="stat-card"><div class="num" id="stPeakDisease">—</div><div class="lbl">Top spreading disease</div></div>
+        </div>
+    </div>
+
+    <aside id="sidePanel" class="side-panel">
+        <button class="close-x" onclick="closeSide()"><i class="fas fa-times"></i></button>
+        <div id="sidePanelBody"></div>
+    </aside>
+
+    <button class="theme-toggle" onclick="toggleDarkMode()" aria-label="Toggle dark mode">
+        <i class="fas fa-moon" id="themeIcon"></i>
+    </button>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+
+    <script>
+        function toggleDarkMode() {
+            const body = document.body;
+            const icon = document.getElementById('themeIcon');
+            const isDark = body.getAttribute('data-theme') === 'dark';
+            if (isDark) { body.removeAttribute('data-theme'); if (icon) icon.className = 'fas fa-moon'; localStorage.setItem('theme', 'light'); }
+            else { body.setAttribute('data-theme', 'dark'); if (icon) icon.className = 'fas fa-sun'; localStorage.setItem('theme', 'dark'); }
+        }
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            const _i = document.getElementById('themeIcon'); if (_i) _i.className = 'fas fa-sun';
+        }
+
+        const HIGH_RISK = ['blight','rot','wilt','virus','curl','mosaic','black measles'];
+        const MED_RISK  = ['spot','rust','mold','mite','scab','esca','leaf'];
+
+        function severityOf(disease) {
+            if (!disease) return 'low';
+            const d = disease.toLowerCase();
+            if (HIGH_RISK.some(t => d.includes(t))) return 'high';
+            if (MED_RISK.some(t => d.includes(t))) return 'medium';
+            if (d.includes('healthy')) return 'low';
+            return 'medium';
+        }
+        const SEVERITY_COLOR = { high: '#dc2626', medium: '#f59e0b', low: '#10b981' };
+
+        let map, pointsLayer, heatLayer, outbreaksLayer;
+        let allFeatures = [];
+        let allOutbreaks = { type: 'FeatureCollection', features: [] };
+        let layerVisible = { points: true, heat: true, outbreaks: true };
+        let timelineFraction = 1.0;
+        let currentDisease = '', currentPlant = '', currentWindow = 30;
+
+        function initMap() {
+            map = L.map('map', { worldCopyJump: true }).setView([20, 78], 4);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; OpenStreetMap',
+                maxZoom: 19,
+            }).addTo(map);
+            pointsLayer = L.markerClusterGroup({ maxClusterRadius: 40, disableClusteringAtZoom: 12 });
+            outbreaksLayer = L.layerGroup();
+            heatLayer = null;
+            map.addLayer(pointsLayer);
+            map.addLayer(outbreaksLayer);
+        }
+
+        function pointMarker(f) {
+            const sev = severityOf(f.properties.disease);
+            const color = SEVERITY_COLOR[sev];
+            const m = L.circleMarker([f.geometry.coordinates[1], f.geometry.coordinates[0]], {
+                radius: 7, weight: 1.5, color: '#fff', fillColor: color, fillOpacity: 0.85,
+            });
+            const p = f.properties;
+            const ts = p.capture_ts || p.created_at || '';
+            m.bindPopup(`
+                <div style="min-width: 200px;">
+                    <div style="font-weight:700; margin-bottom:4px;">${p.plant || 'Unknown'}</div>
+                    <div style="color:${color}; font-weight:600;">${p.disease || 'Unknown'}</div>
+                    <div style="font-size:0.75rem; color:#64748b; margin-top:4px;">${ts.slice(0,16).replace('T',' ')}</div>
+                    ${p.outbreak_id ? `<div style="margin-top:6px; font-size:0.8rem;"><a href="#" onclick="openOutbreak(${p.outbreak_id}); return false;">View outbreak #${p.outbreak_id}</a></div>` : ''}
+                    ${p.filename ? `<div style="margin-top:6px;"><img src="/uploads/${p.filename}" style="max-width:100%; border-radius:6px;"></div>` : ''}
+                </div>
+            `);
+            return m;
+        }
+
+        function outbreakLayer(f) {
+            const p = f.properties;
+            const sev = severityOf(p.disease);
+            const color = SEVERITY_COLOR[sev];
+            let layer;
+            if (f.geometry.type === 'Polygon' || f.geometry.type === 'MultiPolygon') {
+                layer = L.geoJSON(f, {
+                    style: { color, weight: 2, fillColor: color, fillOpacity: 0.15 }
+                });
+            } else {
+                const c = f.geometry.coordinates;
+                layer = L.circle([c[1], c[0]], {
+                    radius: Math.max(500, (p.radius_km || 1) * 1000),
+                    color, weight: 2, fillColor: color, fillOpacity: 0.12,
+                });
+            }
+            const r = (p.r_estimate ?? null);
+            const rText = r === null ? '—' : r.toFixed(2);
+            layer.bindPopup(`
+                <div style="min-width: 220px;">
+                    <div style="font-weight:700;">${p.plant || ''} — ${p.disease}</div>
+                    <div style="font-size:0.8rem; color:#64748b;">${p.member_count} reports • R<sub>eff</sub> = ${rText}</div>
+                    <div style="font-size:0.75rem; color:#64748b; margin-top:4px;">
+                        ${(p.started_at || '').slice(0,10)} → ${(p.ended_at || '').slice(0,10)}
+                    </div>
+                    <button onclick="openOutbreak(${p.id})" style="margin-top:8px; padding:6px 10px; background:#10b981; color:#fff; border:0; border-radius:6px; cursor:pointer; font-weight:600;">Details</button>
+                </div>
+            `);
+            return layer;
+        }
+
+        function fitTimelineFiltered(features) {
+            if (!features.length) return features;
+            const dates = features.map(f => new Date(f.properties.capture_ts || f.properties.created_at || 0).getTime()).filter(Boolean);
+            if (!dates.length) return features;
+            const minD = Math.min(...dates);
+            const maxD = Math.max(...dates);
+            const cutoff = minD + (maxD - minD) * timelineFraction;
+            return features.filter(f => {
+                const t = new Date(f.properties.capture_ts || f.properties.created_at || 0).getTime();
+                return t <= cutoff;
+            });
+        }
+
+        function renderLayers() {
+            pointsLayer.clearLayers();
+            outbreaksLayer.clearLayers();
+            if (heatLayer) { map.removeLayer(heatLayer); heatLayer = null; }
+
+            const filtered = fitTimelineFiltered(allFeatures);
+
+            if (layerVisible.points) {
+                filtered.forEach(f => pointsLayer.addLayer(pointMarker(f)));
+            }
+            if (layerVisible.heat && filtered.length) {
+                const heatPts = filtered.map(f => [f.geometry.coordinates[1], f.geometry.coordinates[0], 0.6]);
+                heatLayer = L.heatLayer(heatPts, { radius: 28, blur: 20, max: 1.0,
+                    gradient: { 0.2: '#10b981', 0.4: '#f59e0b', 0.7: '#ef4444', 1.0: '#7f1d1d' }
+                });
+                map.addLayer(heatLayer);
+            }
+            if (layerVisible.outbreaks) {
+                allOutbreaks.features.forEach(f => outbreaksLayer.addLayer(outbreakLayer(f)));
+            }
+            updateStats(filtered);
+        }
+
+        function updateStats(filteredFeatures) {
+            document.getElementById('stPredictions').textContent = filteredFeatures.length;
+            document.getElementById('stOutbreaks').textContent = allOutbreaks.features.length;
+            const rs = allOutbreaks.features.map(f => f.properties.r_estimate).filter(v => typeof v === 'number');
+            document.getElementById('stRMax').textContent = rs.length ? Math.max(...rs).toFixed(2) : '—';
+            const counts = {};
+            allOutbreaks.features.forEach(f => {
+                const k = f.properties.disease || 'Unknown';
+                counts[k] = (counts[k] || 0) + (f.properties.member_count || 1);
+            });
+            const top = Object.entries(counts).sort((a,b) => b[1] - a[1])[0];
+            document.getElementById('stPeakDisease').textContent = top ? top[0] : '—';
+        }
+
+        async function loadData() {
+            const params = new URLSearchParams({ since_days: String(currentWindow), jitter: 'true' });
+            if (currentDisease) params.set('disease', currentDisease);
+            if (currentPlant) params.set('plant', currentPlant);
+
+            const [predResp, obResp, dsResp] = await Promise.all([
+                fetch('/map/predictions?' + params).then(r => r.json()),
+                fetch('/map/outbreaks?active_only=true').then(r => r.json()),
+                fetch('/map/diseases').then(r => r.json()),
+            ]);
+            allFeatures = predResp.features || [];
+            allOutbreaks = obResp || { features: [] };
+            populateDropdowns(dsResp);
+            if (allFeatures.length) {
+                const lats = allFeatures.map(f => f.geometry.coordinates[1]);
+                const lons = allFeatures.map(f => f.geometry.coordinates[0]);
+                map.fitBounds([
+                    [Math.min(...lats), Math.min(...lons)],
+                    [Math.max(...lats), Math.max(...lons)]
+                ], { padding: [40, 40], maxZoom: 12 });
+            }
+            renderLayers();
+            loadTimeline();
+        }
+
+        function populateDropdowns(diseaseMap) {
+            const plantSel = document.getElementById('plantSelect');
+            const diseaseSel = document.getElementById('diseaseSelect');
+            const currentPlantVal = plantSel.value;
+            const currentDiseaseVal = diseaseSel.value;
+            plantSel.innerHTML = '<option value="">All plants</option>';
+            diseaseSel.innerHTML = '<option value="">All diseases</option>';
+            const seenDiseases = new Set();
+            Object.entries(diseaseMap).forEach(([plant, ds]) => {
+                const o = document.createElement('option');
+                o.value = plant; o.textContent = plant;
+                plantSel.appendChild(o);
+                ds.forEach(d => {
+                    if (seenDiseases.has(d)) return;
+                    seenDiseases.add(d);
+                    const od = document.createElement('option');
+                    od.value = d; od.textContent = d;
+                    diseaseSel.appendChild(od);
+                });
+            });
+            plantSel.value = currentPlantVal;
+            diseaseSel.value = currentDiseaseVal;
+        }
+
+        async function loadTimeline() {
+            const buckets = await fetch('/map/timeline?since_days=' + currentWindow).then(r => r.json()).then(j => j.buckets || []);
+            renderSpark(buckets);
+        }
+
+        function renderSpark(buckets) {
+            const svg = document.getElementById('spark');
+            svg.innerHTML = '';
+            if (!buckets.length) return;
+            const w = 600, h = 56;
+            const max = Math.max(1, ...buckets.map(b => b.total));
+            const step = w / Math.max(1, buckets.length - 1);
+            const ptsHealthy = buckets.map((b, i) => `${(i * step).toFixed(2)},${(h - (b.healthy / max) * h).toFixed(2)}`).join(' ');
+            const ptsDiseased = buckets.map((b, i) => `${(i * step).toFixed(2)},${(h - (b.diseased / max) * h).toFixed(2)}`).join(' ');
+            svg.innerHTML = `
+                <polyline fill="none" stroke="#10b981" stroke-width="2" points="${ptsHealthy}"/>
+                <polyline fill="none" stroke="#ef4444" stroke-width="2" points="${ptsDiseased}"/>
+            `;
+        }
+
+        async function openOutbreak(id) {
+            const ob = await fetch('/map/outbreaks/' + id).then(r => r.json());
+            const c = ob.centroid || {};
+            let pressure = { pressure: [], nearby_outbreaks: [] };
+            if (c.lat != null && c.lon != null) {
+                pressure = await fetch(`/map/pressure/local?lat=${c.lat}&lon=${c.lon}&disease=${encodeURIComponent(ob.disease)}`).then(r => r.json());
+            }
+            const r = ob.r_estimate;
+            const rText = (r == null) ? '—' : r.toFixed(2);
+            const trend = (r != null && r > 1.0) ? '↑ growing' : (r != null && r < 1.0 ? '↓ declining' : 'stable');
+            const pressureRows = (pressure.pressure || []).slice(0, 14).map(row => {
+                const pct = Math.max(0, Math.min(100, row.score));
+                const color = pct > 70 ? '#dc2626' : pct > 40 ? '#f59e0b' : '#10b981';
+                return `
+                    <div class="pressure-row">
+                        <div class="pressure-day">${row.day}</div>
+                        <div class="pressure-bar"><div class="pressure-bar-fill" style="width:${pct}%; background:${color};"></div></div>
+                        <div class="pressure-num">${pct.toFixed(0)}</div>
+                    </div>
+                `;
+            }).join('');
+
+            document.getElementById('sidePanelBody').innerHTML = `
+                <h4><i class="fas fa-virus"></i> ${ob.plant || ''} ${ob.disease}</h4>
+                <div style="color:var(--text-secondary); font-size:0.85rem;">${(ob.started_at || '').slice(0,10)} → ${(ob.ended_at || '').slice(0,10)}</div>
+                <div class="panel-section">
+                    <div class="panel-stat-grid">
+                        <div class="panel-stat"><span>Members</span><strong>${ob.member_count}</strong></div>
+                        <div class="panel-stat"><span>Radius</span><strong>${(ob.radius_km || 0).toFixed(2)} km</strong></div>
+                        <div class="panel-stat"><span>R<sub>eff</sub></span><strong>${rText} ${trend}</strong></div>
+                        <div class="panel-stat"><span>Centroid</span><strong>${c.lat?.toFixed?.(3)}, ${c.lon?.toFixed?.(3)}</strong></div>
+                    </div>
+                </div>
+                <div class="panel-section">
+                    <h6><i class="fas fa-cloud-rain"></i> Pressure forecast</h6>
+                    ${pressureRows || '<div style="color:var(--text-muted); font-size:0.8rem;">No pressure data cached. Click Recompute to fetch weather.</div>'}
+                </div>
+                <div class="panel-section">
+                    <h6><i class="fas fa-map-marker-alt"></i> Other nearby outbreaks (15km / 14d)</h6>
+                    ${
+                        (pressure.nearby_outbreaks || []).filter(o => o.id !== ob.id).map(o => `
+                            <div style="padding:0.4rem 0; border-bottom:1px dashed var(--border-subtle); font-size:0.85rem;">
+                                <strong>${o.disease}</strong> — ${o.member_count} reports, ${o.distance_km}km away
+                            </div>
+                        `).join('') || '<div style="color:var(--text-muted); font-size:0.8rem;">None.</div>'
+                    }
+                </div>
+            `;
+            document.getElementById('sidePanel').classList.add('open');
+        }
+        function closeSide() { document.getElementById('sidePanel').classList.remove('open'); }
+        window.openOutbreak = openOutbreak;
+        window.closeSide = closeSide;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initMap();
+            loadData();
+
+            document.querySelectorAll('.layer-chip').forEach(chip => {
+                chip.addEventListener('click', () => {
+                    chip.classList.toggle('active');
+                    layerVisible[chip.dataset.layer] = chip.classList.contains('active');
+                    renderLayers();
+                });
+            });
+            document.getElementById('diseaseSelect').addEventListener('change', e => { currentDisease = e.target.value; loadData(); });
+            document.getElementById('plantSelect').addEventListener('change', e => { currentPlant = e.target.value; loadData(); });
+            document.getElementById('windowSelect').addEventListener('change', e => { currentWindow = parseInt(e.target.value, 10); loadData(); });
+
+            document.getElementById('timelineSlider').addEventListener('input', e => {
+                timelineFraction = parseInt(e.target.value, 10) / 100;
+                const lbl = document.getElementById('timelineLabel');
+                if (allFeatures.length) {
+                    const dates = allFeatures.map(f => new Date(f.properties.capture_ts || f.properties.created_at || 0).getTime()).filter(Boolean);
+                    if (dates.length) {
+                        const minD = Math.min(...dates), maxD = Math.max(...dates);
+                        const cutoff = new Date(minD + (maxD - minD) * timelineFraction);
+                        lbl.textContent = `Showing through ${cutoff.toISOString().slice(0,10)}`;
+                    }
+                }
+                renderLayers();
+            });
+
+            document.getElementById('recomputeBtn').addEventListener('click', async () => {
+                document.getElementById('recomputeBtn').disabled = true;
+                try {
+                    await fetch('/map/recompute', { method: 'POST' });
+                    M.toast({ html: 'Recompute scheduled — refreshing in ~10s', classes: 'green' });
+                    setTimeout(loadData, 10000);
+                } catch {
+                    M.toast({ html: 'Recompute failed', classes: 'red' });
+                } finally {
+                    document.getElementById('recomputeBtn').disabled = false;
+                }
+            });
+        });
+    </script>
+</body>
+</html>
