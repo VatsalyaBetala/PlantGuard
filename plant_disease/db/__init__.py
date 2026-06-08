@@ -15,7 +15,7 @@ from contextlib import contextmanager
 from pathlib import Path
 from typing import Iterator
 
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session, sessionmaker
 
@@ -40,6 +40,33 @@ def _build_engine() -> Engine:
     return create_engine(DATABASE_URL, connect_args=connect_args, future=True)
 
 
+_PREDICTION_NEW_COLS: dict[str, str] = {
+    # additive geo fields. SQLite ALTER TABLE supports ADD COLUMN.
+    "lat": "REAL",
+    "lon": "REAL",
+    "geo_accuracy_m": "REAL",
+    "geo_source": "VARCHAR(16)",
+    "capture_ts": "DATETIME",
+    "outbreak_id": "INTEGER",
+}
+
+
+def _ensure_prediction_columns(engine: Engine) -> None:
+    """Add new geo columns to legacy DBs without dropping data.
+
+    SQLite cannot drop or alter existing columns, but ADD COLUMN with a
+    nullable type is safe and instantaneous.
+    """
+    inspector = inspect(engine)
+    if "predictions" not in inspector.get_table_names():
+        return
+    existing = {c["name"] for c in inspector.get_columns("predictions")}
+    with engine.begin() as conn:
+        for col, sqltype in _PREDICTION_NEW_COLS.items():
+            if col not in existing:
+                conn.execute(text(f"ALTER TABLE predictions ADD COLUMN {col} {sqltype}"))
+
+
 def init_db() -> Engine:
     """Create tables if they don't exist. Idempotent. Safe to call on every startup."""
     global _engine, _SessionLocal
@@ -47,6 +74,7 @@ def init_db() -> Engine:
         _engine = _build_engine()
         _SessionLocal = sessionmaker(bind=_engine, autoflush=False, expire_on_commit=False, future=True)
     Base.metadata.create_all(_engine)
+    _ensure_prediction_columns(_engine)
     return _engine
 
 
