@@ -35,6 +35,11 @@ dependencies = [
   "openai>=1.0",
   "gdown",
   "tqdm",
+  "piexif",
+  "httpx",
+  "shapely",
+  "apscheduler",
+  "fastmcp>=3.2.4",
 ]
 
 [project.optional-dependencies]
