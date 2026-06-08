@@ -13,6 +13,7 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
     <link rel="stylesheet" href="/static/style.css">
 
     <style>
@@ -626,6 +627,7 @@
                     <li><a href="/upload-images" class="active"><i class="material-icons">cloud_upload</i>Upload</a></li>
                     <li><a href="/record-video"><i class="material-icons">videocam</i>Live</a></li>
                     <li><a href="/view-images"><i class="material-icons">photo_library</i>Library</a></li>
+                    <li><a href="/outbreaks"><i class="material-icons">public</i>Outbreaks</a></li>
                     <li><a href="/about"><i class="material-icons">info</i>About</a></li>
                     <li><a href="/doc"><i class="material-icons">description</i>Docs</a></li>
                     <li><a href="/faq"><i class="material-icons">help_outline</i>FAQ</a></li>
@@ -692,6 +694,36 @@
                         <div class="preview-count" id="previewCount">0 files</div>
                     </div>
                     <div class="preview-grid" id="previewContainer"></div>
+                </div>
+
+                <!-- Geo capture -->
+                <div id="geoBlock" style="margin-top:1.25rem; padding:1rem 1.1rem; border:1px solid var(--border-primary); border-radius: var(--radius-lg); background: var(--surface-secondary);">
+                    <div style="display:flex; align-items:center; justify-content:space-between; gap:0.75rem; flex-wrap:wrap;">
+                        <div>
+                            <div style="font-weight:700; color:var(--text-primary); display:inline-flex; align-items:center; gap:0.4rem;">
+                                <i class="fas fa-map-marker-alt" style="color:var(--brand-600);"></i> Tag with location
+                            </div>
+                            <div style="color:var(--text-secondary); font-size:0.85rem; margin-top:0.2rem;">
+                                Optional. Powers the outbreak map and pressure forecasts. Coordinates are jittered ~200m on public views.
+                            </div>
+                        </div>
+                        <label class="switch" style="display:inline-flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                            <input type="checkbox" id="geoToggle" style="width:18px; height:18px;">
+                            <span style="font-weight:600; color:var(--text-primary);">Share location</span>
+                        </label>
+                    </div>
+                    <div id="geoStatus" style="margin-top:0.6rem; font-size:0.85rem; color:var(--text-muted);">Off — uploads without GPS will fall back to EXIF only.</div>
+                    <div id="geoActions" style="margin-top:0.6rem; display:none; gap:0.5rem; flex-wrap:wrap;">
+                        <button type="button" id="geoUseGps" class="main-btn" style="height:38px; padding:0 0.9rem;">
+                            <i class="fas fa-crosshairs"></i> Use my GPS
+                        </button>
+                        <button type="button" id="geoPickMap" class="main-btn" style="height:38px; padding:0 0.9rem;">
+                            <i class="fas fa-thumbtack"></i> Pin on map
+                        </button>
+                    </div>
+                    <div id="geoMapWrap" style="display:none; margin-top:0.75rem; height:280px; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border-primary);">
+                        <div id="geoMap" style="width:100%; height:100%;"></div>
+                    </div>
                 </div>
 
                 <!-- Inline message -->
@@ -778,6 +810,7 @@
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script>
         // Theme
         function toggleDarkMode() {
@@ -806,6 +839,78 @@
         let fileInput, uploadZone, previewSection, previewContainer, previewCount;
         let submitBtn, clearBtn, responseMessage, responseText, progressContainer;
         let progressText, progressPercent, progressFill;
+
+        const geoState = { lat: null, lon: null, accuracy: null, source: null };
+        let geoMap = null, geoMarker = null;
+
+        function setGeoStatus(text, ok = false) {
+            const el = document.getElementById('geoStatus');
+            if (!el) return;
+            el.textContent = text;
+            el.style.color = ok ? 'var(--brand-700)' : 'var(--text-muted)';
+        }
+
+        function clearGeo() {
+            geoState.lat = null; geoState.lon = null; geoState.accuracy = null; geoState.source = null;
+        }
+
+        function applyGeo(lat, lon, accuracy, source) {
+            geoState.lat = lat; geoState.lon = lon; geoState.accuracy = accuracy; geoState.source = source;
+            setGeoStatus(`${source.toUpperCase()} → ${lat.toFixed(5)}, ${lon.toFixed(5)} (±${accuracy?.toFixed?.(0) ?? '?'}m)`, true);
+            if (geoMap && geoMarker) {
+                geoMarker.setLatLng([lat, lon]);
+                geoMap.setView([lat, lon], 14);
+            }
+        }
+
+        function ensureGeoMap() {
+            if (geoMap || typeof L === 'undefined') return;
+            const wrap = document.getElementById('geoMapWrap');
+            wrap.style.display = 'block';
+            geoMap = L.map('geoMap').setView([20, 78], 4);
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '&copy; OpenStreetMap', maxZoom: 19 }).addTo(geoMap);
+            geoMarker = L.marker([20, 78], { draggable: true }).addTo(geoMap);
+            geoMarker.on('dragend', e => {
+                const ll = e.target.getLatLng();
+                applyGeo(ll.lat, ll.lng, 50, 'manual');
+            });
+            geoMap.on('click', e => {
+                geoMarker.setLatLng(e.latlng);
+                applyGeo(e.latlng.lat, e.latlng.lng, 50, 'manual');
+            });
+            setTimeout(() => geoMap.invalidateSize(), 200);
+        }
+
+        function useBrowserGps() {
+            if (!navigator.geolocation) {
+                setGeoStatus('Browser geolocation unavailable.');
+                return;
+            }
+            setGeoStatus('Requesting GPS…');
+            navigator.geolocation.getCurrentPosition(
+                pos => applyGeo(pos.coords.latitude, pos.coords.longitude, pos.coords.accuracy, 'browser'),
+                err => setGeoStatus(`GPS denied or failed: ${err.message}`)
+            );
+        }
+
+        function bindGeoControls() {
+            const toggle = document.getElementById('geoToggle');
+            const actions = document.getElementById('geoActions');
+            const mapWrap = document.getElementById('geoMapWrap');
+            toggle.addEventListener('change', () => {
+                if (toggle.checked) {
+                    actions.style.display = 'flex';
+                    setGeoStatus('Sharing on. Choose a source below.');
+                } else {
+                    actions.style.display = 'none';
+                    if (mapWrap) mapWrap.style.display = 'none';
+                    clearGeo();
+                    setGeoStatus('Off — uploads without GPS will fall back to EXIF only.');
+                }
+            });
+            document.getElementById('geoUseGps').addEventListener('click', useBrowserGps);
+            document.getElementById('geoPickMap').addEventListener('click', ensureGeoMap);
+        }
 
         function isValidImageFile(file) {
             const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
@@ -938,6 +1043,13 @@
             try {
                 const formData = new FormData();
                 selectedFiles.forEach(file => formData.append('files', file));
+                if (geoState.lat != null && geoState.lon != null) {
+                    formData.append('lat', String(geoState.lat));
+                    formData.append('lon', String(geoState.lon));
+                    if (geoState.accuracy != null) formData.append('geo_accuracy_m', String(geoState.accuracy));
+                    if (geoState.source) formData.append('geo_source', geoState.source);
+                    formData.append('capture_ts', new Date().toISOString());
+                }
                 updateProgress(25, 'Uploading images…', 1);
 
                 const response = await fetch('/upload', { method: 'POST', body: formData });
@@ -982,6 +1094,9 @@
 
             // AOS
             if (window.AOS) AOS.init({ duration: 650, easing: 'ease-out-cubic', once: true, offset: 60 });
+
+            // Geo capture controls
+            bindGeoControls();
 
             // Choose button
             const chooseBtn = document.getElementById('chooseFilesBtn');

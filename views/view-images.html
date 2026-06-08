@@ -338,7 +338,7 @@
         }
 
         .gallery.grid-view    { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
-        .gallery.compact-view { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+        .gallery.compact-view { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
         .gallery.list-view    { grid-template-columns: 1fr; }
 
         .image-card {
@@ -364,7 +364,7 @@
             align-items: stretch;
         }
         .gallery.list-view .card-image-wrapper { width: 220px; flex-shrink: 0; }
-        .gallery.list-view .card-content { flex: 1; }
+        .gallery.list-view .card-content { flex: 1; min-width: 0; }
 
         .card-image-wrapper {
             position: relative;
@@ -449,20 +449,23 @@
         [data-theme="dark"] .severity-low    { background: rgba(16,185,129,0.14); color: var(--brand-300); border-color: rgba(16,185,129,0.3); }
 
         .card-actions {
-            display: flex;
-            gap: 0.4rem;
-            padding: 0.75rem 1.15rem 1rem;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.5rem;
+            padding: 0.85rem 1.15rem 1rem;
             border-top: 1px solid var(--border-subtle);
             margin-top: auto;
-            flex-wrap: wrap;
+            background: linear-gradient(180deg, var(--surface-primary), var(--surface-secondary));
         }
 
         .action-btn {
-            flex: 1;
+            width: 100%;
+            min-width: 0;
+            min-height: 36px;
             display: inline-flex; align-items: center; justify-content: center; gap: 0.35rem;
-            padding: 0.5rem 0.75rem;
+            padding: 0.5rem 0.55rem;
             font-family: inherit;
-            font-size: 0.75rem;
+            font-size: 0.73rem;
             font-weight: 600;
             border-radius: var(--radius-md);
             border: 1px solid var(--border-primary);
@@ -472,7 +475,15 @@
             cursor: pointer;
             transition: background var(--dur-fast) var(--ease-out), color var(--dur-fast) var(--ease-out), border-color var(--dur-fast) var(--ease-out), transform var(--dur-fast) var(--ease-out);
             white-space: nowrap;
-            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.15;
+            box-sizing: border-box;
+        }
+
+        .action-btn i {
+            flex: 0 0 auto;
+            font-size: 0.78rem;
         }
 
         .action-btn:hover {
@@ -494,6 +505,38 @@
             opacity: 0.5;
             cursor: not-allowed;
             pointer-events: none;
+        }
+
+        .gallery.list-view .card-actions {
+            width: 340px;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            align-content: center;
+            margin-top: 0;
+            border-top: 0;
+            border-left: 1px solid var(--border-subtle);
+        }
+
+        @media (min-width: 1080px) {
+            .gallery.list-view .card-actions {
+                width: 460px;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 760px) {
+            .gallery.list-view .image-card {
+                flex-direction: column;
+            }
+
+            .gallery.list-view .card-image-wrapper,
+            .gallery.list-view .card-actions {
+                width: auto;
+            }
+
+            .gallery.list-view .card-actions {
+                border-left: 0;
+                border-top: 1px solid var(--border-subtle);
+            }
         }
 
         /* ---- Main actions ---- */
@@ -580,15 +623,76 @@
 
         #modalImage { width: 100%; height: auto; border-radius: var(--radius-lg); }
 
-        #llmContent {
+        #llmContent,
+        #triageContent {
             font-size: 0.9375rem;
             line-height: 1.65;
             color: var(--text-primary);
-            white-space: pre-wrap;
             max-height: 60vh;
             overflow-y: auto;
             padding-right: 0.5rem;
         }
+
+        #llmContent { white-space: pre-wrap; }
+
+        .triage-summary {
+            padding: 1rem;
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-lg);
+            background: var(--surface-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .triage-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 0.75rem;
+            margin: 1rem 0;
+        }
+
+        .triage-metric {
+            padding: 0.85rem;
+            border: 1px solid var(--border-primary);
+            border-radius: var(--radius-md);
+            background: var(--surface-secondary);
+        }
+
+        .triage-metric span {
+            display: block;
+            color: var(--text-muted);
+            font-size: 0.6875rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .triage-metric strong {
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            text-transform: capitalize;
+        }
+
+        .triage-section { margin-top: 1.1rem; }
+        .triage-section h6 {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin: 0 0 0.5rem;
+            font-size: 0.8125rem;
+            font-weight: 700;
+            color: var(--text-secondary);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .triage-section ul {
+            margin: 0;
+            padding-left: 1.2rem;
+            color: var(--text-primary);
+        }
+
+        .triage-section li { margin: 0.35rem 0; }
 
         /* fade-in for cards */
         .fade-in-up { animation: fadeInUp 0.35s var(--ease-out) both; }
@@ -614,6 +718,7 @@
                     <li><a href="/upload-images"><i class="material-icons">cloud_upload</i>Upload</a></li>
                     <li><a href="/record-video"><i class="material-icons">videocam</i>Live</a></li>
                     <li><a href="/view-images" class="active"><i class="material-icons">photo_library</i>Library</a></li>
+                    <li><a href="/outbreaks"><i class="material-icons">public</i>Outbreaks</a></li>
                     <li><a href="/about"><i class="material-icons">info</i>About</a></li>
                     <li><a href="/doc"><i class="material-icons">description</i>Docs</a></li>
                     <li><a href="/faq"><i class="material-icons">help_outline</i>FAQ</a></li>
@@ -778,6 +883,17 @@
         </div>
     </div>
 
+    <div id="triageModal" class="modal">
+        <div class="modal-content">
+            <h5><i class="fas fa-clipboard-check"></i> Diagnosis Triage Agent</h5>
+            <div id="triageContent">Loading...</div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close btn btn-secondary"><i class="fas fa-times"></i> Close</a>
+            <button id="copyTriage" class="btn btn-primary"><i class="fas fa-copy"></i> Copy triage</button>
+        </div>
+    </div>
+
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
@@ -831,8 +947,10 @@
 
     <script>
         const explanationCache = {};
+        const triageCache = {};
         let imagesData = [];
         let currentView = 'grid';
+        let currentTriageText = '';
 
         function toggleDarkMode() {
             const body = document.body;
@@ -964,6 +1082,7 @@
 
             const plantSafe = (image.plant || 'Unknown').replace(/'/g, "\\'");
             const diseaseSafe = (image.disease || 'Unknown').replace(/'/g, "\\'");
+            const filenameSafe = (image.filename || '').replace(/'/g, "\\'");
 
             card.innerHTML = `
                 <div class="card-image-wrapper">
@@ -985,6 +1104,9 @@
                     <button class="action-btn btn-primary" onclick="fetchLLMExplanation('${plantSafe}', '${diseaseSafe}')" title="AI diagnosis">
                         <i class="fas fa-brain"></i> AI Analysis
                     </button>
+                    <button class="action-btn" onclick="fetchTriage('${filenameSafe}')" title="Run local triage agent">
+                        <i class="fas fa-clipboard-check"></i> Triage
+                    </button>
                     ${image.heatmap
                         ? `<button class="action-btn" onclick="openHeatmapPlot('heatmaps/${image.heatmap}')" title="View heatmap"><i class="fas fa-fire"></i> Heatmap</button>`
                         : `<button class="action-btn disabled" title="Heatmap unavailable"><i class="fas fa-fire"></i> Heatmap</button>`}
@@ -996,9 +1118,13 @@
             probe.onload = function() {
                 const meta = card.querySelector('.image-metadata');
                 if (meta) {
+                    const geoLine = (image.lat != null && image.lon != null)
+                        ? `<div>📍 ${Number(image.lat).toFixed(3)}, ${Number(image.lon).toFixed(3)}${image.outbreak_id ? ` · <a href="/outbreaks" style="color:#fca5a5;">outbreak #${image.outbreak_id}</a>` : ''}</div>`
+                        : '';
                     meta.innerHTML = `
                         <div>Resolution: ${this.naturalWidth}×${this.naturalHeight}</div>
                         <div>Format: ${image.filename.split('.').pop().toUpperCase()}</div>
+                        ${geoLine}
                     `;
                 }
             };
@@ -1031,6 +1157,176 @@
             };
             const modal = M.Modal.getInstance(document.getElementById('heatmapPlotModal')) || M.Modal.init(document.getElementById('heatmapPlotModal'));
             modal.open();
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/[&<>"']/g, char => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[char]));
+        }
+
+        function listHtml(items) {
+            if (!items || items.length === 0) return '<ul><li>None.</li></ul>';
+            return `<ul>${items.map(item => `<li>${escapeHtml(item)}</li>`).join('')}</ul>`;
+        }
+
+        function competingHtml(items) {
+            if (!items || items.length === 0) return '<ul><li>None.</li></ul>';
+            return `<ul>${items.map(item => {
+                if (typeof item === 'string') return `<li>${escapeHtml(item)}</li>`;
+                return `
+                    <li>
+                        <strong>${escapeHtml(item.label || 'Alternative')}</strong>:
+                        ${escapeHtml(item.why_it_matters || 'Worth checking.')}
+                        <br><span style="color:var(--text-secondary);">Confirm with: ${escapeHtml(item.what_would_confirm || 'field observation')}</span>
+                    </li>
+                `;
+            }).join('')}</ul>`;
+        }
+
+        function fieldMissionHtml(mission) {
+            if (!mission || Object.keys(mission).length === 0) return '';
+            return `
+                <div class="triage-section">
+                    <h6><i class="fas fa-route"></i> Field mission</h6>
+                    <div class="triage-grid">
+                        <div class="triage-metric"><span>Next 10 minutes</span>${listHtml(mission.next_10_minutes)}</div>
+                        <div class="triage-metric"><span>Next 24 hours</span>${listHtml(mission.next_24_hours)}</div>
+                        <div class="triage-metric"><span>Follow-up</span>${listHtml(mission.next_follow_up)}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatConfidence(value) {
+            if (value === null || value === undefined) return 'Not reported';
+            return `${Math.round(Number(value) * 100)}%`;
+        }
+
+        function formatTriageText(data) {
+            const lines = [
+                `PlantGuard ${data.uses_openai ? 'OpenAI-enhanced' : 'local'} triage agent`,
+                `OpenAI status: ${data.openai_status || (data.uses_openai ? 'used' : 'not used')}`,
+                `Plant: ${data.plant}`,
+                `Disease: ${data.disease}`,
+                `Plant confidence: ${formatConfidence(data.confidence && data.confidence.plant)}`,
+                `Disease confidence: ${formatConfidence(data.confidence && data.confidence.disease)}`,
+                `Risk: ${data.risk_level}`,
+                `Diagnosis quality: ${data.diagnosis_quality}`,
+                `Recommended action: ${data.recommended_action}`,
+                `Follow up: ${data.follow_up_days} day(s)`,
+                ``,
+                data.summary,
+                ``,
+                `Agent trace:`,
+                ...(data.agent_trace || []).map(item => `- ${item}`),
+                ``,
+                `Next questions:`,
+                ...(data.next_questions || []).map(item => `- ${item}`),
+                ``,
+                `Immediate steps:`,
+                ...(data.immediate_steps || []).map(item => `- ${item}`),
+                ``,
+                `Capture guidance:`,
+                ...(data.capture_guidance || []).map(item => `- ${item}`)
+            ];
+            return lines.join('\n');
+        }
+
+        function renderTriage(data) {
+            const heatmapText = data.signals && data.signals.has_heatmap ? 'Available' : 'Unavailable';
+            const confidence = data.confidence || {};
+            const openaiStatus = data.openai_status || (data.uses_openai ? 'used' : 'not_used');
+            return `
+                <div class="triage-summary">${escapeHtml(data.summary)}</div>
+                <div class="triage-grid">
+                    <div class="triage-metric"><span>Risk</span><strong>${escapeHtml(data.risk_level)}</strong></div>
+                    <div class="triage-metric"><span>Quality</span><strong>${escapeHtml(data.diagnosis_quality).replaceAll('_', ' ')}</strong></div>
+                    <div class="triage-metric"><span>Action</span><strong>${escapeHtml(data.recommended_action)}</strong></div>
+                    <div class="triage-metric"><span>Follow up</span><strong>${escapeHtml(data.follow_up_days)} days</strong></div>
+                    <div class="triage-metric"><span>Plant confidence</span><strong>${formatConfidence(confidence.plant)}</strong></div>
+                    <div class="triage-metric"><span>Disease confidence</span><strong>${formatConfidence(confidence.disease)}</strong></div>
+                    <div class="triage-metric"><span>Heatmap</span><strong>${heatmapText}</strong></div>
+                    <div class="triage-metric"><span>OpenAI</span><strong>${escapeHtml(openaiStatus).replaceAll('_', ' ')}</strong></div>
+                </div>
+                <div class="triage-section">
+                    <h6><i class="fas fa-project-diagram"></i> Agent trace</h6>
+                    ${listHtml(data.agent_trace)}
+                </div>
+                <div class="triage-section">
+                    <h6><i class="fas fa-not-equal"></i> Competing diagnoses</h6>
+                    ${competingHtml(data.competing_diagnoses)}
+                </div>
+                ${fieldMissionHtml(data.field_mission)}
+                <div class="triage-section">
+                    <h6><i class="fas fa-flag"></i> Escalation flags</h6>
+                    ${listHtml(data.escalation_flags)}
+                </div>
+                <div class="triage-section">
+                    <h6><i class="fas fa-exclamation-circle"></i> Reliability notes</h6>
+                    ${listHtml([...(data.blockers || []), ...(data.reliability_notes || [])])}
+                </div>
+                <div class="triage-section">
+                    <h6><i class="fas fa-question-circle"></i> Follow-up questions</h6>
+                    ${listHtml(data.next_questions)}
+                </div>
+                <div class="triage-section">
+                    <h6><i class="fas fa-tasks"></i> Immediate steps</h6>
+                    ${listHtml(data.immediate_steps)}
+                </div>
+                <div class="triage-section">
+                    <h6><i class="fas fa-camera"></i> Capture guidance</h6>
+                    ${listHtml(data.capture_guidance)}
+                </div>
+            `;
+        }
+
+        async function fetchTriage(filename) {
+            const content = document.getElementById('triageContent');
+            const modal = M.Modal.getInstance(document.getElementById('triageModal')) || M.Modal.init(document.getElementById('triageModal'));
+
+            if (triageCache[filename]) {
+                currentTriageText = formatTriageText(triageCache[filename]);
+                content.innerHTML = renderTriage(triageCache[filename]);
+                modal.open();
+                return;
+            }
+
+            content.innerHTML = `
+                <div style="display:flex; align-items:center; gap:0.75rem; color:var(--text-secondary); padding:1.5rem 0;">
+                    <div class="loading-spinner"></div>
+                    <div>
+                        <div style="font-weight:600; color:var(--text-primary); margin-bottom:0.25rem;">Running triage agent...</div>
+                        <div style="font-size:0.875rem;">Checking model confidence, alternatives, and OpenAI field strategy.</div>
+                    </div>
+                </div>
+            `;
+            modal.open();
+
+            try {
+                const res = await fetch(`/agent/triage/${encodeURIComponent(filename)}`);
+                if (!res.ok) throw new Error(await res.text());
+                const data = await res.json();
+                triageCache[filename] = data;
+                currentTriageText = formatTriageText(data);
+                content.innerHTML = renderTriage(data);
+            } catch (error) {
+                console.error('agent-triage:', error);
+                currentTriageText = '';
+                content.innerHTML = `
+                    <div style="color: var(--color-error); display:flex; align-items:center; gap:0.75rem; padding:1rem 0;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 1.5rem;"></i>
+                        <div>
+                            <div style="font-weight:600; margin-bottom:0.25rem;">Triage unavailable</div>
+                            <div style="font-size: 0.875rem; color: var(--text-secondary);">Could not run the local triage agent for this image.</div>
+                        </div>
+                    </div>
+                `;
+            }
         }
 
         async function deleteImages() {
@@ -1151,6 +1447,14 @@
             );
         }
 
+        function copyTriage() {
+            if (!currentTriageText) return;
+            navigator.clipboard.writeText(currentTriageText).then(
+                () => M.toast({ html: 'Triage copied to clipboard', classes: 'green' }),
+                () => M.toast({ html: 'Copy failed', classes: 'red' })
+            );
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             if (window.AOS) AOS.init({ duration: 650, easing: 'ease-out-cubic', once: true, offset: 60 });
 
@@ -1167,6 +1471,7 @@
             document.getElementById('exportData').addEventListener('click', exportAnalysisData);
             document.getElementById('uploadMoreImages').addEventListener('click', () => { window.location.href = '/upload-images'; });
             document.getElementById('shareAnalysis').addEventListener('click', shareAnalysis);
+            document.getElementById('copyTriage').addEventListener('click', copyTriage);
 
             // Scroll-aware navbar
             const navbar = document.querySelector('.navbar-custom');
